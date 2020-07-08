@@ -48,11 +48,15 @@
     "dateformat": "^3.0.3",
     "discord.js": "discordjs/discord.js",
     "dotenv": "^8.2.0",
+    "ffmpeg": "^0.0.4",
+    "fluent-ffmpeg": "^2.1.2",
     "jimp": "^0.14.0",
     "knex": "^0.21.1",
     "node-fetch": "^2.6.0",
+    "opusscript": "^0.0.7",
     "parse-ms": "^2.1.0",
     "pg": "^8.2.1",
-    "request": "^2.88.2"
+    "request": "^2.88.2",
+    "ytdl-core": "^3.1.2"
   }
 }

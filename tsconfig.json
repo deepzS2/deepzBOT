@@ -29,7 +29,8 @@
       "@config/*": ["./src/config/*"],
       "@customTypes/*": ["./src/@types/*"],
       "@database": ["./src/database"],
-      "@assets/*": ["./src/assets/*"]
+      "@assets/*": ["./src/assets/*"],
+      "@utils/*": ["./src/utils/*"]
     }
   },
   "include": [

@@ -21,6 +21,7 @@ module.exports = {
           '@reactions': './src/reactions',
           '@database': './src/database',
           '@assets': './src/assets',
+          '@utils': './src/utils',
         },
       },
     ],

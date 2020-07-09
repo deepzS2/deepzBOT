@@ -1,4 +1,5 @@
 import { Client, TextChannel, MessageEmbed } from 'discord.js'
+import fetch from 'node-fetch'
 
 import { Commits } from '@customTypes/github'
 

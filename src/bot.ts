@@ -13,9 +13,18 @@ const client = new Discord.Client()
 const commandHandler = new CommandHandler(config.prefix, client)
 
 client.once('ready', async () => {
-  client.user.setActivity('To be a bot XD', {
-    type: 'PLAYING',
-  })
+  const activities = [
+    "try 'd.help' command",
+    'made with TypeScript',
+    'to be a BOT...',
+  ]
+
+  setInterval(() => {
+    const index = Math.floor(Math.random() * (activities.length - 1) + 1)
+    client.user.setActivity(activities[index], {
+      type: 'PLAYING',
+    })
+  }, 60000)
 })
 
 client.once('disconnect', () => {

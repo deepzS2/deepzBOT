@@ -5,6 +5,7 @@ import connection from '@database'
 
 import config from './config'
 import { CommandHandler } from './handler'
+import github from './utils/github'
 
 validateConfig(config)
 
@@ -25,6 +26,8 @@ client.once('ready', async () => {
       type: 'PLAYING',
     })
   }, 60000)
+
+  await github(client)
 })
 
 client.once('disconnect', () => {

@@ -26,6 +26,10 @@ const emojis = [
     name: 'audio',
     emoji: ':notes:',
   },
+  {
+    name: 'moderation',
+    emoji: ':eye:',
+  },
 ]
 
 export default emojis

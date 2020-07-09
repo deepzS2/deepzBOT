@@ -2,44 +2,31 @@ import { Command } from '@customTypes/commands'
 import { CommandContext } from '@models/command_context'
 import serverQueue from '@models/queue'
 
-export default class SkipCommand implements Command {
-  commandNames = ['skip']
+export default class PauseCommand implements Command {
+  commandNames = ['pause', 'pause-song', 'hold']
   commandExamples = [
     {
-      example: 'd.skip',
-      description: 'Skip that song please...',
+      example: 'd.pause',
+      description: "Pause the music!!! Mom's calling...",
     },
   ]
 
   commandCategory = 'Audio'
 
-  commandUsage = 'd.skip'
+  commandUsage = 'd.pause'
 
   getHelpMessage(commandPrefix: string): string {
-    return `Use ${commandPrefix}skip to the bot skip one song from the queue.`
+    return `Use ${commandPrefix}pause to pause the actual music.`
   }
 
   async run({ originalMessage }: CommandContext): Promise<void> {
     const queue = serverQueue.get(originalMessage.guild.id)
 
-    if (!originalMessage.member.voice.channel) {
+    const voiceChannel = originalMessage.member.voice.channel
+
+    if (!voiceChannel) {
       const message = await originalMessage.channel.send(
-        `**${originalMessage.author.username}, you have to be in a voice channel to stop the music!**`
-      )
-
-      message.delete({
-        timeout: 5000,
-      })
-      originalMessage.delete({
-        timeout: 5000,
-      })
-
-      return
-    }
-
-    if (!queue) {
-      const message = await originalMessage.channel.send(
-        `**${originalMessage.author.username}, there is no song that I could skip!**`
+        `**${originalMessage.author.username}, join a channel and try again`
       )
 
       message.delete({
@@ -53,10 +40,25 @@ export default class SkipCommand implements Command {
       return
     }
 
-    await originalMessage.channel.send(
-      `**:notes: ${originalMessage.author.username} just skipped the song ${queue.songs[0].title}**`
-    )
-    queue.connection.dispatcher.end()
+    if (queue.dispatcher === null) {
+      const message = await originalMessage.channel.send(
+        '**:x: There is no song playing right now!**'
+      )
+
+      message.delete({
+        timeout: 5000,
+      })
+
+      originalMessage.delete({
+        timeout: 5000,
+      })
+
+      return
+    }
+
+    originalMessage.channel.send('**:pause_button: Song paused!**')
+
+    queue.dispatcher.pause()
   }
 
   hasPermissionToRun(): boolean {

@@ -4,12 +4,15 @@ import {
   VoiceConnection,
   DMChannel,
   NewsChannel,
+  StreamDispatcher,
 } from 'discord.js'
 
 export type Song = {
   title: string
   url: string
   duration: string
+  thumbnail: string
+  rawDuration: Record<string, number>
 }
 
 export interface Queue {
@@ -19,4 +22,6 @@ export interface Queue {
   songs: Array<Song>
   volume: number
   playing: boolean
+  nowPlaying: Song | null
+  dispatcher: StreamDispatcher | null
 }

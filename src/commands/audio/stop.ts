@@ -23,9 +23,17 @@ export default class StopCommand implements Command {
     const queue = serverQueue.get(originalMessage.guild.id)
 
     if (!originalMessage.member.voice.channel) {
-      originalMessage.channel.send(
+      const message = await originalMessage.channel.send(
         `${originalMessage.author.username}, you have to be in a voice channel to stop the music!`
       )
+
+      message.delete({
+        timeout: 5000,
+      })
+      originalMessage.delete({
+        timeout: 5000,
+      })
+
       return
     }
 

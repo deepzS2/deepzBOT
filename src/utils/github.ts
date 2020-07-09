@@ -32,12 +32,8 @@ export default async function (bot: Client): Promise<void> {
       guild.channels.cache.map((c) => {
         if (found === 0) {
           if (c.type === 'text') {
-            if (
-              c.permissionsFor(this.client.user).has('VIEW_CHANNEL') === true
-            ) {
-              if (
-                c.permissionsFor(this.client.user).has('SEND_MESSAGES') === true
-              ) {
+            if (c.permissionsFor(bot.user).has('VIEW_CHANNEL') === true) {
+              if (c.permissionsFor(bot.user).has('SEND_MESSAGES') === true) {
                 ;(c as TextChannel).send(embed)
                 found = 1
               }
@@ -48,5 +44,6 @@ export default async function (bot: Client): Promise<void> {
     })
   } catch (err) {
     console.log('Could not send message to a (few) guild(s)!')
+    console.error(err)
   }
 }

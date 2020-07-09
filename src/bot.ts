@@ -27,7 +27,8 @@ client.once('ready', async () => {
     })
   }, 60000)
 
-  await github(client)
+  // Already tested it, so in the next commit it'll be uncommented
+  // await github(client)
 })
 
 client.once('disconnect', () => {

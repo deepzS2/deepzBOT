@@ -1,6 +1,6 @@
 import { Tenor } from '@customTypes/tenor'
 
-const Tenor: Tenor = require('tenorjs').client({
+const tenor: Tenor = require('tenorjs').client({
   Key: process.env.TENOR_KEY,
   Filter: 'off',
   Locale: 'en_US',
@@ -8,4 +8,4 @@ const Tenor: Tenor = require('tenorjs').client({
   DateFormat: 'D/MM/YYYY - H:mm:ss A',
 })
 
-export default Tenor
+export default tenor

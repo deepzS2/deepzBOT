@@ -14,6 +14,8 @@ const client = new Discord.Client()
 const commandHandler = new CommandHandler(config.prefix, client)
 
 client.once('ready', async () => {
+  console.log('Bot ready!')
+
   const activities = [
     "try 'd.help' command",
     'made with TypeScript',

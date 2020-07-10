@@ -178,14 +178,23 @@ export default class PlayCommand implements Command {
       if (playlistQueue.playing === false) {
         try {
           const connection = await voiceChannel.join()
+
           const message = await originalMessage.channel.send(
             `**:notes: Successfully connected to your channel ${connection.voice.channel.name}!**`
           )
+
           message.delete({
-            timeout: 5000,
+            timeout: 10000,
           })
+
+          await originalMessage.channel.send(
+            `:notes: Started playing your playlist: **${playlist.title}**`
+          )
+
           connection.voice.setSelfDeaf(true)
+
           playlistQueue.connection = connection
+
           play(originalMessage.guild, playlistQueue.songs[0], originalMessage)
         } catch (err) {
           console.error(err)
@@ -331,7 +340,9 @@ export default class PlayCommand implements Command {
                   })
 
                   connection.voice.setSelfDeaf(true)
+
                   playlistQueue.connection = connection
+
                   play(
                     originalMessage.guild,
                     playlistQueue.songs[0],
@@ -339,7 +350,9 @@ export default class PlayCommand implements Command {
                   )
                 } catch (err) {
                   console.error(err)
+
                   serverQueue.delete(originalMessage.guild.id)
+
                   originalMessage.channel.send(err)
                 }
               } else {
@@ -421,7 +434,7 @@ export default class PlayCommand implements Command {
     }
 
     if (!queue) {
-      const queueContruct = {
+      const queueConstruct = {
         textChannel: originalMessage.channel,
         voiceChannel: voiceChannel,
         connection: null,
@@ -432,30 +445,35 @@ export default class PlayCommand implements Command {
         dispatcher: null,
       }
 
-      serverQueue.set(originalMessage.guild.id, queueContruct)
+      serverQueue.set(originalMessage.guild.id, queueConstruct)
 
-      queueContruct.songs.push(constructSongObj(video))
+      queueConstruct.songs.push(constructSongObj(video))
 
       try {
         const connection = await voiceChannel.join()
+
         const message = await originalMessage.channel.send(
           `**:notes: Successfully connected to your channel ${connection.voice.channel.name}!**`
         )
 
         message.delete({
-          timeout: 5000,
+          timeout: 10000,
         })
 
         connection.voice.setSelfDeaf(true)
-        queueContruct.connection = connection
-        play(originalMessage.guild, queueContruct.songs[0], originalMessage)
+
+        queueConstruct.connection = connection
+
+        play(originalMessage.guild, queueConstruct.songs[0], originalMessage)
       } catch (err) {
         console.error(err)
+
         serverQueue.delete(originalMessage.guild.id)
         originalMessage.channel.send(err)
       }
     } else {
       queue.songs.push(constructSongObj(video))
+
       originalMessage.channel.send(
         `:notes: **${video.title}** has been added to the queue!`
       )
@@ -493,7 +511,7 @@ function play(guild: Guild, song: Song, message: Message) {
       const embed = await message.channel.send(videoEmbed)
 
       embed.delete({
-        timeout: 6000,
+        timeout: 15000,
       })
 
       queue.nowPlaying = song
@@ -509,9 +527,9 @@ function play(guild: Guild, song: Song, message: Message) {
 
   dispatcher.setVolumeLogarithmic(queue.volume / 5)
 
-  queue.textChannel.send(
-    `:notes: Added to queue your song: **${song.title} (${song.duration})**`
-  )
+  // queue.textChannel.send(
+  //   `:notes: Added to queue your song: **${song.title} (${song.duration})**`
+  // )
 }
 
 function constructSongObj(video) {
@@ -528,7 +546,11 @@ function constructSongObj(video) {
 
 function formatDuration(durationObj) {
   const duration = `${durationObj.hours ? durationObj.hours + ':' : ''}${
-    durationObj.minutes ? durationObj.minutes : '00'
+    durationObj.minutes
+      ? durationObj.minutes < 10
+        ? '0' + durationObj.minutes
+        : durationObj.minutes
+      : '00'
   }:${
     durationObj.seconds < 10
       ? '0' + durationObj.seconds

@@ -7,20 +7,20 @@ import Tenor from '@utils/tenor'
 import functions from '../../functions'
 
 export default class GoodNightCommand implements Command {
-  commandNames = ['goodnight', 'gn', 'boanoite']
+  commandNames = ['hug']
   commandExamples = [
     {
-      example: 'd.goodnight @『 ♥ deepz ♥ 』#4008',
-      description: 'Sends a good night to deepz :blush:',
+      example: 'd.hug @『 ♥ deepz ♥ 』#4008',
+      description: 'He needs a hug...',
     },
   ]
 
   commandCategory = 'Funny'
 
-  commandUsage = 'd.goodnight <user>'
+  commandUsage = 'd.hug <user>'
 
   getHelpMessage(commandPrefix: string): string {
-    return `Use ${commandPrefix}goodnight to send a good night to someone 😴zzzz.`
+    return `Use ${commandPrefix}hug to hug someone <3.`
   }
 
   async run({ originalMessage }: CommandContext): Promise<void> {
@@ -32,14 +32,20 @@ export default class GoodNightCommand implements Command {
       const member = functions.getMember(originalMessage)
 
       if (!member) {
+        originalMessage.channel.send('Mention someone to send a hug...')
+
+        return
+      }
+
+      if (member.user.id === originalMessage.author.id) {
         originalMessage.channel.send(
-          'Mention someone to send good night :zzz::zzz:'
+          "**You can't hug yourself... Wait... You can?**"
         )
 
         return
       }
 
-      const gifs = await Tenor.Search.Query('sleeping anime', '10')
+      const gifs = await Tenor.Search.Query('hug anime', '10')
 
       const toSend = Math.floor(Math.random() * (gifs.length - 1) + 1)
 
@@ -48,7 +54,7 @@ export default class GoodNightCommand implements Command {
         .setColor('#4360FB')
 
       originalMessage.channel.send(
-        `${originalMessage.author.username} just sent a good night to ${member} :zzz: :sleeping:`,
+        `**${originalMessage.author.username}, you just hugged ${member} :smiling_face_with_3_hearts:**`,
         embed
       )
     } catch (error) {

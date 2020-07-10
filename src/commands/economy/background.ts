@@ -62,7 +62,7 @@ export default class BackgroundCommand implements Command {
       const user_attachment = originalMessage.attachments.first()
 
       if (user_attachment) {
-        return request.get(user_attachment.url, async function (err) {
+        request.get(user_attachment.url, async function (err) {
           if (err)
             return originalMessage.channel.send(
               '**Something went wrong while trying to get the image, please try again**'
@@ -86,6 +86,8 @@ export default class BackgroundCommand implements Command {
             attachment
           )
         })
+
+        return
       }
     }
 
@@ -94,7 +96,7 @@ export default class BackgroundCommand implements Command {
       return
     }
 
-    return request.get(args[0], async function (err) {
+    request.get(args[0], async function (err) {
       if (err)
         return originalMessage.channel.send(
           '**Something went wrong while trying to get the image, please try again**'

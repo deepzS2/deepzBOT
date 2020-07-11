@@ -1,4 +1,6 @@
-import { MessageAttachment } from 'discord.js'
+import { createCanvas } from 'canvas'
+import { MessageAttachment, Message } from 'discord.js'
+import fs from 'fs'
 import Jimp from 'jimp'
 import path from 'path'
 
@@ -93,7 +95,7 @@ export default class ProfileCommand implements Command {
   }
 }
 
-async function loadProfile(message, avatar, bg = null) {
+async function loadProfile(message: Message, avatar, bg = null) {
   const { bio, reputation, balance, xp } = await connection('users')
     .where('id', '=', message.author.id)
     .first()
@@ -109,6 +111,16 @@ async function loadProfile(message, avatar, bg = null) {
     actual_xp -= level * 433
   }
 
+  const canvas = createCanvas(149, 16)
+  const ctx = canvas.getContext('2d')
+
+  ctx.font = '14px Roboto'
+  ctx.fillStyle = 'rgba(255, 255, 255, 1)'
+  ctx.textAlign = 'left'
+  ctx.textBaseline = 'middle'
+  ctx.fillText(message.author.username, 0, 8, 149)
+
+  const username = await Jimp.read(canvas.toBuffer())
   const template = await Jimp.read(
     path.join(__dirname, '..', '..', 'assets', 'template.png')
   )
@@ -148,6 +160,8 @@ async function loadProfile(message, avatar, bg = null) {
   }
 
   profile = await profile.composite(avatar, 21, 78)
+
+  profile = await profile.composite(username, 139, 115)
 
   profile = await profile.print(
     roboto18,
@@ -227,19 +241,6 @@ async function loadProfile(message, avatar, bg = null) {
     },
     52,
     28
-  )
-
-  profile = await profile.print(
-    roboto14,
-    139,
-    115,
-    {
-      text: message.author.username,
-      alignmentX: Jimp.HORIZONTAL_ALIGN_LEFT,
-      alignmentY: Jimp.VERTICAL_ALIGN_MIDDLE,
-    },
-    149,
-    16
   )
 
   profile = await profile.quality(100).getBufferAsync(Jimp.MIME_PNG)

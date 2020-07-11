@@ -494,6 +494,8 @@ function play(guild: Guild, song: Song, message: Message) {
     return
   }
 
+  let interval
+
   const dispatcher = queue.connection
     .play(ytdl(song.url, { quality: 'highestaudio' }))
     .on('start', async () => {
@@ -516,9 +518,27 @@ function play(guild: Guild, song: Song, message: Message) {
 
       queue.nowPlaying = song
       queue.playing = true
+
+      interval = setInterval(() => {
+        if (queue.voiceChannel.members.array().length === 1) {
+          queue.songs = []
+          queue.connection.dispatcher.end()
+
+          clearInterval(interval)
+          console.log(interval)
+        }
+      }, 20000)
+    })
+    .on('close', () => {
+      serverQueue.delete(guild.id)
     })
     .on('finish', () => {
+      if (!interval._destroyed) {
+        clearInterval(interval)
+      }
+
       queue.songs.shift()
+
       play(guild, queue.songs[0], message)
     })
     .on('error', (error) => {

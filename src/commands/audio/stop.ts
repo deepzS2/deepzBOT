@@ -40,6 +40,7 @@ export default class StopCommand implements Command {
     await originalMessage.channel.send(
       `**:notes: ${originalMessage.author.username} just stop the queue! Now I'm gonna rest :sleeping:**`
     )
+
     queue.songs = []
     queue.connection.dispatcher.end()
   }

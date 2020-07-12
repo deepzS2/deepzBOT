@@ -23,11 +23,31 @@ export default class GoodMorningCommand implements Command {
     return `Use ${commandPrefix}goodmorning to send a good morning to someone 🥱.`
   }
 
-  async run({ originalMessage }: CommandContext): Promise<void> {
+  async run({ originalMessage, args }: CommandContext): Promise<void> {
     try {
-      const member = functions.getMember(originalMessage)
-      if (!member) {
+      if (!args[0]) {
         originalMessage.channel.send('Mention someone to send good morning...')
+
+        return
+      }
+
+      const member = functions.getMember(originalMessage, args[0])
+
+      if (
+        (originalMessage.mentions.members.first() &&
+          originalMessage.mentions.members.first().user ===
+            originalMessage.author) ||
+        originalMessage.author.username
+          .toLowerCase()
+          .includes(args[0].toLowerCase())
+      ) {
+        originalMessage.channel.send('**Sending a good morning to yourself?**')
+
+        return
+      } else if (
+        !member.user.username.toLowerCase().includes(args[0].toLowerCase())
+      ) {
+        originalMessage.channel.send(`**Sorry, User not found... :(**`)
 
         return
       }
@@ -47,9 +67,6 @@ export default class GoodMorningCommand implements Command {
     } catch (error) {
       console.error(error)
     }
-    originalMessage.delete().catch((O_o) => {
-      console.error(O_o)
-    })
   }
 
   hasPermissionToRun(): boolean {

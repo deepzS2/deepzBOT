@@ -23,18 +23,33 @@ export default class GoodNightCommand implements Command {
     return `Use ${commandPrefix}goodnight to send a good night to someone 😴zzzz.`
   }
 
-  async run({ originalMessage }: CommandContext): Promise<void> {
+  async run({ originalMessage, args }: CommandContext): Promise<void> {
     try {
-      originalMessage.delete().catch((O_o) => {
-        console.error(O_o)
-      })
-
-      const member = functions.getMember(originalMessage)
-
-      if (!member) {
+      if (!args[0]) {
         originalMessage.channel.send(
           'Mention someone to send good night :zzz::zzz:'
         )
+
+        return
+      }
+
+      const member = functions.getMember(originalMessage, args[0])
+
+      if (
+        (originalMessage.mentions.members.first() &&
+          originalMessage.mentions.members.first().user ===
+            originalMessage.author) ||
+        originalMessage.author.username
+          .toLowerCase()
+          .includes(args[0].toLowerCase())
+      ) {
+        originalMessage.channel.send('**Sending a good night to yourself?**')
+
+        return
+      } else if (
+        !member.user.username.toLowerCase().includes(args[0].toLowerCase())
+      ) {
+        originalMessage.channel.send(`**Sorry, User not found... :(**`)
 
         return
       }

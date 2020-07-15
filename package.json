@@ -5,7 +5,7 @@
   "author": "Diego Fernandes <diego.schell.f@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false; export NODE_ENV=; NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --only=dev --dev && sudo apt-get install graphicsmagick",
+    "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false; export NODE_ENV=; NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --only=dev --dev",
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "heroku-postbuild": "export NPM_CONFIG_PRODUCTION=true; export NODE_ENV=prod;",
     "start": "NODE_ENV=prod node dist/bot.js",

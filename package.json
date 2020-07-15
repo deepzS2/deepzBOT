@@ -5,7 +5,7 @@
   "author": "Diego Fernandes <diego.schell.f@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false; export NODE_ENV=; NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --only=dev --dev",
+    "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false; export NODE_ENV=; NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --only=dev --dev && sudo apt-get install graphicsmagick",
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "heroku-postbuild": "export NPM_CONFIG_PRODUCTION=true; export NODE_ENV=prod;",
     "start": "NODE_ENV=prod node dist/bot.js",
@@ -20,7 +20,7 @@
     "@babel/preset-typescript": "^7.10.1",
     "@types/common-tags": "^1.8.0",
     "@types/express": "^4.17.6",
-    "@types/jest": "^26.0.0",
+    "@types/jest": "^26.0.4",
     "@types/node-fetch": "^2.5.7",
     "@types/request": "^2.48.5",
     "@types/youtube": "^0.0.39",
@@ -37,6 +37,8 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^26.0.1",
+    "jest-discord": "^0.1.0",
+    "jest-environment-discord": "^0.1.0",
     "prettier": "^2.0.5",
     "ts-jest": "^26.1.0",
     "ts-node-dev": "^1.0.0-pre.49",
@@ -45,6 +47,7 @@
   },
   "dependencies": {
     "@types/node": "^14.0.14",
+    "asciify-image": "^0.1.6",
     "axios": "^0.19.2",
     "beautify": "^0.0.8",
     "canvas": "^2.6.1",
@@ -54,6 +57,8 @@
     "dotenv": "^8.2.0",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
+    "image-to-ascii": "^3.0.12",
+    "image-to-base64": "^2.1.0",
     "jimp": "^0.14.0",
     "knex": "^0.21.1",
     "node-fetch": "^2.6.0",
@@ -64,6 +69,7 @@
     "request": "^2.88.2",
     "simple-youtube-api": "^5.2.1",
     "tenorjs": "^1.0.7",
+    "text-to-image": "^2.3.0",
     "ytdl-core": "^3.1.2"
   }
 }

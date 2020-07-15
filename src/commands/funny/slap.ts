@@ -6,27 +6,29 @@ import Tenor from '@utils/tenor'
 
 import functions from '../../functions'
 
-export default class GoodNightCommand implements Command {
-  commandNames = ['hug']
+export default class KissCommand implements Command {
+  commandNames = ['slap']
   commandExamples = [
     {
-      example: 'd.hug @『 ♥ deepz ♥ 』#4008',
-      description: 'He needs a hug...',
+      example: 'd.slap @『 ♥ deepz ♥ 』#4008',
+      description: "He needs a... Wait, what? He don't need that...",
     },
   ]
 
   commandCategory = 'Funny'
 
-  commandUsage = 'd.hug <user>'
+  commandUsage = 'd.slap <user>'
 
   getHelpMessage(commandPrefix: string): string {
-    return `Use ${commandPrefix}hug to hug someone <3.`
+    return `Use ${commandPrefix}slap to slap someone :angry:.`
   }
 
   async run({ originalMessage, args }: CommandContext): Promise<void> {
     try {
       if (!args[0]) {
-        originalMessage.channel.send('Mention someone to send a hug...')
+        originalMessage.channel.send(
+          'Mention someone to slap :hand_splayed: ...'
+        )
 
         return
       }
@@ -38,7 +40,7 @@ export default class GoodNightCommand implements Command {
         return
       }
 
-      const gifs = await Tenor.Search.Query('hug anime', '10')
+      const gifs = await Tenor.Search.Query('slap anime', '10')
 
       const toSend = Math.floor(Math.random() * (gifs.length - 1) + 1)
 
@@ -47,7 +49,7 @@ export default class GoodNightCommand implements Command {
         .setColor('#4360FB')
 
       originalMessage.channel.send(
-        `**${originalMessage.author.username}, you just hugged ${member} :smiling_face_with_3_hearts:**`,
+        `**${originalMessage.author.username}, you just slapped ${member} :angry:**`,
         embed
       )
     } catch (error) {

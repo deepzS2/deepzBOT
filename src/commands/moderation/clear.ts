@@ -52,6 +52,10 @@ export default class ClearCommand implements Command {
       return
     }
 
+    if (originalMessage.deletable) {
+      originalMessage.delete()
+    }
+
     await originalMessage.channel.messages
       .fetch({ limit: parseInt(args.join(' ')) })
       .then((messages) => {
@@ -60,7 +64,7 @@ export default class ClearCommand implements Command {
   }
 
   hasPermissionToRun({ originalMessage }: CommandContext): boolean {
-    if (originalMessage.author.id !== '411557789068951552') {
+    if (!originalMessage.member.hasPermission('MANAGE_MESSAGES')) {
       return false
     } else {
       return true

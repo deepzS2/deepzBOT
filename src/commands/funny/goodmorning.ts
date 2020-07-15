@@ -33,22 +33,8 @@ export default class GoodMorningCommand implements Command {
 
       const member = functions.getMember(originalMessage, args[0])
 
-      if (
-        (originalMessage.mentions.members.first() &&
-          originalMessage.mentions.members.first().user ===
-            originalMessage.author) ||
-        originalMessage.author.username
-          .toLowerCase()
-          .includes(args[0].toLowerCase())
-      ) {
-        originalMessage.channel.send('**Sending a good morning to yourself?**')
-
-        return
-      } else if (
-        !member.user.username.toLowerCase().includes(args[0].toLowerCase())
-      ) {
-        originalMessage.channel.send(`**Sorry, User not found... :(**`)
-
+      if (!member || member.user.id === originalMessage.author.id) {
+        originalMessage.channel.send(`**Please mention someone...**`)
         return
       }
 

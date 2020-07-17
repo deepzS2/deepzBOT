@@ -8,7 +8,6 @@
     "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false; export NODE_ENV=; NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --only=dev --dev",
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "heroku-postbuild": "export NPM_CONFIG_PRODUCTION=true; export NODE_ENV=prod;",
-    "prestart": "yarn knex migrate:latest --knexfile dist/knexfile.js --env production",
     "start": "NODE_ENV=prod node dist/bot.js",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --ignore-watch node_modules --no-notify src/bot.ts",
     "test": "jest"
@@ -24,6 +23,7 @@
     "@types/jest": "^26.0.4",
     "@types/node-fetch": "^2.5.7",
     "@types/request": "^2.48.5",
+    "@types/request-promise-native": "^1.0.17",
     "@types/youtube": "^0.0.39",
     "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.5.0",
@@ -48,7 +48,6 @@
   },
   "dependencies": {
     "@types/node": "^14.0.14",
-    "asciify-image": "^0.1.6",
     "axios": "^0.19.2",
     "beautify": "^0.0.8",
     "canvas": "^2.6.1",
@@ -58,19 +57,19 @@
     "dotenv": "^8.2.0",
     "ffmpeg": "^0.0.4",
     "fluent-ffmpeg": "^2.1.2",
-    "image-to-ascii": "^3.0.12",
-    "image-to-base64": "^2.1.0",
     "jimp": "^0.14.0",
+    "jssoup": "^0.0.12",
     "knex": "^0.21.1",
     "node-fetch": "^2.6.0",
     "node-osu": "^2.2.0",
     "opusscript": "^0.0.7",
+    "osu-bpdpc": "^0.1.1",
     "parse-ms": "^2.1.0",
     "pg": "^8.2.1",
     "request": "^2.88.2",
+    "request-promise-native": "^1.0.8",
     "simple-youtube-api": "^5.2.1",
     "tenorjs": "^1.0.7",
-    "text-to-image": "^2.3.0",
     "ytdl-core": "^3.1.2"
   }
 }

@@ -141,6 +141,7 @@ export default class PlayCommand implements Command {
           playing: false,
           nowPlaying: null,
           dispatcher: null,
+          loop: false,
         }
 
         serverQueue.set(originalMessage.guild.id, queueContruct)
@@ -294,6 +295,7 @@ export default class PlayCommand implements Command {
               playing: false,
               nowPlaying: null,
               dispatcher: null,
+              loop: false,
             }
 
             serverQueue.set(originalMessage.guild.id, queueContruct)
@@ -443,6 +445,7 @@ export default class PlayCommand implements Command {
         playing: true,
         nowPlaying: null,
         dispatcher: null,
+        loop: false,
       }
 
       serverQueue.set(originalMessage.guild.id, queueConstruct)
@@ -485,71 +488,91 @@ export default class PlayCommand implements Command {
   }
 }
 
-function play(guild: Guild, song: Song, message: Message) {
-  const queue = serverQueue.get(guild.id)
+async function play(guild: Guild, song: Song, message: Message) {
+  try {
+    const queue = serverQueue.get(guild.id)
 
-  if (!song) {
-    queue.voiceChannel.leave()
-    serverQueue.delete(guild.id)
-    return
-  }
+    if (!queue) {
+      console.log(serverQueue.get(guild.id))
+      return
+    }
 
-  let interval
+    if (!song) {
+      queue.voiceChannel.leave()
+      serverQueue.delete(guild.id)
+      return
+    }
 
-  const dispatcher = queue.connection
-    .play(ytdl(song.url, { quality: 'highestaudio' }))
-    .on('start', async () => {
-      queue.dispatcher = dispatcher
+    let interval
 
-      const videoEmbed = new MessageEmbed()
-        .setThumbnail(song.thumbnail)
-        .setColor('#4360FB')
-        .addField('Now Playing:', song.title)
-        .addField('Duration:', song.duration)
+    const dispatcher = queue.connection
+      .play(ytdl(song.url, { quality: 'highestaudio' }))
+      .on('start', async () => {
+        queue.dispatcher = dispatcher
 
-      if (queue.songs[1])
-        videoEmbed.addField('Next Song:', queue.songs[1].title)
+        const videoEmbed = new MessageEmbed()
+          .setThumbnail(song.thumbnail)
+          .setColor('#4360FB')
+          .addField('Now Playing:', song.title)
+          .addField('Duration:', song.duration)
 
-      const embed = await message.channel.send(videoEmbed)
+        if (queue.songs[1])
+          videoEmbed.addField('Next Song:', queue.songs[1].title)
 
-      embed.delete({
-        timeout: 15000,
+        const embed = await message.channel.send(videoEmbed)
+
+        embed.delete({
+          timeout: 15000,
+        })
+
+        queue.nowPlaying = song
+        queue.playing = true
+
+        interval = setInterval(() => {
+          if (queue.voiceChannel.members.array().length === 1) {
+            queue.songs = []
+            queue.connection.dispatcher.end()
+
+            clearInterval(interval)
+          }
+        }, 20000)
+      })
+      .on('close', () => {
+        if (queue.connection.status === 4) {
+          serverQueue.delete(guild.id)
+
+          if (!interval._destroyed) {
+            clearInterval(interval)
+          }
+        }
+      })
+      .on('finish', () => {
+        if (!interval._destroyed) {
+          clearInterval(interval)
+        }
+
+        if (queue.loop) {
+          queue.songs.push(queue.nowPlaying)
+        }
+
+        queue.songs.shift()
+
+        play(guild, queue.songs[0], message)
+      })
+      .on('error', async (error) => {
+        console.error(error)
+        await message.channel.send(
+          `**:x: Something went wrong! Please try again later!**`
+        )
       })
 
-      queue.nowPlaying = song
-      queue.playing = true
-
-      interval = setInterval(() => {
-        if (queue.voiceChannel.members.array().length === 1) {
-          queue.songs = []
-          queue.connection.dispatcher.end()
-
-          clearInterval(interval)
-          console.log(interval)
-        }
-      }, 20000)
-    })
-    .on('close', () => {
-      serverQueue.delete(guild.id)
-    })
-    .on('finish', () => {
-      if (!interval._destroyed) {
-        clearInterval(interval)
-      }
-
-      queue.songs.shift()
-
-      play(guild, queue.songs[0], message)
-    })
-    .on('error', (error) => {
-      console.error(error)
-    })
-
-  dispatcher.setVolumeLogarithmic(queue.volume / 5)
-
-  // queue.textChannel.send(
-  //   `:notes: Added to queue your song: **${song.title} (${song.duration})**`
-  // )
+    dispatcher.setVolumeLogarithmic(queue.volume / 5)
+  } catch (error) {
+    console.error(error)
+    await message.channel.send(
+      `**:x: Something went wrong! Please try again later!**`
+    )
+  }
 }
 
 function constructSongObj(video) {

@@ -60,6 +60,10 @@ export default class NowPlayingCommand implements Command {
       .setTitle(`**Total time: ${description.totalDurationFormatted}**`)
       .setDescription(description.string)
 
+    if (queue.loop) {
+      videoEmbed.setFooter(`Looping...`)
+    }
+
     originalMessage.channel.send(videoEmbed)
   }
 

@@ -6,37 +6,23 @@ export default class LoopCommand implements Command {
   commandNames = ['loop', 'repeat']
   commandExamples = [
     {
-      example: 'd.loop 3',
-      description: 'Good song... Loop 3 times please!',
+      example: 'd.loop',
+      description: 'Good song... Loop that please!',
     },
   ]
 
   commandCategory = 'Audio'
 
-  commandUsage = 'd.loop <number of times>'
+  commandUsage = 'd.loop'
 
   getHelpMessage(commandPrefix: string): string {
     return `Use ${commandPrefix}loop to loop the current playing song.`
   }
 
-  async run({ originalMessage, args }: CommandContext): Promise<void> {
+  async run({ originalMessage }: CommandContext): Promise<void> {
     const queue = serverQueue.get(originalMessage.guild.id)
 
     const voiceChannel = originalMessage.member.voice.channel
-
-    if (!args[0].match(/^\d+$/)) {
-      const message = await originalMessage.channel.send(
-        `**:x: Please provide a number of times you want to loop!**`
-      )
-
-      message.delete({
-        timeout: 5000,
-      })
-
-      originalMessage.delete({
-        timeout: 5000,
-      })
-    }
 
     if (!voiceChannel) {
       const message = await originalMessage.channel.send(
@@ -70,15 +56,19 @@ export default class LoopCommand implements Command {
       return
     }
 
-    for (let i = 0; i < parseInt(args[0]); i++) {
-      queue.songs.unshift(queue.nowPlaying)
-    }
+    queue.loop = true
 
-    await originalMessage.channel.send(
-      `**:notes: ${originalMessage.author.username} just looped the song ${
-        queue.nowPlaying.title
-      } ${parseInt(args[0]) === 1 ? 'time' : 'times'}**`
-    )
+    if (queue.songs.length > 1) {
+      await originalMessage.channel.send(
+        `**:notes: ${originalMessage.author.username} just looped the actual queue.**`
+      )
+    } else {
+      await originalMessage.channel.send(
+        `**:notes: ${
+          originalMessage.author.username
+        } just looped the actual song ${queue.nowPlaying.title || ''}.**`
+      )
+    }
   }
 
   hasPermissionToRun(): boolean {

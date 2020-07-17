@@ -5,3 +5,9 @@ package-lock.json
 dist
 coverage
 .vscode
+test.ts
+
+# Soon
+src/commands/games
+src/@types/games.d.ts
+src/database

@@ -30,6 +30,10 @@ const emojis = [
     name: 'moderation',
     emoji: ':eye:',
   },
+  {
+    name: 'games',
+    emoji: ':video_game:',
+  },
 ]
 
 export default emojis

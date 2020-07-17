@@ -24,4 +24,5 @@ export interface Queue {
   playing: boolean
   nowPlaying: Song | null
   dispatcher: StreamDispatcher | null
+  loop: boolean
 }

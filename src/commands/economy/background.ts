@@ -63,30 +63,30 @@ export default class BackgroundCommand implements Command {
       const user_attachment = originalMessage.attachments.first()
 
       if (user_attachment) {
-        request.get(user_attachment.url, async function (err) {
-          if (err)
-            return originalMessage.channel.send(
-              '**Something went wrong while trying to get the image, please try again**'
-            )
-
-          const [{ background_image }] = await connection('users')
-            .where('id', '=', originalMessage.author.id)
-            .first()
-            .update(
-              {
-                background_image: user_attachment.url,
-                balance: balance - amount,
-              },
-              ['background_image']
-            )
-
-          const attachment = new MessageAttachment(background_image)
-
-          return originalMessage.channel.send(
-            `**📝  | ${originalMessage.author.username}, I changed your background by your image!**`,
-            attachment
+        if (!isImageUrl(user_attachment.url)) {
+          originalMessage.channel.send(
+            `**:x: Your image is invalid or corrupted!**`
           )
-        })
+          return
+        }
+
+        const [{ background_image }] = await connection('users')
+          .where('id', '=', originalMessage.author.id)
+          .first()
+          .update(
+            {
+              background_image: user_attachment.url,
+              balance: balance - amount,
+            },
+            ['background_image']
+          )
+
+        const attachment = new MessageAttachment(background_image)
+
+        originalMessage.channel.send(
+          `**📝  | ${originalMessage.author.username}, I changed your background by your image!**`,
+          attachment
+        )
 
         return
       }
@@ -97,30 +97,23 @@ export default class BackgroundCommand implements Command {
       return
     }
 
-    request.get(args[0], async function (err) {
-      if (err)
-        return originalMessage.channel.send(
-          '**Something went wrong while trying to get the image, please try again**'
-        )
-
-      const [{ background_image }] = await connection('users')
-        .where('id', '=', originalMessage.author.id)
-        .first()
-        .update(
-          {
-            background_image: args[0],
-            balance: balance - amount,
-          },
-          ['background_image']
-        )
-
-      const attachment = new MessageAttachment(background_image)
-
-      return originalMessage.channel.send(
-        `**📝  | ${originalMessage.author.username}, I changed your background by your image!**`,
-        attachment
+    const [{ background_image }] = await connection('users')
+      .where('id', '=', originalMessage.author.id)
+      .first()
+      .update(
+        {
+          background_image: args[0],
+          balance: balance - amount,
+        },
+        ['background_image']
       )
-    })
+
+    const attachment = new MessageAttachment(background_image)
+
+    originalMessage.channel.send(
+      `**📝  | ${originalMessage.author.username}, I changed your background by your image!**`,
+      attachment
+    )
   }
 
   hasPermissionToRun(): boolean {

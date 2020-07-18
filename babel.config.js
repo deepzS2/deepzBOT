@@ -22,6 +22,7 @@ module.exports = {
           '@database': './src/database',
           '@assets': './src/assets',
           '@utils': './src/utils',
+          '@services': './src/services',
         },
       },
     ],

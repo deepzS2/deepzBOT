@@ -30,7 +30,8 @@
       "@customTypes/*": ["./src/@types/*"],
       "@database": ["./src/database"],
       "@assets/*": ["./src/assets/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@services/*": ["./src/services/*"]
     }
   },
   "include": [

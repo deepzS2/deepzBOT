@@ -1,4 +1,3 @@
-import { stripIndents } from 'common-tags'
 import { MessageEmbed } from 'discord.js'
 import fetch from 'node-fetch'
 

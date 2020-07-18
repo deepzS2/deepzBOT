@@ -22,23 +22,12 @@ export default class DocumentationCommand implements Command {
     return `Use ${commandPrefix}documentation to see the bot status, etc.`
   }
 
-  async run({ bot, originalMessage, args }: CommandContext): Promise<void> {
+  async run({ bot, originalMessage }: CommandContext): Promise<void> {
     const owner = await bot.users.fetch('411557789068951552')
 
     const { description, updated_at, pushed_at, language } = await fetch(
       'https://api.github.com/repos/deepzS2/myBot'
     )
-      .then((res) => res.json())
-      .catch((err) => {
-        console.error(err)
-        return originalMessage.channel.send(
-          `**:x: Something went wrong! Possibly with Github API! Try again later...**`
-        )
-      })
-
-    const {
-      commit: { message },
-    } = await fetch('https://api.github.com/repos/deepzS2/myBot/commits/master')
       .then((res) => res.json())
       .catch((err) => {
         console.error(err)

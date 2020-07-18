@@ -5,7 +5,7 @@ import { Command } from '@customTypes/commands'
 import { CommandContext } from '@models/command_context'
 import tracker from '@services/tracker'
 
-export default class FortniteCommand implements Command {
+export default class CSGOCommand implements Command {
   commandNames = ['csgo', 'counterstrike', 'globaloffensive']
   commandExamples = [
     {

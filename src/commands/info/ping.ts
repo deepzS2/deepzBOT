@@ -18,9 +18,7 @@ export default class PingCommand implements Command {
     return `Use ${commandPrefix}ping to get the bot latency.`
   }
 
-  async run({ bot, originalMessage }: CommandContext): Promise<void> {
-    const owner = await bot.users.fetch('411557789068951552')
-
+  async run({ originalMessage }: CommandContext): Promise<void> {
     const m = await originalMessage.channel.send(`🏓 Pinging....`)
     m.edit(
       `🏓 Pong!\nLatency is ${

@@ -6,7 +6,7 @@ import Tenor from '@utils/tenor'
 
 import functions from '../../functions'
 
-export default class KissCommand implements Command {
+export default class SlapCommand implements Command {
   commandNames = ['slap']
   commandExamples = [
     {

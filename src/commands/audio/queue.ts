@@ -1,11 +1,11 @@
-import { MessageEmbed, Message } from 'discord.js'
+import { MessageEmbed } from 'discord.js'
 
 import { Command } from '@customTypes/commands'
-import { Song, Queue } from '@customTypes/queue'
+import { Song } from '@customTypes/queue'
 import { CommandContext } from '@models/command_context'
 import serverQueue from '@models/queue'
 
-export default class NowPlayingCommand implements Command {
+export default class QueueCommand implements Command {
   commandNames = ['queue', 'list', 'songs']
   commandExamples = [
     {

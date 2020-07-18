@@ -1,6 +1,5 @@
 import { createCanvas } from 'canvas'
 import { MessageAttachment, Message } from 'discord.js'
-import fs from 'fs'
 import Jimp from 'jimp'
 import path from 'path'
 
@@ -130,9 +129,6 @@ async function loadProfile(message: Message, avatar, bg = null) {
   )
   const roboto18 = await Jimp.loadFont(
     path.join(__dirname, '..', '..', 'assets', 'Roboto18.fnt')
-  )
-  const roboto14 = await Jimp.loadFont(
-    path.join(__dirname, '..', '..', 'assets', 'Roboto14.fnt')
   )
   const roboto11 = await Jimp.loadFont(
     path.join(__dirname, '..', '..', 'assets', 'Roboto11.fnt')

@@ -3,8 +3,6 @@ import { MessageEmbed } from 'discord.js'
 import { Command } from '@customTypes/commands'
 import { CommandContext } from '@models/command_context'
 
-import functions from '../../functions'
-
 export default class SayCommand implements Command {
   commandNames = ['say', 's', 'speak']
   commandExamples = [

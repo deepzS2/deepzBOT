@@ -1,6 +1,5 @@
 import { MessageAttachment } from 'discord.js'
 import isImageUrl from 'is-image-url'
-import request from 'request'
 
 import { Command } from '@customTypes/commands'
 import connection from '@database'
@@ -43,7 +42,7 @@ export default class BackgroundCommand implements Command {
         .first()
         .select('background_image')
 
-      const attachment = new MessageAttachment(background_image)
+      const attachment = new MessageAttachment(background_image.toString())
 
       originalMessage.channel.send(
         `**📝  | ${originalMessage.author.username}, here's your current profile background:**`,
@@ -81,7 +80,7 @@ export default class BackgroundCommand implements Command {
             ['background_image']
           )
 
-        const attachment = new MessageAttachment(background_image)
+        const attachment = new MessageAttachment(background_image.toString())
 
         originalMessage.channel.send(
           `**📝  | ${originalMessage.author.username}, I changed your background by your image!**`,
@@ -108,7 +107,7 @@ export default class BackgroundCommand implements Command {
         ['background_image']
       )
 
-    const attachment = new MessageAttachment(background_image)
+    const attachment = new MessageAttachment(background_image.toString())
 
     originalMessage.channel.send(
       `**📝  | ${originalMessage.author.username}, I changed your background by your image!**`,

@@ -39,7 +39,7 @@ export default class ProfileCommand implements Command {
         .first()
         .select('background_image')
 
-      background = background_image
+      background = background_image.toString()
 
       avatar = await (
         await Jimp.read(
@@ -58,7 +58,7 @@ export default class ProfileCommand implements Command {
         .first()
         .select('background_image')
 
-      background = background_image
+      background = background_image.toString()
 
       avatar = await (
         await Jimp.read(
@@ -76,6 +76,7 @@ export default class ProfileCommand implements Command {
         const bg = await (await Jimp.read(background))
           .resize(300, 300)
           .quality(100)
+
         await loadProfile(originalMessage, avatar, bg)
         return
       } catch (error) {

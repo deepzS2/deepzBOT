@@ -1,11 +1,13 @@
-import Discord, { Message } from 'discord.js'
+import { stripIndents } from 'common-tags'
+import Discord, { Message, TextChannel, Guild } from 'discord.js'
 
 import { BotConfig } from '@customTypes/client'
 import connection from '@database'
+// import github from '@utils/github'
+import { tickTwitchCheck } from '@utils/twitch'
 
 import config from './config'
 import { CommandHandler } from './handler'
-import github from './utils/github'
 
 validateConfig(config)
 
@@ -27,7 +29,12 @@ client.once('ready', async () => {
     client.user.setActivity(activities[index], {
       type: 'PLAYING',
     })
-  }, 60000)
+  }, 60 * 1000)
+
+  await tickTwitchCheck(client)
+  setInterval(async () => {
+    await tickTwitchCheck(client)
+  }, 1000 * 60 * 30)
 
   // Already tested it, so in the next commit it'll be uncommented
   // await github(client)
@@ -55,6 +62,30 @@ client.on('message', async (message: Message) => {
 client.on('error', (e) => {
   console.error('Discord client error!', e)
 })
+
+client.on('guildCreate', async (guild) => {
+  let found = 0
+  guild.channels.cache.map((c) => {
+    if (found === 0) {
+      if (c.type === 'text') {
+        if (c.permissionsFor(client.user).has('VIEW_CHANNEL') === true) {
+          if (c.permissionsFor(client.user).has('SEND_MESSAGES') === true) {
+            ;(c as TextChannel).send(stripIndents`
+            **Thanks for adding me!! My name is deepz**
+            It's a honor being invited to your server! I hope we all can be friends forever :smiley:.
+            For help with commands try \`d.help\` or \`d.help <command>\`.
+            `)
+            found = 1
+          }
+        }
+      }
+    }
+  })
+
+  await onGuildAdd(guild)
+})
+
+client.on('guildDelete', onGuildDelete)
 
 client.login(config.token)
 
@@ -128,4 +159,15 @@ async function onMessage(message: Message) {
         balance: user.balance + Math.floor(Math.random() * 7) + 3,
       })
   }
+}
+
+async function onGuildAdd(guild: Guild) {
+  await connection('guilds').insert({
+    id: guild.id,
+    name: guild.name,
+  })
+}
+
+async function onGuildDelete(guild: Guild) {
+  await connection('guilds').where('id', '=', guild.id).delete()
 }

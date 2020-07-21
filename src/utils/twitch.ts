@@ -98,7 +98,7 @@ export async function sendToDiscord(
       )
       .setColor('#4360FB')
       .setDescription(
-        `**${res.stream.channel.status}**\nPlaying: ${res.stream.game}`
+        `**${res.stream.channel.status}**\nPlaying: ${res.stream.game}\n\n`
       )
       .setImage(`${res.stream.preview.large}?junktimestamp=${currentTime}`)
       .setThumbnail(`${res.stream.channel.logo}?junktimestamp=${currentTime}`)
@@ -110,7 +110,7 @@ export async function sendToDiscord(
       const channel = guild.channels.cache.find(
         (value) => value.id === notificationChannel
       )
-      ;(channel as TextChannel).send(embed)
+      ;(channel as TextChannel).send('@everyone', embed)
     } else {
       let found = 0
       guild.channels.cache.map((c) => {
@@ -118,7 +118,7 @@ export async function sendToDiscord(
           if (c.type === 'text') {
             if (c.permissionsFor(bot.user).has('VIEW_CHANNEL') === true) {
               if (c.permissionsFor(bot.user).has('SEND_MESSAGES') === true) {
-                ;(c as TextChannel).send(embed)
+                ;(c as TextChannel).send('@everyone', embed)
                 found = 1
               }
             }

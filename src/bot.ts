@@ -11,7 +11,11 @@ import { CommandHandler } from './handler'
 
 validateConfig(config)
 
-const client = new Discord.Client()
+const client = new Discord.Client({
+  allowedMentions: {
+    parse: ['everyone'],
+  },
+})
 
 const commandHandler = new CommandHandler(config.prefix, client)
 

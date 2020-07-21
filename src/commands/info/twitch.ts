@@ -92,6 +92,8 @@ async function streamManage(
       return msg.channel.send(
         `**Added ${channel.name} successfully to the guilds twitch channel notifications!**`
       )
+    } else if (action === 'now') {
+      return tickTwitchCheck(bot)
     } else {
       return await msg.channel.send(
         `**:x: Please provide an argument! Try \`d.help twitch\`.**`

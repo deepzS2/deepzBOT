@@ -32,6 +32,13 @@ export default class MarryCommand implements Command {
     const userToMarry = functions.getMember(originalMessage, args[0])
     const author = originalMessage.author
 
+    if (userToMarry.id === originalMessage.author.id) {
+      originalMessage.channel.send(
+        `**:x: You're trying to marry with yourself?**`
+      )
+      return
+    }
+
     const msg = await originalMessage.channel.send(
       `**:ring: ${userToMarry} you accept marrying with ${author.username}?**`
     )

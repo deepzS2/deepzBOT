@@ -30,6 +30,11 @@ export default class MarryCommand implements Command {
     const userToDivorce = functions.getMember(originalMessage, args[0])
     const author = originalMessage.author
 
+    if (userToDivorce.id === originalMessage.author.id) {
+      originalMessage.channel.send(`**:x: You're trying to divorce yourself?**`)
+      return
+    }
+
     try {
       const { couple } = await connection('users')
         .where('id', '=', author.id)

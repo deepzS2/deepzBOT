@@ -113,7 +113,11 @@ export default class OsuCommand implements Command {
               `https://s.ppy.sh/a/${score.user_id}`,
               `https://osu.ppy.sh/u/${recent.user.id}`
             )
-            .setTitle(`${score.artist} - ${score.title} [${score.version}]`)
+            .setTitle(
+              `${score.artist} - ${score.title} ★${score.stars.toFixed(2)} [${
+                score.version
+              }]`
+            )
             .setURL(`https://osu.ppy.sh/b/${score.beatmap_id}`)
             .setThumbnail(
               `https://b.ppy.sh/thumb/${recent.beatmap.beatmapSetId}l.jpg`
@@ -159,9 +163,7 @@ export default class OsuCommand implements Command {
             description += `${score.countmiss}]`
           }
 
-          console.log(score.map_completion)
-
-          if (score.map_completion) {
+          if (score.map_completion && score.map_completion !== 100) {
             description += `\n➤ **Map completion:** ${score.map_completion.toFixed(
               2
             )}%`
@@ -202,7 +204,7 @@ export default class OsuCommand implements Command {
 
         originalMessage.channel.send(`**Osu profile registered successfully.**`)
       } catch (error) {
-        console.log(error)
+        console.error(error)
 
         if (error.message === 'Not found') {
           originalMessage.channel.send(`**:x: Player not found...**`)

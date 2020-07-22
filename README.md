@@ -1,4 +1,5 @@
-# [deepz BOT](https://discord.com/oauth2/authorize?client_id=709564503053828137&scope=bot&permissions=334621766)
+# [deepz BOT](https://discord.com/oauth2/authorize?client_id=709564503053828137&scope=bot&permissions=334621766) ![](https://img.shields.io/github/license/deepzS2/deepzBOT) ![](https://img.shields.io/github/stars/deepzS2/deepzBOT) ![](https://img.shields.io/github/issues/deepzS2/deepzBOT) ![](https://img.shields.io/github/forks/deepzS2/deepzBOT)
+
 "deepz BOT" is a bot developed with [TypeScript](https://www.typescriptlang.org/) and [discord.js](https://www.discord.js.org/), based on [Tatsu](https://tatsu.gg/) and other BOTS.
 
 #### Status - Under development...

@@ -281,7 +281,7 @@ export async function getScore(
       cb(null, recent)
     })
     .catch((err) => {
-      console.log(err)
+      console.error(err)
 
       cb(
         new Error(

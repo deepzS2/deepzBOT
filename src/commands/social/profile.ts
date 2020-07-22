@@ -105,10 +105,10 @@ async function loadProfile(message: Message, avatar, bg = null) {
   let up_xp = 433
   let actual_xp = xp
 
-  while (up_xp <= actual_xp) {
-    level++
+  while (actual_xp >= up_xp) {
     up_xp = level * 433
     actual_xp -= level * 433
+    level++
   }
 
   const canvas = createCanvas(149, 16)

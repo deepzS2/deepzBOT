@@ -1,6 +1,11 @@
 import { Message, GuildMember } from 'discord.js'
 
 export default {
+  /**
+   * Get member with the params
+   * @param msg Message
+   * @param toFind String with the mention
+   */
   getMember: function (msg: Message, toFind = ''): GuildMember {
     toFind = toFind.toLowerCase()
 

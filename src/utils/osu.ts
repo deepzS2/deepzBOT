@@ -110,6 +110,11 @@ interface Callback {
   (error: Error | null, score?: Recent | undefined)
 }
 
+/**
+ * Get the score informations with pp, fc, etc.
+ * @param recent_raw The informations about the score
+ * @param cb Function callback with the score
+ */
 export async function getScore(
   recent_raw: RecentRaw,
   cb: Callback
@@ -291,6 +296,14 @@ export async function getScore(
     })
 }
 
+/**
+ * Calculate the CS, AR, OD, HP
+ * @param cs_raw CS number
+ * @param ar_raw AR number
+ * @param od_raw OD number
+ * @param hp_raw HP number
+ * @param mods_enabled Mods strings
+ */
 function calculateCsArOdHp(
   cs_raw: number,
   ar_raw: number,
@@ -380,7 +393,11 @@ function calculateCsArOdHp(
   }
 }
 
-function getModsEnum(mods) {
+/**
+ * Get mods number
+ * @param mods the mods string
+ */
+function getModsEnum(mods: string[]) {
   let return_value = 0
   mods.forEach((mod) => {
     return_value |= mods_enum[mod.toUpperCase()]
@@ -388,6 +405,11 @@ function getModsEnum(mods) {
   return return_value
 }
 
+/**
+ * Calculate the % of the map completion
+ * @param beatmap Beatmap parsed
+ * @param totalhits Total hits
+ */
 async function mapCompletion(beatmap: parser, totalhits = 0) {
   try {
     const hitobj = []
@@ -414,6 +436,10 @@ async function mapCompletion(beatmap: parser, totalhits = 0) {
   }
 }
 
+/**
+ * Get the beatmap from osu website
+ * @param beatmap_id Beatmap id
+ */
 function getBeatmap(beatmap_id: string) {
   return new Promise((resolve, reject) => {
     request

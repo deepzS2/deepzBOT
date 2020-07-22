@@ -3,6 +3,10 @@ import https from 'https'
 
 import connection from '@database'
 
+/**
+ * Check if someone is on stream
+ * @param bot Client
+ */
 export async function tickTwitchCheck(bot: Client): Promise<void> {
   const guilds = await connection('guilds')
 

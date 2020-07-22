@@ -6,3 +6,6 @@ dist
 coverage
 .vscode
 test.ts
+
+# Soon :D
+src/web

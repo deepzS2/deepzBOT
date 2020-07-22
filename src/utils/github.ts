@@ -3,6 +3,10 @@ import fetch from 'node-fetch'
 
 import { Commits } from '@customTypes/github'
 
+/**
+ * Notify users when bot updated on github
+ * @param bot Client
+ */
 export default async function (bot: Client): Promise<void> {
   const owner = await bot.users.fetch('411557789068951552')
 

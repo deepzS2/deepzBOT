@@ -1,9 +1,10 @@
 import { Message } from 'discord.js'
-import functions from 'src/functions'
 
 import { Command } from '@customTypes/commands'
 import connection from '@database'
 import { CommandContext } from '@models/command_context'
+
+import functions from '../../functions'
 
 export default class MarryCommand implements Command {
   commandNames = ['marry', 'marriage']

@@ -2,12 +2,12 @@ import { stripIndents } from 'common-tags'
 import Discord, { Message, TextChannel, Guild } from 'discord.js'
 
 import { BotConfig } from '@customTypes/client'
-import connection from '@database'
-// import github from '@utils/github'
 import { tickTwitchCheck } from '@utils/twitch'
 
+import connection from '../database'
 import config from './config'
 import { CommandHandler } from './handler'
+// import github from '@utils/github'
 
 validateConfig(config)
 

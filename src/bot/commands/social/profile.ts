@@ -4,9 +4,9 @@ import Jimp from 'jimp'
 import path from 'path'
 
 import { Command } from '@customTypes/commands'
-import connection from '@database'
 import { CommandContext } from '@models/command_context'
 
+import connection from '../../../database'
 import functions from '../../functions'
 
 export default class ProfileCommand implements Command {

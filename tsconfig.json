@@ -23,15 +23,15 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@commands/*": ["./src/commands/*"],
-      "@models/*": ["./src/models/*"],
-      "@reactions/*": ["./src/reactions/*"],
-      "@config/*": ["./src/config/*"],
-      "@customTypes/*": ["./src/@types/*"],
-      "@database": ["./src/database"],
-      "@assets/*": ["./src/assets/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@services/*": ["./src/services/*"]
+      "@commands/*": ["./src/bot/commands/*"],
+      "@models/*": ["./src/bot/models/*"],
+      "@reactions/*": ["./src/bot/reactions/*"],
+      "@config/*": ["./src/bot/config/*"],
+      "@customTypes/*": ["./src/bot/@types/*"],
+      "@database": ["src/database"],
+      "@assets/*": ["./src/bot/assets/*"],
+      "@utils/*": ["./src/bot/utils/*"],
+      "@services/*": ["./src/bot/services/*"]
     }
   },
   "include": [

@@ -1,8 +1,9 @@
 import ms from 'parse-ms'
 
 import { Command } from '@customTypes/commands'
-import connection from '@database'
 import { CommandContext } from '@models/command_context'
+
+import connection from '../../../database'
 
 export default class DailyMoneyCommand implements Command {
   commandNames = ['daily']

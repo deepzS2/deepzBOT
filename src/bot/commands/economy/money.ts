@@ -1,8 +1,8 @@
 import { Command } from '@customTypes/commands'
 import { User } from '@customTypes/database'
-import connection from '@database'
 import { CommandContext } from '@models/command_context'
 
+import connection from '../../../database'
 import functions from '../../functions'
 
 export default class MoneyCommand implements Command {

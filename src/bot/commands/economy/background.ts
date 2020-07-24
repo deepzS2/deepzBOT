@@ -2,8 +2,9 @@ import { MessageAttachment } from 'discord.js'
 import isImageUrl from 'is-image-url'
 
 import { Command } from '@customTypes/commands'
-import connection from '@database'
 import { CommandContext } from '@models/command_context'
+
+import connection from '../../../database'
 
 export default class BackgroundCommand implements Command {
   commandNames = ['background', 'bg']

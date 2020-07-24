@@ -40,17 +40,20 @@ export class CommandHandler {
     this.categories = []
     let commands: Array<string> = []
 
-    readdirSync(
-      process.env.NODE_ENV === 'prod' ? './dist/commands/' : './src/commands/'
-    ).forEach((dir) => {
+    const path =
+      process.env.NODE_ENV === 'prod'
+        ? './dist/bot/commands'
+        : './src/bot/commands'
+
+    readdirSync(path).forEach((dir) => {
       this.categories.push(dir)
 
       if (process.env.NODE_ENV === 'prod') {
-        commands = readdirSync(`./dist/commands/${dir}/`).filter((f) =>
+        commands = readdirSync(`${path}/${dir}/`).filter((f) =>
           f.endsWith('.js')
         )
       } else {
-        commands = readdirSync(`./src/commands/${dir}/`).filter((f) =>
+        commands = readdirSync(`${path}/${dir}/`).filter((f) =>
           f.endsWith('.ts')
         )
       }

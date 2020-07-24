@@ -1,7 +1,7 @@
 import { Client, Guild, MessageEmbed, TextChannel } from 'discord.js'
 import https from 'https'
 
-import connection from '@database'
+import connection from '../../database'
 
 /**
  * Check if someone is on stream

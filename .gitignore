@@ -7,5 +7,4 @@ coverage
 .vscode
 test.ts
 
-# Soon :D
-src/web
+TODOs.txt

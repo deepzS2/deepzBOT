@@ -1,6 +1,7 @@
 import { Command } from '@customTypes/commands'
-import connection from '@database'
 import { CommandContext } from '@models/command_context'
+
+import connection from '../../../database'
 
 export default class BioCommand implements Command {
   commandNames = ['bio', 'setbio']

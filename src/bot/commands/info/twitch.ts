@@ -1,9 +1,10 @@
 import { Message, Client } from 'discord.js'
 
 import { Command } from '@customTypes/commands'
-import connection from '@database'
 import { CommandContext } from '@models/command_context'
 import { tickTwitchCheck } from '@utils/twitch'
+
+import connection from '../../../database'
 
 export default class TwitchCommand implements Command {
   commandNames = ['twitch']

@@ -4,9 +4,10 @@ import dotenv from 'dotenv'
 import { Api, Score } from 'node-osu'
 
 import { Command } from '@customTypes/commands'
-import connection from '@database'
 import { CommandContext } from '@models/command_context'
 import { getScore } from '@utils/osu'
+
+import connection from '../../../database'
 
 // .env
 dotenv.config()

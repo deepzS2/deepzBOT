@@ -2,7 +2,7 @@ import { Message, Client } from 'discord.js'
 
 import { Command } from '@customTypes/commands'
 import { CommandContext } from '@models/command_context'
-import { tickTwitchCheck } from '@utils/twitch'
+import { checkTwitch } from '@utils/twitch'
 
 import connection from '../../../database'
 
@@ -60,11 +60,27 @@ async function streamManage(
   try {
     if (action === 'add') {
       if (/^[a-zA-Z0-9_]{4,25}$/.test(value)) {
-        await addToDatabase(value, serverId)
-        msg.channel.send(
-          `**Added ${value} successfully to the guilds twitch user notifications!**`
-        )
-        return tickTwitchCheck(bot)
+        return await addToDatabase(value, serverId, (err) => {
+          if (err) {
+            if (err.message === 'Already exists') {
+              msg.channel.send(`**:x: ${err.message}!**`)
+
+              return
+            }
+
+            msg.channel.send(
+              `**:x: Something went wrong! Please try again later!**`
+            )
+
+            return
+          }
+
+          msg.channel.send(
+            `**Added ${value} successfully to the guilds twitch user notifications!**`
+          )
+
+          checkTwitch(value, msg.guild, bot, true)
+        })
       } else {
         return msg.channel.send(`**:x: Twitch username invalid!**`)
       }
@@ -74,11 +90,19 @@ async function streamManage(
         .first()
         .select('twitchs')
 
-      const newTwitchs = twitchs.map((twitch) => twitch !== value)
+      console.log(twitchs)
 
-      await connection('guilds').where('id', '=', serverId).update({
-        twitchs: newTwitchs,
-      })
+      if (!twitchs) {
+        return msg.channel.send(`**:x: This guild has no twitch channels**`)
+      }
+
+      const newTwitchs = twitchs.filter((twitch) => twitch !== value)
+
+      await connection('guilds')
+        .where('id', '=', serverId)
+        .update({
+          twitchs: newTwitchs.length === 0 ? null : newTwitchs,
+        })
 
       return msg.channel.send(
         `**Removed ${value} successfully from guilds twitch user notifications!**`
@@ -94,25 +118,36 @@ async function streamManage(
         `**Added ${channel.name} successfully to the guilds twitch channel notifications!**`
       )
     } else if (action === 'now') {
-      return tickTwitchCheck(bot)
+      const { twitchs } = await connection('guilds')
+        .where('id', '=', serverId)
+        .first()
+        .select('twitchs')
+
+      const guild = bot.guilds.cache.find((value) => value.id === serverId)
+
+      if (twitchs && twitchs.length > 0) {
+        twitchs.forEach((value) => {
+          return checkTwitch(value, guild, bot, true)
+        })
+      }
     } else {
       return await msg.channel.send(
         `**:x: Please provide an argument! Try \`d.help twitch\`.**`
       )
     }
   } catch (error) {
-    if (error.message === 'Already exists') {
-      return msg.channel.send(`**:x: User already registered in guild!**`)
-    } else {
-      console.error(error)
-      return msg.channel.send(
-        `**:x: Something went wrong, please try again later!**`
-      )
-    }
+    console.error(error)
+    return msg.channel.send(
+      `**:x: Something went wrong, please try again later!**`
+    )
   }
 }
 
-async function addToDatabase(value: string, serverId: string) {
+async function addToDatabase(
+  value: string,
+  serverId: string,
+  callback: (err: Error) => void
+) {
   try {
     const { twitchs } = await connection('guilds')
       .where('id', '=', serverId)
@@ -125,20 +160,25 @@ async function addToDatabase(value: string, serverId: string) {
         .update({
           twitchs: [value],
         })
+
+      callback(null)
     } else {
       const alreadyExists = twitchs.find((twitch) => twitch === value)
 
       if (alreadyExists) {
-        return new Error('Already exists')
+        return callback(new Error('Already exists'))
       }
 
-      await connection('guilds')
-        .where('id', '=', serverId)
-        .update({
-          twitchs: twitchs.push(value),
-        })
+      twitchs.push(value)
+
+      await connection('guilds').where('id', '=', serverId).update({
+        twitchs,
+      })
+
+      callback(null)
     }
   } catch (error) {
     console.error(error)
+    return callback(error)
   }
 }

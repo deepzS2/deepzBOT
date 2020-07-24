@@ -30,7 +30,8 @@ export async function tickTwitchCheck(bot: Client): Promise<void> {
 export async function checkTwitch(
   streamer: string,
   guild: Guild,
-  bot: Client
+  bot: Client,
+  now = false
 ): Promise<void> {
   try {
     const response = await getUser(streamer)
@@ -69,8 +70,11 @@ export async function checkTwitch(
           if (json.status === 404) {
             console.log(`Streamer not found`)
           } else {
-            console.log(json)
-            sendToDiscord(streamer, guild, json, bot)
+            let sendNow = false
+            if (now) {
+              sendNow = true
+            }
+            sendToDiscord(streamer, guild, json, bot, sendNow)
           }
         })
       })
@@ -87,17 +91,20 @@ export async function sendToDiscord(
   guild: Guild,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   res: Record<string, any>,
-  bot: Client
+  bot: Client,
+  sendNow = false
 ): Promise<void> {
   if (res && res.stream) {
-    const started = new Date(res.stream.created_at)
-    started.setMinutes(started.getMinutes() + 45)
+    if (!sendNow) {
+      const started = new Date(res.stream.created_at)
+      started.setMinutes(started.getMinutes() + 45)
 
-    const nowTime = new Date()
+      const nowTime = new Date()
 
-    // Verifies if the user started to stream for a long time to stop spamming every 30 minutes
-    if (started.getTime() <= nowTime.getTime()) {
-      return
+      // Verifies if the user started to stream for a long time to stop spamming every 30 minutes
+      if (started.getTime() <= nowTime.getTime()) {
+        return
+      }
     }
 
     const { notificationChannel } = await connection('guilds')
@@ -125,6 +132,7 @@ export async function sendToDiscord(
       const channel = guild.channels.cache.find(
         (value) => value.id === notificationChannel
       )
+
       ;(channel as TextChannel).send('@everyone', embed)
     } else {
       let found = 0

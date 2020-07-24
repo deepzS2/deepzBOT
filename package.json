@@ -10,6 +10,7 @@
     "start:web": "NODE_ENV=prod node dist/server/server.js",
     "dev:bot": "ts-node-dev -r tsconfig-paths/register --respawn --ignore-watch node_modules --no-notify src/bot/bot.ts",
     "dev:web": "ts-node-dev -r tsconfig-paths/register --respawn --ignore-watch node_modules --no-notify src/server/server.ts",
+    "clean": "rm -r dist",
     "test": "jest"
   },
   "devDependencies": {
@@ -35,8 +36,6 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^26.0.1",
-    "jest-discord": "^0.1.0",
-    "jest-environment-discord": "^0.1.0",
     "prettier": "^2.0.5",
     "ts-jest": "^26.1.0",
     "ts-node-dev": "^1.0.0-pre.49",

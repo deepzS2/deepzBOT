@@ -69,6 +69,7 @@ export async function checkTwitch(
           if (json.status === 404) {
             console.log(`Streamer not found`)
           } else {
+            console.log(json)
             sendToDiscord(streamer, guild, json, bot)
           }
         })
@@ -89,6 +90,16 @@ export async function sendToDiscord(
   bot: Client
 ): Promise<void> {
   if (res && res.stream) {
+    const started = new Date(res.stream.created_at)
+    started.setMinutes(started.getMinutes() + 45)
+
+    const nowTime = new Date()
+
+    // Verifies if the user started to stream for a long time to stop spamming every 30 minutes
+    if (started.getTime() <= nowTime.getTime()) {
+      return
+    }
+
     const { notificationChannel } = await connection('guilds')
       .where('id', '=', guild.id)
       .first()

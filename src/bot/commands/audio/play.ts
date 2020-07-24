@@ -147,7 +147,7 @@ export default class PlayCommand implements Command {
         })
       })
 
-      console.log(videosObj)
+      console.log(playlist)
 
       if (!queue) {
         const queueContruct = {

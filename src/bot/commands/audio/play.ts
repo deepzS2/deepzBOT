@@ -48,7 +48,7 @@ export default class PlayCommand implements Command {
 
     if (!args[0]) {
       const message = await originalMessage.channel.send(
-        `${originalMessage.author.username}, you need to provide a link!`
+        `**:x: ${originalMessage.author.username}, you need to provide a link!**`
       )
 
       message.delete({
@@ -65,7 +65,23 @@ export default class PlayCommand implements Command {
 
     if (!voiceChannel) {
       const message = await originalMessage.channel.send(
-        `${originalMessage.author.username}, you need to be in a voice channel to play music!`
+        `**:x: ${originalMessage.author.username}, you need to be in a voice channel to play music!**`
+      )
+
+      message.delete({
+        timeout: 5000,
+      })
+
+      originalMessage.delete({
+        timeout: 5000,
+      })
+
+      return
+    }
+
+    if (queue && queue.voiceChannel.id !== voiceChannel.id) {
+      const message = await originalMessage.channel.send(
+        `**:x: ${originalMessage.author.username}, the bot is playing in another voice channel!**`
       )
 
       message.delete({
@@ -83,7 +99,7 @@ export default class PlayCommand implements Command {
 
     if (!permissions.has('CONNECT') || !permissions.has('SPEAK')) {
       const message = await originalMessage.channel.send(
-        `${originalMessage.author.username}, I need the permissions to join and speak in your voice channel!`
+        `**:x: ${originalMessage.author.username}, I need the permissions to join and speak in your voice channel!**`
       )
 
       message.delete({
@@ -130,6 +146,8 @@ export default class PlayCommand implements Command {
           timeout: 5000,
         })
       })
+
+      console.log(videosObj)
 
       if (!queue) {
         const queueContruct = {

@@ -2,7 +2,15 @@
   "compilerOptions": {
     "target": "es2017",
     "module": "commonjs",
-    "lib": ["es6", "ESNext", "ESNext.Array", "ESNext.AsyncIterable", "ESNext.Intl", "ESNext.Symbol", "DOM"],
+    "lib": [
+      "es6",
+      "ESNext",
+      "ESNext.Array",
+      "ESNext.AsyncIterable",
+      "ESNext.Intl",
+      "ESNext.Symbol",
+      "DOM"
+    ],
     "sourceMap": false,
     "inlineSourceMap": true,
     "inlineSources": true,
@@ -11,10 +19,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "removeComments": true,
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/@types"
-    ],
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
@@ -28,13 +33,11 @@
       "@reactions/*": ["./src/bot/reactions/*"],
       "@config/*": ["./src/bot/config/*"],
       "@customTypes/*": ["./src/bot/@types/*"],
-      "@database": ["src/database"],
+      "@database": ["./src/database"],
       "@assets/*": ["./src/bot/assets/*"],
       "@utils/*": ["./src/bot/utils/*"],
       "@services/*": ["./src/bot/services/*"]
     }
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

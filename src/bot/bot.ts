@@ -1,5 +1,11 @@
 import { stripIndents } from 'common-tags'
-import Discord, { Message, TextChannel, Guild } from 'discord.js'
+import Discord, {
+  Message,
+  TextChannel,
+  Guild,
+  User,
+  MessageReaction,
+} from 'discord.js'
 
 import { BotConfig } from '@customTypes/client'
 import { tickTwitchCheck } from '@utils/twitch'
@@ -15,6 +21,7 @@ const client = new Discord.Client({
   allowedMentions: {
     parse: ['everyone'],
   },
+  partials: ['CHANNEL', 'MESSAGE', 'REACTION'],
 })
 
 const commandHandler = new CommandHandler(config.prefix, client)
@@ -61,6 +68,22 @@ client.on('message', async (message: Message) => {
 
   await onMessage(message)
   commandHandler.handleMessage(message)
+})
+
+client.on('messageReactionAdd', async (msg, user) => {
+  await reactions(msg, user as User, 'add', (err) => {
+    if (err) {
+      msg.message.channel.send(`**:x: ${err.message}**`)
+    }
+  })
+})
+
+client.on('messageReactionRemove', async (msg, user) => {
+  await reactions(msg, user as User, 'remove', (err) => {
+    if (err) {
+      msg.message.channel.send(`**:x: ${err.message}**`)
+    }
+  })
 })
 
 client.on('error', (e) => {
@@ -174,4 +197,34 @@ async function onGuildAdd(guild: Guild) {
 
 async function onGuildDelete(guild: Guild) {
   await connection('guilds').where('id', '=', guild.id).delete()
+}
+
+async function reactions(
+  msg: MessageReaction,
+  user: User,
+  action: string,
+  callback: (err?: Error) => void
+) {
+  const { roleMessage, roles } = await connection('guilds')
+    .where('id', '=', msg.message.guild.id)
+    .first()
+
+  if (msg.message.id !== roleMessage) {
+    return
+  }
+
+  const { role } = roles.find((value) => value.emoji === msg.emoji.name)
+
+  try {
+    const guildRole = await msg.message.guild.roles.fetch(role)
+
+    if (action === 'add') {
+      await msg.message.guild.member(user.id).roles.add(guildRole)
+    } else {
+      await msg.message.guild.member(user.id).roles.remove(guildRole)
+    }
+  } catch (error) {
+    console.error(error)
+    callback(error)
+  }
 }

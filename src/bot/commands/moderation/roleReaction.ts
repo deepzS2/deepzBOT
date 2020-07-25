@@ -1,9 +1,8 @@
 import { Guild, Message, MessageEmbed, TextChannel } from 'discord.js'
 
 import { Command } from '@customTypes/commands'
+import { Guilds } from '@database'
 import { CommandContext } from '@models/command_context'
-
-import connection from '../../../database'
 
 export default class RoleReactionCommand implements Command {
   commandNames = ['reaction', 'rolereaction', 'rolemessage', 'rolemsg', 'role']
@@ -28,7 +27,7 @@ export default class RoleReactionCommand implements Command {
 
   async run({ originalMessage, args }: CommandContext): Promise<void> {
     if (args[0] === 'create') {
-      const { roleMessage } = await connection('guilds')
+      const { roleMessage } = await Guilds()
         .select(`roleMessage`)
         .where('id', '=', originalMessage.guild.id)
         .first()
@@ -53,20 +52,16 @@ export default class RoleReactionCommand implements Command {
             await roleMessage.react(value.emoji)
           })
 
-          await connection('guilds')
-            .where('id', '=', originalMessage.guild.id)
-            .update({
-              roleMessage: roleMessage.id,
-              channelRoleMessage: channel.id,
-              roles,
-            })
+          await Guilds().where('id', '=', originalMessage.guild.id).update({
+            roleMessage: roleMessage.id,
+            channelRoleMessage: channel.id,
+            roles,
+          })
         }
       )
     } else if (args[0] === 'delete') {
       try {
-        const { roles, roleMessage, channelRoleMessage } = await connection(
-          'guilds'
-        )
+        const { roles, roleMessage, channelRoleMessage } = await Guilds()
           .where('id', '=', originalMessage.guild.id)
           .first()
 
@@ -86,12 +81,10 @@ export default class RoleReactionCommand implements Command {
           await msg.delete()
         }
 
-        await connection('guilds')
-          .where('id', '=', originalMessage.guild.id)
-          .update({
-            roles: null,
-            roleMessage: null,
-          })
+        await Guilds().where('id', '=', originalMessage.guild.id).update({
+          roles: null,
+          roleMessage: null,
+        })
 
         originalMessage.channel.send(
           `**Reaction role message deleted successfully**`

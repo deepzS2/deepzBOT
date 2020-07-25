@@ -1,9 +1,9 @@
 import ms from 'parse-ms'
 
 import { Command } from '@customTypes/commands'
+import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
 
-import connection from '../../../database'
 import functions from '../../functions'
 
 export default class RepCommand implements Command {
@@ -42,12 +42,12 @@ export default class RepCommand implements Command {
       return
     }
 
-    const { reputation } = await connection('users')
+    const { reputation } = await Users()
       .where('id', '=', target.user.id)
       .first()
       .select('reputation')
 
-    const { daily_rep } = await connection('users')
+    const { daily_rep } = await Users()
       .where('id', '=', originalMessage.author.id)
       .first()
       .select('daily_rep')
@@ -66,19 +66,16 @@ export default class RepCommand implements Command {
         `**${originalMessage.author.username} just give to ${target} an reputation point!**`
       )
 
-      await connection('users')
+      await Users()
         .where('id', '=', target.user.id)
         .first()
         .update({
           reputation: reputation + 1,
         })
 
-      await connection('users')
-        .where('id', '=', originalMessage.author.id)
-        .first()
-        .update({
-          daily_rep: new Date().toISOString(),
-        })
+      await Users().where('id', '=', originalMessage.author.id).first().update({
+        daily_rep: new Date().toISOString(),
+      })
     }
   }
 

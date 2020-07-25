@@ -2,9 +2,8 @@ import { MessageAttachment } from 'discord.js'
 import isImageUrl from 'is-image-url'
 
 import { Command } from '@customTypes/commands'
+import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
-
-import connection from '../../../database'
 
 export default class BackgroundCommand implements Command {
   commandNames = ['background', 'bg']
@@ -32,13 +31,13 @@ export default class BackgroundCommand implements Command {
 
   async run({ originalMessage, args }: CommandContext): Promise<void> {
     const amount = 600
-    const { balance } = await connection('users')
+    const { balance } = await Users()
       .where('id', '=', originalMessage.author.id)
       .first()
       .select('balance')
 
     if (args.length === 0 && !originalMessage.attachments.first()) {
-      const { background_image } = await connection('users')
+      const { background_image } = await Users()
         .where('id', '=', originalMessage.author.id)
         .first()
         .select('background_image')
@@ -70,7 +69,7 @@ export default class BackgroundCommand implements Command {
           return
         }
 
-        const [{ background_image }] = await connection('users')
+        const [{ background_image }] = await Users()
           .where('id', '=', originalMessage.author.id)
           .first()
           .update(
@@ -97,7 +96,7 @@ export default class BackgroundCommand implements Command {
       return
     }
 
-    const [{ background_image }] = await connection('users')
+    const [{ background_image }] = await Users()
       .where('id', '=', originalMessage.author.id)
       .first()
       .update(

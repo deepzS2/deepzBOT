@@ -1,8 +1,7 @@
 import { Command } from '@customTypes/commands'
-import { User } from '@customTypes/database'
+import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
 
-import connection from '../../../database'
 import functions from '../../functions'
 
 export default class MoneyCommand implements Command {
@@ -31,7 +30,7 @@ export default class MoneyCommand implements Command {
   }
 
   async run({ originalMessage, args }: CommandContext): Promise<void> {
-    const { balance } = await connection('users')
+    const { balance } = await Users()
       .where('id', '=', originalMessage.author.id)
       .first()
       .select('balance')
@@ -53,7 +52,7 @@ export default class MoneyCommand implements Command {
       }
 
       if (args[1] === 'check' || !args[1]) {
-        const user = await connection<User>('users')
+        const user = await Users()
           .where('id', '=', mention.user.id)
           .first()
           .select('balance')
@@ -71,12 +70,12 @@ export default class MoneyCommand implements Command {
         return
       }
 
-      await connection('users')
+      await Users()
         .where('id', '=', originalMessage.author.id)
         .first()
         .decrement('balance', Number(args[1]))
 
-      await connection('users')
+      await Users()
         .where('id', '=', mention.id)
         .first()
         .increment('balance', Number(args[1]))

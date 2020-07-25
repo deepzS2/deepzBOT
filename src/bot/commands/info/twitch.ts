@@ -1,10 +1,9 @@
 import { Message, Client } from 'discord.js'
 
 import { Command } from '@customTypes/commands'
+import { Guilds } from '@database'
 import { CommandContext } from '@models/command_context'
 import { checkTwitch } from '@utils/twitch'
-
-import connection from '../../../database'
 
 export default class TwitchCommand implements Command {
   commandNames = ['twitch']
@@ -85,7 +84,7 @@ async function streamManage(
         return msg.channel.send(`**:x: Twitch username invalid!**`)
       }
     } else if (action === 'remove') {
-      const { twitchs } = await connection('guilds')
+      const { twitchs } = await Guilds()
         .where('id', '=', serverId)
         .first()
         .select('twitchs')
@@ -98,7 +97,7 @@ async function streamManage(
 
       const newTwitchs = twitchs.filter((twitch) => twitch !== value)
 
-      await connection('guilds')
+      await Guilds()
         .where('id', '=', serverId)
         .update({
           twitchs: newTwitchs.length === 0 ? null : newTwitchs,
@@ -110,7 +109,7 @@ async function streamManage(
     } else if (action === 'channel') {
       const channel = msg.guild.channels.cache.find((c) => c.name === value)
 
-      await connection('guilds').where('id', '=', serverId).update({
+      await Guilds().where('id', '=', serverId).update({
         notificationChannel: channel.id,
       })
 
@@ -118,7 +117,7 @@ async function streamManage(
         `**Added ${channel.name} successfully to the guilds twitch channel notifications!**`
       )
     } else if (action === 'now') {
-      const { twitchs } = await connection('guilds')
+      const { twitchs } = await Guilds()
         .where('id', '=', serverId)
         .first()
         .select('twitchs')
@@ -149,13 +148,13 @@ async function addToDatabase(
   callback: (err: Error) => void
 ) {
   try {
-    const { twitchs } = await connection('guilds')
+    const { twitchs } = await Guilds()
       .where('id', '=', serverId)
       .first()
       .select('twitchs')
 
     if (!twitchs) {
-      await connection('guilds')
+      await Guilds()
         .where('id', '=', serverId)
         .update({
           twitchs: [value],
@@ -171,7 +170,7 @@ async function addToDatabase(
 
       twitchs.push(value)
 
-      await connection('guilds').where('id', '=', serverId).update({
+      await Guilds().where('id', '=', serverId).update({
         twitchs,
       })
 

@@ -8,9 +8,9 @@ import Discord, {
 } from 'discord.js'
 
 import { BotConfig } from '@customTypes/client'
+import { Guilds, Users } from '@database'
 import { tickTwitchCheck } from '@utils/twitch'
 
-import connection from '../database'
 import config from './config'
 import { CommandHandler } from './handler'
 // import github from '@utils/github'
@@ -133,7 +133,7 @@ function validateConfig(config: BotConfig) {
  */
 async function checkIfUserExists(id: string, username: string) {
   try {
-    let user = await connection('users')
+    const user = await Users()
       .where({
         id: id,
       })
@@ -141,7 +141,7 @@ async function checkIfUserExists(id: string, username: string) {
       .first()
 
     if (!user) {
-      user = await connection('users').insert(
+      await Users().insert(
         {
           id: id,
           username: username,
@@ -149,7 +149,7 @@ async function checkIfUserExists(id: string, username: string) {
         '*'
       )
     } else if (user.username !== username) {
-      user = await connection('users').where('id', '=', id).update(
+      await Users().where('id', '=', id).update(
         {
           username: username,
         },
@@ -157,7 +157,7 @@ async function checkIfUserExists(id: string, username: string) {
       )
     }
 
-    return await connection('users').where('id', '=', id).select('*').first()
+    return await Users().where('id', '=', id).select('*').first()
   } catch (error) {
     console.error(error)
     throw error
@@ -179,7 +179,7 @@ async function onMessage(message: Message) {
   )
 
   if (user) {
-    await connection('users')
+    await Users()
       .where('id', '=', message.author.id)
       .update({
         xp: user.xp + Math.floor(Math.random() * 15) + 10,
@@ -189,14 +189,14 @@ async function onMessage(message: Message) {
 }
 
 async function onGuildAdd(guild: Guild) {
-  await connection('guilds').insert({
+  await Guilds().insert({
     id: guild.id,
     name: guild.name,
   })
 }
 
 async function onGuildDelete(guild: Guild) {
-  await connection('guilds').where('id', '=', guild.id).delete()
+  await Guilds().where('id', '=', guild.id).delete()
 }
 
 async function reactions(
@@ -205,7 +205,7 @@ async function reactions(
   action: string,
   callback: (err?: Error) => void
 ) {
-  const { roleMessage, roles } = await connection('guilds')
+  const { roleMessage, roles } = await Guilds()
     .where('id', '=', msg.message.guild.id)
     .first()
 

@@ -1,4 +1,8 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/ban-types */
 import knex from 'knex'
+
+import { Guild, User } from '@customTypes/database'
 
 const { development, production } = require('./knexfile')
 
@@ -16,4 +20,6 @@ db.migrate
     console.error(err)
   })
 
-export default db
+export const Users = () => db<User>('users')
+
+export const Guilds = () => db<Guild>('users')

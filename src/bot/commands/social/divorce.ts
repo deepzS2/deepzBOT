@@ -1,7 +1,7 @@
 import { Command } from '@customTypes/commands'
+import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
 
-import connection from '../../../database'
 import functions from '../../functions'
 
 export default class MarryCommand implements Command {
@@ -36,7 +36,7 @@ export default class MarryCommand implements Command {
     }
 
     try {
-      const { couple } = await connection('users')
+      const { couple } = await Users()
         .where('id', '=', author.id)
         .first()
         .select('couple')
@@ -51,7 +51,7 @@ export default class MarryCommand implements Command {
         return
       }
 
-      await connection('users').where('id', '=', author.id).update({
+      await Users().where('id', '=', author.id).update({
         couple: null,
       })
 

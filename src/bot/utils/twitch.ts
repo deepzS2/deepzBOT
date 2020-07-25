@@ -1,14 +1,14 @@
 import { Client, Guild, MessageEmbed, TextChannel } from 'discord.js'
 import https from 'https'
 
-import connection from '../../database'
+import { Guilds } from '../../database'
 
 /**
  * Check if someone is on stream
  * @param bot Client
  */
 export async function tickTwitchCheck(bot: Client): Promise<void> {
-  const guilds = await connection('guilds')
+  const guilds = await Guilds()
 
   guilds.forEach((value) => {
     if (value.twitchs !== null && value.twitchs.length !== 0) {
@@ -107,7 +107,7 @@ export async function sendToDiscord(
       }
     }
 
-    const { notificationChannel } = await connection('guilds')
+    const { notificationChannel } = await Guilds()
       .where('id', '=', guild.id)
       .first()
       .select('notificationChannel')

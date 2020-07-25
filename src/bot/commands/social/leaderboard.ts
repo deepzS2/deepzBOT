@@ -2,9 +2,8 @@ import { stripIndents } from 'common-tags'
 import { MessageEmbed } from 'discord.js'
 
 import { Command } from '@customTypes/commands'
+import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
-
-import connection from '../../../database'
 
 export default class LeaderboardCommand implements Command {
   commandNames = ['leaderboard', 'guildrank']
@@ -26,7 +25,7 @@ export default class LeaderboardCommand implements Command {
   async run({ originalMessage }: CommandContext): Promise<void> {
     const members = originalMessage.guild.members.cache.array()
 
-    const users = await connection('users').select('*')
+    const users = await Users().select('*')
 
     const filteredMembers = members
       .map((member) => {

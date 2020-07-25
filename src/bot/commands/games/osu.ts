@@ -4,10 +4,9 @@ import dotenv from 'dotenv'
 import { Api, Score } from 'node-osu'
 
 import { Command } from '@customTypes/commands'
+import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
 import { getScore } from '@utils/osu'
-
-import connection from '../../../database'
 
 // .env
 dotenv.config()
@@ -50,7 +49,7 @@ export default class OsuCommand implements Command {
   async run({ originalMessage, args, bot }: CommandContext): Promise<void> {
     if (!args[0]) {
       try {
-        const user = await connection('users')
+        const user = await Users()
           .where('id', '=', originalMessage.author.id)
           .first()
 
@@ -80,7 +79,7 @@ export default class OsuCommand implements Command {
 
     if (args[0] === 'rs' || args[0] === 'recent' || args[0] === 'recentscore') {
       try {
-        const user = await connection('users')
+        const user = await Users()
           .where('id', '=', originalMessage.author.id)
           .first()
 
@@ -197,11 +196,9 @@ export default class OsuCommand implements Command {
 
         const osuPlayer = await osuApi.getUser({ u: args[1], type: 'string' })
 
-        await connection('users')
-          .where('id', '=', originalMessage.author.id)
-          .update({
-            osu: osuPlayer.name,
-          })
+        await Users().where('id', '=', originalMessage.author.id).update({
+          osu: osuPlayer.name,
+        })
 
         originalMessage.channel.send(`**Osu profile registered successfully.**`)
       } catch (error) {

@@ -4,9 +4,9 @@ import Jimp from 'jimp'
 import path from 'path'
 
 import { Command } from '@customTypes/commands'
+import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
 
-import connection from '../../../database'
 import functions from '../../functions'
 
 export default class ProfileCommand implements Command {
@@ -33,7 +33,7 @@ export default class ProfileCommand implements Command {
   async run({ args, originalMessage }: CommandContext): Promise<void> {
     let background, avatar
     if (!args[0]) {
-      const { background_image } = await connection('users')
+      const { background_image } = await Users()
         .where('id', '=', originalMessage.author.id)
         .first()
         .select('background_image')
@@ -52,7 +52,7 @@ export default class ProfileCommand implements Command {
     } else {
       const mention = functions.getMember(originalMessage, args[0])
 
-      const { background_image } = await connection('users')
+      const { background_image } = await Users()
         .where('id', '=', mention.user.id)
         .first()
         .select('background_image')
@@ -96,7 +96,7 @@ export default class ProfileCommand implements Command {
 }
 
 async function loadProfile(message: Message, avatar, bg = null) {
-  const { bio, reputation, balance, xp } = await connection('users')
+  const { bio, reputation, balance, xp } = await Users()
     .where('id', '=', message.author.id)
     .first()
     .select('*')

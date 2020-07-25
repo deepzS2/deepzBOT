@@ -1,7 +1,6 @@
 import { Command } from '@customTypes/commands'
+import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
-
-import connection from '../../../database'
 
 export default class BioCommand implements Command {
   commandNames = ['bio', 'setbio']
@@ -29,7 +28,7 @@ export default class BioCommand implements Command {
       return
     }
 
-    await connection('users')
+    await Users()
       .where('id', '=', originalMessage.author.id)
       .update({
         bio: args.join(' '),

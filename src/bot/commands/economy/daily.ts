@@ -1,9 +1,8 @@
 import ms from 'parse-ms'
 
 import { Command } from '@customTypes/commands'
+import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
-
-import connection from '../../../database'
 
 export default class DailyMoneyCommand implements Command {
   commandNames = ['daily']
@@ -26,7 +25,7 @@ export default class DailyMoneyCommand implements Command {
     const timeout = 86400000
     const amount = Math.floor(Math.random() * 1000) + 1
 
-    const { daily, balance } = await connection('users')
+    const { daily, balance } = await Users()
       .where('id', '=', originalMessage.author.id)
       .first()
       .select('daily', 'balance')
@@ -45,7 +44,7 @@ export default class DailyMoneyCommand implements Command {
         `**${originalMessage.author.username}, here's your daily money: :yen: ${amount} credits!**`
       )
 
-      await connection('users')
+      await Users()
         .where('id', '=', originalMessage.author.id)
         .first()
         .update(

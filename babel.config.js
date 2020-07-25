@@ -18,7 +18,7 @@ module.exports = {
           '@models': './src/bot/models',
           '@commands': './src/bot/commands',
           '@reactions': './src/bot/reactions',
-          '@database': './src/bot/database',
+          '@database': './src/database',
           '@assets': './src/bot/assets',
           '@utils': './src/bot/utils',
           '@services': './src/bot/services',

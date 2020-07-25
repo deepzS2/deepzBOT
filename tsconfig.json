@@ -31,7 +31,6 @@
       "@commands/*": ["./src/bot/commands/*"],
       "@models/*": ["./src/bot/models/*"],
       "@reactions/*": ["./src/bot/reactions/*"],
-      "@config/*": ["./src/bot/config/*"],
       "@customTypes/*": ["./src/bot/@types/*"],
       "@database": ["./src/database"],
       "@assets/*": ["./src/bot/assets/*"],

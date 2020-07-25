@@ -11,7 +11,7 @@ export async function tickTwitchCheck(bot: Client): Promise<void> {
   const guilds = await Guilds()
 
   guilds.forEach((value) => {
-    if (value.twitchs !== null && value.twitchs.length !== 0) {
+    if (value.twitchs && value.twitchs.length !== 0) {
       try {
         value.twitchs.forEach(async (twitch) => {
           await checkTwitch(

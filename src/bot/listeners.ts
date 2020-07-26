@@ -6,22 +6,197 @@ import {
   User,
   MessageReaction,
   PartialUser,
+  Client,
 } from 'discord.js'
+import { Application } from 'express'
 
+import { BotConfig } from '@customTypes/client'
 import { Guilds, Users } from '@database'
 import { tickTwitchCheck } from '@utils/twitch'
 
-import server from '../server'
-import client from './bot'
-import config from './config'
 import { CommandHandler } from './handler'
 // import github from '@utils/github'
 
-const commandHandler = new CommandHandler(config.prefix, client)
+export default class Listeners {
+  readonly client: Client
+  readonly config: BotConfig
+  readonly server: Application | undefined
+  readonly commandHandler: CommandHandler
 
-export default {
-  ready: async (): Promise<void> => {
-    console.log('Bot ready!')
+  /**
+   * Listeners class for a better organization
+   * @param client The bot instance
+   * @param config Token and other configs
+   * @param server Web server (soon)
+   */
+  public constructor(client: Client, config: BotConfig, server?: Application) {
+    this.client = client
+    this.config = config
+    this.server = server
+    this.commandHandler = new CommandHandler(this.config.prefix, this.client)
+  }
+
+  /**
+   * Start the listeners
+   */
+  public start(): void {
+    this.client.once('disconnect', () => {
+      console.log('Disconnect!')
+    })
+
+    this.client.on('error', (e) => {
+      console.error('Discord client error!', e)
+    })
+
+    this.client.on('message', (msg) => {
+      this.message(msg)
+    })
+
+    this.client.on('messageReactionAdd', (msgReaction, user) => {
+      this.messageReactionAdd(msgReaction, user)
+    })
+
+    this.client.on('messageReactionRemove', (msgReaction, user) => {
+      this.messageReactionRemove(msgReaction, user)
+    })
+
+    this.client.on('guildCreate', (guild) => {
+      this.guildCreate(guild)
+    })
+
+    this.client.on('guildDelete', (guild) => {
+      this.onGuildDelete(guild)
+    })
+
+    this.client.once('ready', () => {
+      this.ready()
+    })
+
+    console.log(`Everything okay, listeners ready!`)
+  }
+
+  /**
+   * Check if user exists
+   * @param id The user discord ID
+   * @param username The user discord username
+   */
+  private async checkIfUserExists(id: string, username: string) {
+    try {
+      const user = await Users()
+        .where({
+          id: id,
+        })
+        .select('*')
+        .first()
+
+      if (!user) {
+        await Users().insert(
+          {
+            id: id,
+            username: username,
+          },
+          '*'
+        )
+      } else if (user.username !== username) {
+        await Users().where('id', '=', id).update(
+          {
+            username: username,
+          },
+          '*'
+        )
+      }
+
+      return await Users().where('id', '=', id).select('*').first()
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
+  }
+
+  /**
+   * Update the xp and balance when the user sends a message
+   * @param message The message informations
+   */
+  private async onMessage(message: Message) {
+    if (message.author.bot) {
+      return
+    }
+
+    const user = await this.checkIfUserExists(
+      message.author.id,
+      message.author.username
+    )
+
+    if (user) {
+      await Users()
+        .where('id', '=', message.author.id)
+        .update({
+          xp: user.xp + Math.floor(Math.random() * 15) + 10,
+          balance: user.balance + Math.floor(Math.random() * 7) + 3,
+        })
+    }
+  }
+
+  /**
+   * When the bot is added to a guild
+   * @param guild Guild information
+   */
+  private async onGuildAdd(guild: Guild): Promise<void> {
+    await Guilds().insert({
+      id: guild.id,
+      name: guild.name,
+    })
+  }
+
+  /**
+   * When the bot is excluded from some guild or when the guild is deleted
+   * @param guild Guild information
+   */
+  private async onGuildDelete(guild: Guild): Promise<void> {
+    await Guilds().where('id', '=', guild.id).delete()
+  }
+
+  /**
+   * Check if the reaction is on the message with the role reaction function
+   * @param msg The message reacted
+   * @param user User reacted
+   * @param action The user reacted or removed the reaction from before?
+   * @param callback The callback for error handling
+   */
+  private async reactions(
+    msg: MessageReaction,
+    user: User,
+    action: string,
+    callback: (err?: Error) => void
+  ) {
+    try {
+      const { roleMessage, roles } = await Guilds()
+        .where('id', '=', msg.message.guild.id)
+        .first()
+
+      if (msg.message.id !== roleMessage) {
+        return
+      }
+
+      const { role } = roles.find((value) => value.emoji === msg.emoji.name)
+
+      const guildRole = await msg.message.guild.roles.fetch(role)
+
+      if (action === 'add') {
+        await msg.message.guild.member(user.id).roles.add(guildRole)
+      } else {
+        await msg.message.guild.member(user.id).roles.remove(guildRole)
+      }
+    } catch (error) {
+      console.error(error)
+      callback(error)
+    }
+  }
+
+  /**
+   * Start the bot and his activities (Web server soon!)
+   */
+  private async ready(): Promise<void> {
     const PORT = process.env.PORT || 3000
 
     const activities = [
@@ -30,71 +205,95 @@ export default {
       'to be a BOT...',
     ]
 
-    // Listening :D
-    server.listen(PORT, () => {
-      console.info(`Listening on port ${PORT}`)
-    })
-
     setInterval(() => {
       const index = Math.floor(Math.random() * (activities.length - 1) + 1)
-      client.user.setActivity(activities[index], {
+      this.client.user.setActivity(activities[index], {
         type: 'PLAYING',
       })
     }, 60 * 1000)
 
-    await tickTwitchCheck(client)
+    await tickTwitchCheck(this.client)
     setInterval(async () => {
-      await tickTwitchCheck(client)
+      await tickTwitchCheck(this.client)
     }, 1000 * 60 * 30)
 
-    // Already tested it, so in the next commit it'll be uncommented
-    // await github(client)
-  },
+    console.log('Bot ready and listening!')
 
-  message: async (message: Message): Promise<void> => {
+    // Listening web server :D
+    if (this.server) {
+      this.server.listen(PORT, () => {
+        console.info(`Server started! Listening on port ${PORT}`)
+      })
+    }
+
+    // Uncomment if you use this repository to make your own bot, and tell to the users when u update!
+    // await github(this.client)
+  }
+
+  /**
+   * On message, the basic of the discord.js, the bot will updated the stats with a random number on the balance and xp, after that will execute the command (if it is one)
+   * @param message The message information
+   */
+  private async message(message: Message): Promise<void> {
     if (process.env.NODE_ENV !== 'prod') {
-      await onMessage(message)
+      await this.onMessage(message)
 
       if (message.author.id === '411557789068951552') {
-        commandHandler.handleMessage(message)
+        this.commandHandler.handleMessage(message)
       }
 
       return
     }
 
-    await onMessage(message)
-    commandHandler.handleMessage(message)
-  },
+    await this.onMessage(message)
+    this.commandHandler.handleMessage(message)
+  }
 
-  messageReactionAdd: async (
+  /**
+   * The listener to the message reaction add
+   * @param msg Message reaction
+   * @param user User reacted
+   */
+  private async messageReactionAdd(
     msg: MessageReaction,
     user: User | PartialUser
-  ): Promise<void> => {
-    await reactions(msg, user as User, 'add', (err) => {
+  ): Promise<void> {
+    await this.reactions(msg, user as User, 'add', (err) => {
       if (err) {
         msg.message.channel.send(`**:x: ${err.message}**`)
       }
     })
-  },
+  }
 
-  messageReactionRemove: async (
+  /**
+   * The listener to the message reaction remove
+   * @param msg Message reaction
+   * @param user User reacted
+   */
+  async messageReactionRemove(
     msg: MessageReaction,
     user: User | PartialUser
-  ): Promise<void> => {
-    await reactions(msg, user as User, 'remove', (err) => {
+  ): Promise<void> {
+    await this.reactions(msg, user as User, 'remove', (err) => {
       if (err) {
         msg.message.channel.send(`**:x: ${err.message}**`)
       }
     })
-  },
+  }
 
-  guildCreate: async (guild: Guild): Promise<void> => {
+  /**
+   * The listener when the bot is added to a guild
+   * @param guild Guild information
+   */
+  async guildCreate(guild: Guild): Promise<void> {
     let found = 0
     guild.channels.cache.map((c) => {
       if (found === 0) {
         if (c.type === 'text') {
-          if (c.permissionsFor(client.user).has('VIEW_CHANNEL') === true) {
-            if (c.permissionsFor(client.user).has('SEND_MESSAGES') === true) {
+          if (c.permissionsFor(this.client.user).has('VIEW_CHANNEL') === true) {
+            if (
+              c.permissionsFor(this.client.user).has('SEND_MESSAGES') === true
+            ) {
               ;(c as TextChannel).send(stripIndents`
               **Thanks for adding me!! My name is deepz**
               It's a honor being invited to your server! I hope we all can be friends forever :smiley:.
@@ -107,111 +306,6 @@ export default {
       }
     })
 
-    await onGuildAdd(guild)
-  },
-
-  onGuildDelete,
-}
-
-/**
- * Check if user exists
- * @param id The user discord ID
- * @param username The user discord username
- */
-async function checkIfUserExists(id: string, username: string) {
-  try {
-    const user = await Users()
-      .where({
-        id: id,
-      })
-      .select('*')
-      .first()
-
-    if (!user) {
-      await Users().insert(
-        {
-          id: id,
-          username: username,
-        },
-        '*'
-      )
-    } else if (user.username !== username) {
-      await Users().where('id', '=', id).update(
-        {
-          username: username,
-        },
-        '*'
-      )
-    }
-
-    return await Users().where('id', '=', id).select('*').first()
-  } catch (error) {
-    console.error(error)
-    throw error
-  }
-}
-
-/**
- * Update the xp and balance when the user sends a message
- * @param message The message informations
- */
-async function onMessage(message: Message) {
-  if (message.author.bot) {
-    return
-  }
-
-  const user = await checkIfUserExists(
-    message.author.id,
-    message.author.username
-  )
-
-  if (user) {
-    await Users()
-      .where('id', '=', message.author.id)
-      .update({
-        xp: user.xp + Math.floor(Math.random() * 15) + 10,
-        balance: user.balance + Math.floor(Math.random() * 7) + 3,
-      })
-  }
-}
-
-async function onGuildAdd(guild: Guild) {
-  await Guilds().insert({
-    id: guild.id,
-    name: guild.name,
-  })
-}
-
-async function onGuildDelete(guild: Guild): Promise<void> {
-  await Guilds().where('id', '=', guild.id).delete()
-}
-
-async function reactions(
-  msg: MessageReaction,
-  user: User,
-  action: string,
-  callback: (err?: Error) => void
-) {
-  try {
-    const { roleMessage, roles } = await Guilds()
-      .where('id', '=', msg.message.guild.id)
-      .first()
-
-    if (msg.message.id !== roleMessage) {
-      return
-    }
-
-    const { role } = roles.find((value) => value.emoji === msg.emoji.name)
-
-    const guildRole = await msg.message.guild.roles.fetch(role)
-
-    if (action === 'add') {
-      await msg.message.guild.member(user.id).roles.add(guildRole)
-    } else {
-      await msg.message.guild.member(user.id).roles.remove(guildRole)
-    }
-  } catch (error) {
-    console.error(error)
-    callback(error)
+    await this.onGuildAdd(guild)
   }
 }

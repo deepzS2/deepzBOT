@@ -22,6 +22,7 @@ module.exports = {
           '@assets': './src/bot/assets',
           '@utils': './src/bot/utils',
           '@services': './src/bot/services',
+          '@bot': './src/bot',
         },
       },
     ],

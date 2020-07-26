@@ -22,4 +22,4 @@ db.migrate
 
 export const Users = () => db<User>('users')
 
-export const Guilds = () => db<Guild>('users')
+export const Guilds = () => db<Guild>('guilds')

@@ -35,7 +35,8 @@
       "@database": ["./src/database"],
       "@assets/*": ["./src/bot/assets/*"],
       "@utils/*": ["./src/bot/utils/*"],
-      "@services/*": ["./src/bot/services/*"]
+      "@services/*": ["./src/bot/services/*"],
+      "@bot/*": ["./src/bot/*"]
     }
   },
   "include": ["src/**/*"]

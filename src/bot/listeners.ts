@@ -11,7 +11,7 @@ import {
 
 import { BotConfig } from '@customTypes/client'
 import { Guilds, Users } from '@database'
-import { tickTwitchCheck } from '@utils/twitch'
+import Twitch from '@utils/twitch'
 
 import Server from '../server'
 import { CommandHandler } from './handler'
@@ -22,6 +22,7 @@ export default class Listeners {
   readonly config: BotConfig
   readonly server: Server | undefined
   readonly commandHandler: CommandHandler
+  readonly twitch: Twitch
 
   /**
    * Listeners class for a better organization
@@ -33,6 +34,7 @@ export default class Listeners {
     this.client = client
     this.config = config
     this.server = server
+    this.twitch = new Twitch(this.client)
     this.commandHandler = new CommandHandler(this.config.prefix, this.client)
   }
 
@@ -232,9 +234,9 @@ export default class Listeners {
       })
     }, 60 * 1000)
 
-    await tickTwitchCheck(this.client)
+    await this.twitch.tickTwitchCheck()
     setInterval(async () => {
-      await tickTwitchCheck(this.client)
+      await this.twitch.tickTwitchCheck()
     }, 1000 * 60 * 30)
 
     console.log('Bot ready and listening!')

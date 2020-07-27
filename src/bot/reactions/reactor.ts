@@ -2,9 +2,9 @@ import { Message, MessageReaction } from 'discord.js'
 
 import config from '../config'
 
-const ACK_REACTIONS = ['👍', '🎮', '💚', '🍜']
+const ACK_REACTIONS = ['👍', '🎮', '💚', '🍜', '✅']
 const EXPIRED_REACTIONS = ['🖤']
-const FAILURE_REACTIONS = ['⛔', '🚱']
+const FAILURE_REACTIONS = ['⛔', '🚫', '❌']
 
 /**
  * Reactor for notify the user if the command is being executed, failed or expired

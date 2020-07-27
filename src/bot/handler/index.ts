@@ -92,12 +92,17 @@ export class CommandHandler {
       command.commandNames.includes(commandContext.parsedCommandName)
     )
 
+    if (!matchedCommand) {
+      reactor.failure(message)
+      return
+    }
+
     if (!allowedCommands.includes(matchedCommand)) {
       await message.reply(
         `**:x: You aren't allowed to use that command! Try d.help...**`
       )
       await reactor.failure(message)
-    } else if (matchedCommand) {
+    } else {
       await matchedCommand
         .run(commandContext)
         .then(() => {

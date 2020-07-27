@@ -6,7 +6,7 @@ import { Api, Score } from 'node-osu'
 import { Command } from '@customTypes/commands'
 import { Users } from '@database'
 import { CommandContext } from '@models/command_context'
-import { getScore } from '@utils/osu'
+import Osu from '@utils/osu'
 
 // .env
 dotenv.config()
@@ -16,6 +16,8 @@ const osuApi = new Api(process.env.OSU_API_KEY, {
   notFoundAsError: true,
   completeScores: true,
 })
+
+const osuClass = new Osu()
 
 /**
  * * Under development!
@@ -79,6 +81,8 @@ export default class OsuCommand implements Command {
 
     if (args[0] === 'rs' || args[0] === 'recent' || args[0] === 'recentscore') {
       try {
+        await originalMessage.channel.startTyping()
+
         const user = await Users()
           .where('id', '=', originalMessage.author.id)
           .first()
@@ -97,7 +101,7 @@ export default class OsuCommand implements Command {
 
         const recent_raw = formatRecentRaw(recent)
 
-        await getScore(recent_raw, async (err, score) => {
+        await osuClass.getScore(recent_raw, async (err, score) => {
           if (err) {
             await originalMessage.channel.send(`**:x: ${err.message}**`)
             return
@@ -175,11 +179,14 @@ export default class OsuCommand implements Command {
             `**Most recent play for ${osuUser.name}**`,
             message
           )
+
+          originalMessage.channel.stopTyping()
         })
       } catch (error) {
         await originalMessage.channel.send(
           `**:x: Something went wrong! Please try again later.**`
         )
+        originalMessage.channel.stopTyping()
       }
 
       return
@@ -215,6 +222,15 @@ export default class OsuCommand implements Command {
 
       return
     }
+
+    // Soon
+    // if (args[0].startsWith(`https://osu.ppy.sh/beatmapsets/`)) {
+    //   if (!args[0].includes(`#osu`)) {
+    //     originalMessage.channel.send(`**:x: I only support osu! standard!**`)
+    //     return
+    //   }
+
+    // }
 
     try {
       const embed = await getUserEmbed(args[0])

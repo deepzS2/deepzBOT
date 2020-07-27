@@ -3,7 +3,7 @@ import { Message, Client } from 'discord.js'
 import { Command } from '@customTypes/commands'
 import { Guilds } from '@database'
 import { CommandContext } from '@models/command_context'
-import { checkTwitch } from '@utils/twitch'
+import Twitch from '@utils/twitch'
 
 export default class TwitchCommand implements Command {
   commandNames = ['twitch']
@@ -55,6 +55,7 @@ async function streamManage(
   bot: Client
 ) {
   value = value.toLowerCase()
+  const twitch = new Twitch(bot)
 
   try {
     if (action === 'add') {
@@ -78,7 +79,7 @@ async function streamManage(
             `**Added ${value} successfully to the guilds twitch user notifications!**`
           )
 
-          checkTwitch(value, msg.guild, bot, true)
+          twitch.checkTwitch(value, msg.guild, bot, true)
         })
       } else {
         return msg.channel.send(`**:x: Twitch username invalid!**`)
@@ -126,7 +127,7 @@ async function streamManage(
 
       if (twitchs && twitchs.length > 0) {
         twitchs.forEach((value) => {
-          return checkTwitch(value, guild, bot, true)
+          return twitch.checkTwitch(value, guild, bot, true)
         })
       }
     } else {

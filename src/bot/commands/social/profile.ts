@@ -96,6 +96,8 @@ export default class ProfileCommand implements Command {
 }
 
 async function loadProfile(message: Message, avatar, bg = null) {
+  await message.channel.startTyping()
+
   const { bio, reputation, balance, xp } = await Users()
     .where('id', '=', message.author.id)
     .first()

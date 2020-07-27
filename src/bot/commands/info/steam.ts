@@ -33,6 +33,8 @@ export default class SteamCommand implements Command {
       ' '
     )}`
 
+    await originalMessage.channel.startTyping()
+
     fetch(url)
       .then((res) => res.json())
       .then((body) => {
@@ -110,8 +112,27 @@ export default class SteamCommand implements Command {
                   .setTimestamp()
 
                 originalMessage.channel.send(embed)
+                originalMessage.channel.stopTyping()
               })
           })
+          .catch((err) => {
+            console.error(err)
+
+            originalMessage.channel.send(
+              `**:x: Something went wrong! Please try again later!**`
+            )
+
+            originalMessage.channel.stopTyping()
+          })
+      })
+      .catch((err) => {
+        console.error(err)
+
+        originalMessage.channel.send(
+          `**:x: Something went wrong! Please try again later!**`
+        )
+
+        originalMessage.channel.stopTyping()
       })
   }
 

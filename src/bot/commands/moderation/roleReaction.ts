@@ -140,8 +140,11 @@ async function createRoleReaction(
     const channelMention = response.first().mentions.channels.first()
 
     if (!channelMention) {
+      await response.first().react('🚫')
       throw new Error('You provided a invalid channel!')
     }
+
+    await response.first().react('✅')
 
     await originalMessage.channel.send(
       `Yeah... Got it! ${channelMention}! So now tell me which title and/or description you want. Use && to separate between title and description like:\n\`Cool title over here 😎 && Cool description over here too 😳\``
@@ -156,8 +159,11 @@ async function createRoleReaction(
     const arrayTitleAndDesc = getTitleAndDesc.first().content.split('&&')
 
     if (!arrayTitleAndDesc[0]) {
+      await getTitleAndDesc.first().react('🚫')
       throw new Error("You didn't provided at least a title...")
     }
+
+    await getTitleAndDesc.first().react('✅')
 
     const title = arrayTitleAndDesc[0]
     const desc = arrayTitleAndDesc[1] ? arrayTitleAndDesc[1] : ''
@@ -176,8 +182,11 @@ async function createRoleReaction(
     const regex = /^[0-9a-fA-F]+$/
 
     if (color !== 'skip' && !regex.test(color)) {
+      getColor.first().react('❌')
       throw new Error('Invalid hexdecimal value...')
     }
+
+    await getColor.first().react('✅')
 
     await originalMessage.channel.send(
       `Nice color... Now the reactions and roles! Just type like that: \`:some_cool_emoji: Cool role\``
@@ -185,7 +194,8 @@ async function createRoleReaction(
 
     const collector = start.channel.createMessageCollector(filter)
 
-    collector.on('collect', (m: Message) => {
+    collector.on('collect', async (m: Message) => {
+      await m.react('✅')
       if (m.content === 'done') {
         collector.stop('done')
       }

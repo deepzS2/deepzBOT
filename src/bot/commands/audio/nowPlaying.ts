@@ -43,7 +43,7 @@ export default class NowPlayingCommand implements Command {
 
     const song = queue.nowPlaying
 
-    const description = playbackBar(originalMessage, song, queue)
+    const description = this.playbackBar(originalMessage, song, queue)
 
     const videoEmbed = new MessageEmbed()
       .setThumbnail(song.thumbnail)
@@ -57,60 +57,64 @@ export default class NowPlayingCommand implements Command {
   hasPermissionToRun(): boolean {
     return true
   }
-}
 
-function playbackBar(message: Message, song: Song, queue: Queue) {
-  const passedTimeInMS = queue.dispatcher.streamTime
-  const passedTimeInMSObj = {
-    seconds: Math.floor((passedTimeInMS / 1000) % 60),
-    minutes: Math.floor((passedTimeInMS / (1000 * 60)) % 60),
-    hours: Math.floor((passedTimeInMS / (1000 * 60 * 60)) % 24),
+  private formatDuration(durationObj: {
+    seconds: number
+    minutes: number
+    hours: number
+  }) {
+    const duration = `${durationObj.hours ? durationObj.hours + ':' : ''}${
+      durationObj.minutes ? durationObj.minutes : '00'
+    }:${
+      durationObj.seconds < 10
+        ? '0' + durationObj.seconds
+        : durationObj.seconds
+        ? durationObj.seconds
+        : '00'
+    }`
+    return duration
   }
-  const passedTimeFormatted = formatDuration(passedTimeInMSObj)
 
-  const totalDurationObj = song.rawDuration
-  const totalDurationFormatted = song.duration
+  private playbackBar(message: Message, song: Song, queue: Queue) {
+    const passedTimeInMS = queue.dispatcher.streamTime
+    const passedTimeInMSObj = {
+      seconds: Math.floor((passedTimeInMS / 1000) % 60),
+      minutes: Math.floor((passedTimeInMS / (1000 * 60)) % 60),
+      hours: Math.floor((passedTimeInMS / (1000 * 60 * 60)) % 24),
+    }
+    const passedTimeFormatted = this.formatDuration(passedTimeInMSObj)
 
-  let totalDurationInMS = 0
-  Object.keys(totalDurationObj).forEach(function (key) {
-    if (key === 'hours') {
-      totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 3600000
-    } else if (key === 'minutes') {
-      totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 60000
-    } else if (key === 'seconds') {
-      totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 100
+    const totalDurationObj = song.rawDuration
+    const totalDurationFormatted = song.duration
+
+    let totalDurationInMS = 0
+    Object.keys(totalDurationObj).forEach(function (key) {
+      if (key === 'hours') {
+        totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 3600000
+      } else if (key === 'minutes') {
+        totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 60000
+      } else if (key === 'seconds') {
+        totalDurationInMS = totalDurationInMS + totalDurationObj[key] * 100
+      }
+    })
+    const playBackBarLocation = Math.round(
+      (passedTimeInMS / totalDurationInMS) * 10
+    )
+    let playBack = ''
+    for (let i = 1; i < 21; i++) {
+      if (playBackBarLocation === 0) {
+        playBack = ':musical_note:▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬'
+        break
+      } else if (playBackBarLocation === 10) {
+        playBack = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬:musical_note:'
+        break
+      } else if (i === playBackBarLocation * 2) {
+        playBack = playBack + ':musical_note:'
+      } else {
+        playBack = playBack + '▬'
+      }
     }
-  })
-  const playBackBarLocation = Math.round(
-    (passedTimeInMS / totalDurationInMS) * 10
-  )
-  let playBack = ''
-  for (let i = 1; i < 21; i++) {
-    if (playBackBarLocation === 0) {
-      playBack = ':musical_note:▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬'
-      break
-    } else if (playBackBarLocation === 10) {
-      playBack = '▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬:musical_note:'
-      break
-    } else if (i === playBackBarLocation * 2) {
-      playBack = playBack + ':musical_note:'
-    } else {
-      playBack = playBack + '▬'
-    }
+    playBack = `${passedTimeFormatted}  ${playBack}  ${totalDurationFormatted}`
+    return playBack
   }
-  playBack = `${passedTimeFormatted}  ${playBack}  ${totalDurationFormatted}`
-  return playBack
-}
-
-function formatDuration(durationObj) {
-  const duration = `${durationObj.hours ? durationObj.hours + ':' : ''}${
-    durationObj.minutes ? durationObj.minutes : '00'
-  }:${
-    durationObj.seconds < 10
-      ? '0' + durationObj.seconds
-      : durationObj.seconds
-      ? durationObj.seconds
-      : '00'
-  }`
-  return duration
 }

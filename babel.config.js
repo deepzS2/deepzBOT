@@ -27,5 +27,4 @@ module.exports = {
       },
     ],
   ],
-  ignore: ['**/tests/*.spec.ts'],
 }

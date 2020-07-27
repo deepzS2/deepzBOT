@@ -92,15 +92,12 @@ export class CommandHandler {
       command.commandNames.includes(commandContext.parsedCommandName)
     )
 
-    if (!matchedCommand) {
-      await message.channel.send(
-        `**I don't recognize that command \`${message.content}\`. Try d.help.**`
+    if (!allowedCommands.includes(matchedCommand)) {
+      await message.reply(
+        `**:x: You aren't allowed to use that command! Try d.help...**`
       )
       await reactor.failure(message)
-    } else if (!allowedCommands.includes(matchedCommand)) {
-      await message.reply(`You aren't allowed to use that command. Try d.help.`)
-      await reactor.failure(message)
-    } else {
+    } else if (matchedCommand) {
       await matchedCommand
         .run(commandContext)
         .then(() => {

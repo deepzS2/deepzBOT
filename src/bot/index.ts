@@ -2,7 +2,7 @@ import { Client } from 'discord.js'
 
 import { BotConfig } from '@customTypes/client'
 
-// import server from '../server'
+import Server from '../server'
 import config from './config'
 import Listeners from './listeners'
 
@@ -15,7 +15,9 @@ const client = new Client({
   partials: ['CHANNEL', 'MESSAGE', 'REACTION'],
 })
 
-const listeners = new Listeners(client, config)
+const server = new Server(client)
+
+const listeners = new Listeners(client, config, server)
 
 listeners.start()
 
@@ -30,5 +32,3 @@ function validateConfig(config: BotConfig) {
     throw new Error('You need to specify your Discord bot token!')
   }
 }
-
-export default client

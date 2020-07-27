@@ -8,19 +8,19 @@ import {
   PartialUser,
   Client,
 } from 'discord.js'
-import { Application } from 'express'
 
 import { BotConfig } from '@customTypes/client'
 import { Guilds, Users } from '@database'
 import { tickTwitchCheck } from '@utils/twitch'
 
+import Server from '../server'
 import { CommandHandler } from './handler'
 // import github from '@utils/github'
 
 export default class Listeners {
   readonly client: Client
   readonly config: BotConfig
-  readonly server: Application | undefined
+  readonly server: Server | undefined
   readonly commandHandler: CommandHandler
 
   /**
@@ -29,7 +29,7 @@ export default class Listeners {
    * @param config Token and other configs
    * @param server Web server (soon)
    */
-  public constructor(client: Client, config: BotConfig, server?: Application) {
+  public constructor(client: Client, config: BotConfig, server?: Server) {
     this.client = client
     this.config = config
     this.server = server
@@ -199,16 +199,36 @@ export default class Listeners {
   private async ready(): Promise<void> {
     const PORT = process.env.PORT || 3000
 
-    const activities = [
-      "try 'd.help' command",
-      'made with TypeScript',
-      'to be a BOT...',
+    const activities =
+      process.env.NODE_ENV === 'prod'
+        ? [
+            "try 'd.help' command",
+            'made with TypeScript',
+            'under development...',
+            'a bot made for you! :smiley:',
+            'my website will be on soon :relaxed:',
+          ]
+        : [
+            'bot under development, commands not working',
+            'commands not working, under development',
+            'my developer is upgrading me :flushed:',
+          ]
+
+    const types: Array<'PLAYING' | 'STREAMING' | 'WATCHING' | 'LISTENING'> = [
+      'PLAYING',
+      'STREAMING',
+      'WATCHING',
+      'LISTENING',
     ]
 
     setInterval(() => {
-      const index = Math.floor(Math.random() * (activities.length - 1) + 1)
-      this.client.user.setActivity(activities[index], {
-        type: 'PLAYING',
+      const activity =
+        activities[Math.floor(Math.random() * (activities.length - 1) + 1)]
+      const type =
+        types[Math.floor(Math.random() * (activities.length - 1) + 1)]
+
+      this.client.user.setActivity(activity, {
+        type,
       })
     }, 60 * 1000)
 
@@ -221,9 +241,7 @@ export default class Listeners {
 
     // Listening web server :D
     if (this.server) {
-      this.server.listen(PORT, () => {
-        console.info(`Server started! Listening on port ${PORT}`)
-      })
+      this.server.start(PORT)
     }
 
     // Uncomment if you use this repository to make your own bot, and tell to the users when u update!

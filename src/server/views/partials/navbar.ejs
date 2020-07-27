@@ -1,0 +1,63 @@
+<nav class="navbar">
+  <div id="bot" href="/">
+    <a href="/">
+      <img id="bot-avatar" src="<%= botAvatar %>" alt="deepz avatar">
+      <span>deepz</span>
+    </a>
+  </div>
+
+  <ul id="nav-items">
+    <li class="nav-item">
+      <a href="https://discord.com/users/411557789068951552">
+        <img src="/images/conversation.svg" alt="Suggestions">
+        <span>Suggestions</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/commands">
+        <img src="/images/paper.svg" alt="Commands">
+        <span>Commands</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="/about">
+        <img src="/images/about.svg" alt="about">
+        <span>About</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="https://github.com/deepzS2/deepzBOT" target="_blank">
+        <img src="/images/github.svg" alt="Github">
+        <span>Github</span>
+      </a>
+    </li>
+    <li class="nav-item">
+      <a href="https://discordapp.com/oauth2/authorize?client_id=709564503053828137&scope=bot&permissions=1345842302"
+        target="_blank">
+        <img src="/images/discord.svg" alt="Github">
+        <span>Invite</span>
+      </a>
+    </li>
+  </ul>
+
+  <div id="nav-buttons">
+    <label for="checkbox" id="theme-wrapper">
+      <input type="checkbox" id="checkbox" />
+      <span>Theme</span>
+    </label>
+    <%  if (user) { %>
+    <div class="subnav">
+      <img src="<%= user.avatarURL ? user.avatarURL : user.dcInfos.avatarURL %>" alt="Avatar">
+      <div class="subnav-content">
+        <a href="/profile">Profile</a>
+        <a href="/authorize/logout">Logout</a>
+      </div>
+    </div>
+    <% } else { %>
+    <a href="/authorize">
+      <img src="/images/login.svg">
+      <span>Login</span>
+    </a>
+    <% } %>
+  </div>
+</nav>

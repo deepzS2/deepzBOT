@@ -1,0 +1,99 @@
+main#index {
+  margin: 87px auto 0 auto;
+  width: 78%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+
+  .display-left,
+  .display-right {
+    width: 1202px;
+    display: grid;
+    margin-bottom: 300px;
+    grid-gap: 30px;
+    transition: all 600ms ease-in-out;
+    opacity: 0;
+
+    .text {
+      height: 100%;
+      grid-area: contentText;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .title {
+      color: var(--primary);
+      font-size: 2.25em;
+      font-weight: bold;
+    }
+
+    .content {
+      font-size: 1.5em;
+      color: var(--text);
+      font-weight: normal;
+
+      a {
+        color: var(--primary);
+        text-decoration: underline;
+      }
+    }
+
+    .image {
+      grid-area: imageCommand;
+      max-width: 543px;
+      max-width: 492px;
+    }
+  }
+
+  .fade-left {
+    .text {
+      align-items: flex-start;
+    }
+
+    opacity: 1;
+    animation: fadeInLeft 0.7s;
+
+    grid-template-areas: 'contentText contentText imageCommand'
+    'contentText contentText imageCommand';
+  }
+
+  .fade-right {
+    .text {
+      align-items: flex-end;
+    }
+
+    opacity: 1;
+
+    animation: fadeInRight 0.7s;
+    text-align: right;
+    grid-template-areas: 'imageCommand contentText contentText'
+    'imageCommand contentText contentText';
+  }
+}
+
+@keyframes fadeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

@@ -1,0 +1,56 @@
+main#commands {
+  height: 400vh;
+
+  padding-top: 50px;
+
+  h1 {
+    color: var(--primary);
+    font-size: 2.5em;
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 100px;
+
+    p {
+      font-weight: bold;
+      line-height:
+        30px;
+      color: var(--text);
+    }
+  }
+
+  .category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 150px;
+
+    .title {
+      font-size: 2em;
+      font-weight: bold;
+      color: var(--primary);
+      text-transform: capitalize;
+      margin-bottom: 100px;
+    }
+
+    .commands {
+      display: grid;
+      align-items: center;
+      justify-content: center;
+      width: 50%;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-row-gap: 50px;
+      grid-column-gap: 100px;
+
+      h2 {
+        font-size: 1.3em;
+        color: var(--text);
+      }
+    }
+  }
+}

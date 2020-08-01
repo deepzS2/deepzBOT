@@ -28,12 +28,10 @@ export default class Listeners {
    * Listeners class for a better organization
    * @param client The bot instance
    * @param config Token and other configs
-   * @param server Web server (soon)
    */
-  public constructor(client: Client, config: BotConfig, server?: Server) {
+  public constructor(client: Client, config: BotConfig) {
     this.client = client
     this.config = config
-    this.server = server
     this.twitch = new Twitch(this.client)
     this.commandHandler = new CommandHandler(this.config.prefix, this.client)
   }
@@ -199,8 +197,6 @@ export default class Listeners {
    * Start the bot and his activities (Web server soon!)
    */
   private async ready(): Promise<void> {
-    const PORT = process.env.PORT || 3000
-
     const activities =
       process.env.NODE_ENV === 'prod'
         ? [
@@ -240,11 +236,6 @@ export default class Listeners {
     }, 1000 * 60 * 30)
 
     console.log('Bot ready and listening!')
-
-    // Listening web server :D
-    if (this.server) {
-      this.server.start(PORT)
-    }
 
     // Uncomment if you use this repository to make your own bot, and tell to the users when u update!
     // await github(this.client)

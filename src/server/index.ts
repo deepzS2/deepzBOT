@@ -15,21 +15,32 @@ export default class WebDashboard {
    * Initialize the server
    * @param client Client instance
    */
-  constructor(client: Client) {
+  constructor() {
     this.app = express()
-    this.client = client
+    this.client = new Client()
+
+    const PORT = process.env.PORT || 3000
+
+    this.start(PORT)
+      .then(() => {
+        console.log('Server ready')
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   }
 
   /**
    * Starts the server!
    * @param port Port to listen
    */
-  public start(port: number | string): void {
+  public async start(port: number | string): Promise<void> {
     this.ejsConfigurations()
     this.oAuthConfigurations()
     // this.jsonConfigurations()
 
     this.initRoutes()
+    await this.client.login(process.env.TOKEN)
 
     this.app.listen(port, () => {
       console.log(`Server started! Listening to ${port}`)
@@ -77,3 +88,5 @@ export default class WebDashboard {
     this.app.use(express.urlencoded({ extended: true }))
   }
 }
+
+new WebDashboard()

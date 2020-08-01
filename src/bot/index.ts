@@ -2,7 +2,6 @@ import { Client } from 'discord.js'
 
 import { BotConfig } from '@customTypes/client'
 
-import Server from '../server'
 import config from './config'
 import Listeners from './listeners'
 
@@ -15,9 +14,7 @@ const client = new Client({
   partials: ['CHANNEL', 'MESSAGE', 'REACTION'],
 })
 
-const server = new Server(client)
-
-const listeners = new Listeners(client, config, server)
+const listeners = new Listeners(client, config)
 
 listeners.start()
 

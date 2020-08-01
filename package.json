@@ -5,10 +5,13 @@
   "author": "deepzS2",
   "license": "MIT",
   "scripts": {
-    "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored && yarn sass:build",
+    "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "sass:build": "node-sass -r dist/server/assets/scss -o dist/server/assets/css",
     "start": "NODE_ENV=prod node dist/bot/index.js",
     "dev": "ts-node-dev -r tsconfig-paths/register --respawn --ignore-watch node_modules --no-notify src/bot/index.ts",
+    "start:web": "NODE_ENV=prod node dist/server/index.js",
+    "dev:web": "ts-node-dev -r tsconfig-paths/register --respawn --ignore-watch node_modules --no-notify src/server/index.ts",
+    "build:web": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored && yarn sass:build",
     "clean": "rm -r dist",
     "sass": "node-sass -w src/server/assets/scss -o src/server/assets/css",
     "test": "jest"

@@ -219,11 +219,18 @@ export default class Listeners {
       'LISTENING',
     ]
 
+    let activity =
+      activities[Math.floor(Math.random() * (activities.length - 1) + 1)]
+    let type = types[Math.floor(Math.random() * (activities.length - 1) + 1)]
+
+    this.client.user.setActivity(activity, {
+      type,
+    })
+
     setInterval(() => {
-      const activity =
+      activity =
         activities[Math.floor(Math.random() * (activities.length - 1) + 1)]
-      const type =
-        types[Math.floor(Math.random() * (activities.length - 1) + 1)]
+      type = types[Math.floor(Math.random() * (activities.length - 1) + 1)]
 
       this.client.user.setActivity(activity, {
         type,
@@ -233,7 +240,7 @@ export default class Listeners {
     await this.twitch.tickTwitchCheck()
     setInterval(async () => {
       await this.twitch.tickTwitchCheck()
-    }, 1000 * 60 * 30)
+    }, /* 1000 * 60 * 30 */ 1000)
 
     console.log('Bot ready and listening!')
 

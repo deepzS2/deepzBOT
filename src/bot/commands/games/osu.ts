@@ -81,7 +81,7 @@ export default class OsuCommand implements Command {
 
     if (args[0] === 'rs' || args[0] === 'recent' || args[0] === 'recentscore') {
       try {
-        await originalMessage.channel.startTyping()
+        originalMessage.channel.startTyping()
 
         const user = await Users()
           .where('id', '=', originalMessage.author.id)
@@ -186,6 +186,7 @@ export default class OsuCommand implements Command {
         await originalMessage.channel.send(
           `**:x: Something went wrong! Please try again later.**`
         )
+
         originalMessage.channel.stopTyping()
       }
 

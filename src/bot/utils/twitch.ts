@@ -76,11 +76,7 @@ export default class Twitch {
             if (json.status === 404) {
               console.log(`Streamer not found`)
             } else {
-              let sendNow = false
-              if (now) {
-                sendNow = true
-              }
-              this.sendToDiscord(streamer, guild, json, bot, sendNow)
+              this.sendToDiscord(streamer, guild, json, bot, now)
             }
           })
         })
@@ -103,7 +99,7 @@ export default class Twitch {
     if (res && res.stream) {
       if (!sendNow) {
         const started = new Date(res.stream.created_at)
-        started.setMinutes(started.getMinutes() + 45)
+        started.setMinutes(started.getMinutes() + 30)
 
         const nowTime = new Date()
 

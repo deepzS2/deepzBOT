@@ -352,6 +352,7 @@ export default class MusicController {
     } else {
       queue = serverQueue
     }
+    console.log(videosObj[0])
 
     videosObj.forEach(async (video) => {
       queue.songs.push(

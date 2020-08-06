@@ -240,7 +240,7 @@ export default class Listeners {
     await this.twitch.tickTwitchCheck()
     setInterval(async () => {
       await this.twitch.tickTwitchCheck()
-    }, /* 1000 * 60 * 30 */ 1000)
+    }, 1000 * 60 * 30)
 
     console.log('Bot ready and listening!')
 

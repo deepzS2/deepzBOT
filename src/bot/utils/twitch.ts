@@ -99,12 +99,13 @@ export default class Twitch {
     if (res && res.stream) {
       if (!sendNow) {
         const started = new Date(res.stream.created_at)
+
         started.setMinutes(started.getMinutes() + 30)
 
-        const nowTime = new Date()
+        const nowTime = Date.now()
 
         // Verifies if the user started to stream for a long time to stop spamming every 30 minutes
-        if (started.getTime() <= nowTime.getTime()) {
+        if (started.getTime() <= nowTime) {
           return
         }
       }

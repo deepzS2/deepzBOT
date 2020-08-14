@@ -50,7 +50,7 @@
     "typescript": "^3.9.5"
   },
   "dependencies": {
-    "@types/node": "^14.0.14",
+    "@types/node": "^14.0.25",
     "axios": "^0.19.2",
     "beautify": "^0.0.8",
     "canvas": "^2.6.1",

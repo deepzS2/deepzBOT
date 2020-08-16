@@ -85,6 +85,6 @@
     "simple-youtube-api": "^5.2.1",
     "socket.io": "^2.3.0",
     "tenorjs": "^1.0.7",
-    "ytdl-core": "^3.1.2"
+    "ytdl-core": "^3.1.3"
   }
 }

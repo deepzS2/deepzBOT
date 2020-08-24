@@ -189,7 +189,7 @@ async function createRoleReaction(
     await getColor.first().react('✅')
 
     await originalMessage.channel.send(
-      `Nice color... Now the reactions and roles! Just type like that: \`:some_cool_emoji: Cool role\``
+      `Nice color... Now the reactions and roles! Just type like that: \`:some_cool_emoji: Cool role\` and when you're done type \`done\``
     )
 
     const collector = start.channel.createMessageCollector(filter)
@@ -217,9 +217,8 @@ async function createRoleReaction(
           const emoji = content.shift()
 
           const roleName = content.join(' ')
-          const role = originalMessage.guild.roles.cache.find(
-            (roleValue) =>
-              roleValue.name.toLowerCase() === roleName.toLowerCase()
+          const role = originalMessage.guild.roles.cache.find((roleValue) =>
+            roleValue.name.toLowerCase().includes(roleName.toLowerCase())
           )
 
           if (!role) {

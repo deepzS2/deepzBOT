@@ -265,15 +265,19 @@ function isAnyDuplicateEmoji(
     role: string
   }>
 ): boolean {
-  const counts = {}
+  const sortedArray = array.slice().sort()
 
-  for (let i = 0; i <= array.length; i++) {
-    if (counts[array[i].emoji] === undefined) {
-      counts[array[i].emoji] = 1
-    } else {
-      return true
+  const results = []
+
+  for (let i = 0; i < sortedArray.length - 1; i++) {
+    if (sortedArray[i + 1].emoji === sortedArray[i].emoji) {
+      results.push(sortedArray[i].emoji)
     }
   }
 
-  return false
+  if (results.length === 0) {
+    return false
+  } else {
+    return true
+  }
 }

@@ -42,6 +42,11 @@ export default class Twitch {
     try {
       const response = await this.getUser(streamer)
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if ((response as Record<string, any>).users.length === 0) {
+        return
+      }
+
       const apiPath = `/kraken/streams/${
         (response as Record<string, unknown>).users[0]._id
       }`

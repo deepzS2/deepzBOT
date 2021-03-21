@@ -13,19 +13,27 @@ export default class MusicController {
     serverQueue: Queue,
     voiceChannel: VoiceChannel
   ): Promise<void> {
-    const videos = await youtube.searchVideos(name, 5).catch(async function () {
-      const message = await originalMessage.channel.send(
-        '**:x: There was a problem searching the video you requested :(**'
-      )
+    const constructSongObj = this.constructSongObj
+    const play = MusicController.play
+    const formatDuration = this.formatDuration
 
-      message.delete({
-        timeout: 5000,
-      })
+    const videos = await youtube
+      .searchVideos(name, 5)
+      .catch(async function (error) {
+        console.error(error)
 
-      originalMessage.delete({
-        timeout: 5000,
+        const message = await originalMessage.channel.send(
+          '**:x: There was a problem searching the video you requested :(**'
+        )
+
+        message.delete({
+          timeout: 5000,
+        })
+
+        originalMessage.delete({
+          timeout: 5000,
+        })
       })
-    })
 
     if (videos.length < 5 || !videos) {
       const message = await originalMessage.channel.send(
@@ -111,7 +119,7 @@ export default class MusicController {
 
         youtube
           .getVideoByID(videos[videoIndex - 1].id)
-          .then(async function (video) {
+          .then(async (video) => {
             if (video.raw.snippet.liveBroadcastContent === 'live') {
               songEmbed.delete()
 
@@ -128,7 +136,7 @@ export default class MusicController {
               })
             }
 
-            queue.songs.push(this.constructSongObj(video))
+            queue.songs.push(constructSongObj(video, formatDuration))
 
             if (queue.playing === false) {
               if (songEmbed) {
@@ -149,11 +157,7 @@ export default class MusicController {
 
                 queue.connection = connection
 
-                this.play(
-                  originalMessage.guild,
-                  queue.songs[0],
-                  originalMessage
-                )
+                play(originalMessage.guild, queue.songs[0], originalMessage)
               } catch (err) {
                 console.error(err)
 
@@ -183,10 +187,13 @@ export default class MusicController {
             )
           })
       })
-      .catch(async function () {
+      .catch(async function (error) {
         if (songEmbed) {
           songEmbed.delete()
         }
+
+        console.error(error)
+
         const message = await originalMessage.channel.send(
           '**:x: Please try again and enter a number between 1 and 5 or exit**'
         )
@@ -212,6 +219,9 @@ export default class MusicController {
       .split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/)
 
     const id = song[2].split(/[^0-9a-z_-]/i)[0]
+    const constructSongObj = this.constructSongObj
+    const play = MusicController.play
+    const formatDuration = this.formatDuration
 
     const video = await youtube.getVideoByID(id).catch(async function () {
       const message = await originalMessage.channel.send(
@@ -258,7 +268,7 @@ export default class MusicController {
 
       queueModel.set(originalMessage.guild.id, queueConstruct)
 
-      queueConstruct.songs.push(this.constructSongObj(video))
+      queueConstruct.songs.push(constructSongObj(video, formatDuration))
 
       try {
         const connection = await voiceChannel.join()
@@ -275,11 +285,7 @@ export default class MusicController {
 
         queueConstruct.connection = connection
 
-        this.play(
-          originalMessage.guild,
-          queueConstruct.songs[0],
-          originalMessage
-        )
+        play(originalMessage.guild, queueConstruct.songs[0], originalMessage)
       } catch (err) {
         console.error(err)
 
@@ -287,7 +293,7 @@ export default class MusicController {
         originalMessage.channel.send(err)
       }
     } else {
-      serverQueue.songs.push(this.constructSongObj(video))
+      serverQueue.songs.push(constructSongObj(video, formatDuration))
 
       originalMessage.channel.send(
         `:notes: **${video.title}** has been added to the queue!`
@@ -301,6 +307,10 @@ export default class MusicController {
     serverQueue: Queue,
     voiceChannel: VoiceChannel
   ): Promise<void> {
+    const constructSongObj = this.constructSongObj
+    const play = MusicController.play
+    const formatDuration = this.formatDuration
+
     const playlist = await youtube
       .getPlaylist(url, { part: 'snippet' })
       .catch(async function () {
@@ -356,8 +366,9 @@ export default class MusicController {
 
     videosObj.forEach(async (video) => {
       queue.songs.push(
-        this.constructSongObj(
-          await video.fetch({ part: ['snippet', 'contentDetails'] })
+        constructSongObj(
+          await video.fetch({ part: ['snippet', 'contentDetails'] }),
+          formatDuration
         )
       )
     })
@@ -382,7 +393,7 @@ export default class MusicController {
 
         queue.connection = connection
 
-        this.play(originalMessage.guild, queue.songs[0], originalMessage)
+        play(originalMessage.guild, queue.songs[0], originalMessage)
       } catch (err) {
         console.error(err)
         queueModel.delete(originalMessage.guild.id)
@@ -413,12 +424,12 @@ export default class MusicController {
     return duration
   }
 
-  private constructSongObj(video) {
+  private constructSongObj(video, formatDurationFunction) {
     if (!video || !video.duration) {
       return
     }
 
-    const duration = this.formatDuration(video.duration)
+    const duration = formatDurationFunction(video.duration)
     return {
       url: `https://www.youtube.com/watch?v=${video.raw.id}`,
       title: video.title,
@@ -428,9 +439,10 @@ export default class MusicController {
     }
   }
 
-  private async play(guild: Guild, song: Song, message: Message) {
+  private static async play(guild: Guild, song: Song, message: Message) {
     try {
       const queue = queueModel.get(guild.id)
+      const play = MusicController.play
 
       if (!queue) {
         return
@@ -443,9 +455,10 @@ export default class MusicController {
       }
 
       let interval
+      const songYtdl = ytdl(song.url, { filter: 'audioonly' })
 
       const dispatcher = queue.connection
-        .play(ytdl(song.url, { quality: 'highestaudio' }))
+        .play(songYtdl, { seek: 0 })
         .on('start', async () => {
           queue.dispatcher = dispatcher
 
@@ -496,7 +509,7 @@ export default class MusicController {
 
           queue.songs.shift()
 
-          this.play(guild, queue.songs[0], message)
+          play(guild, queue.songs[0], message)
         })
         .on('error', async (error) => {
           console.error(error)

@@ -4,7 +4,7 @@ import { CommandContext } from '@models/command_context'
 import functions from '../../functions'
 
 export default class AddRoleCommand implements Command {
-  commandNames = ['addRole']
+  commandNames = ['addRole', 'roleadd', 'addrole', 'roleAdd']
   commandExamples = [
     {
       example: 'd.addRole @『 ♥ deepz ♥ 』#4008 ugly',
@@ -31,10 +31,12 @@ export default class AddRoleCommand implements Command {
       return
     }
 
+    console.log(targetUser, args.join(' '))
+
     const roleName = args.join(' ')
     const { guild } = originalMessage
 
-    const role = guild.roles.cache.find((role) => role.name === roleName)
+    const role = guild.roles.cache.find((role) => role.name.includes(roleName))
 
     if (!role) {
       originalMessage.channel.send(
@@ -48,15 +50,17 @@ export default class AddRoleCommand implements Command {
     member.roles.add(role)
 
     originalMessage.channel.send(
-      `**:ballot_box_with_check: Now ${targetUser.nickname} have ${roleName} role**`
+      `**:ballot_box_with_check: Now ${
+        targetUser.nickname || targetUser.user.username
+      } have ${roleName} role**`
     )
   }
 
   hasPermissionToRun({ originalMessage }: CommandContext): boolean {
-    if (!originalMessage.member.hasPermission('ADMINISTRATOR')) {
-      return false
-    } else {
+    if (originalMessage.member.hasPermission('ADMINISTRATOR')) {
       return true
+    } else {
+      return false
     }
   }
 }

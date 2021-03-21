@@ -93,6 +93,7 @@ export class CommandHandler {
     )
 
     if (!matchedCommand) {
+      console.log('No matched command')
       reactor.failure(message)
       return
     }

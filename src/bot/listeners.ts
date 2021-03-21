@@ -170,9 +170,15 @@ export default class Listeners {
     callback: (err?: Error) => void
   ) {
     try {
-      const { roleMessage, roles } = await Guilds()
+      const guild = await Guilds()
         .where('id', '=', msg.message.guild.id)
         .first()
+
+      if (!guild) {
+        return
+      }
+
+      const { roleMessage, roles } = guild
 
       if (msg.message.id !== roleMessage) {
         return
@@ -188,7 +194,6 @@ export default class Listeners {
         await msg.message.guild.member(user.id).roles.remove(guildRole)
       }
     } catch (error) {
-      console.error(error)
       callback(error)
     }
   }
@@ -278,7 +283,8 @@ export default class Listeners {
   ): Promise<void> {
     await this.reactions(msg, user as User, 'add', (err) => {
       if (err) {
-        msg.message.channel.send(`**:x: ${err.message}**`)
+        console.error(err)
+        // msg.message.channel.send(`**:x: ${err.message}**`)
       }
     })
   }

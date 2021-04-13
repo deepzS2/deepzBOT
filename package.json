@@ -57,6 +57,7 @@
     "axios": "^0.19.2",
     "babel-plugin-module-resolver": "^4.0.0",
     "beautify": "^0.0.8",
+    "canvas": "^2.6.1",
     "common-tags": "^1.8.0",
     "cors": "^2.8.5",
     "dateformat": "^3.0.3",

@@ -51,7 +51,7 @@
   },
   "dependencies": {
     "@types/node": "^14.0.14",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "beautify": "^0.0.8",
     "canvas": "^2.6.1",
     "common-tags": "^1.8.0",

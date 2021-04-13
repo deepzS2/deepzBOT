@@ -1,0 +1,40 @@
+<%- contentFor('body') %>
+
+<main id="profile">
+  <div class="stats">
+    <div class="discord-info">
+      <img src="<%= user.dcInfos.avatarURL %>" alt="<%= user.username %> avatar">
+      <div class="tag">
+        <h1><%= user.dcInfos.username %></h1>
+        <p>#<%= user.dcInfos.discriminator %></p>
+      </div>
+      <p class="date">Meet deepz BOT in <%= new Date(user.created_at).toLocaleString() %></p>
+    </div>
+
+    <div class="bot-info">
+      <div class="progress-bar">
+        <div class="actual-xp" style="width: <%=user.widthProgressBar%>%;"></div>
+        <span><%= user.actual_xp %>/<%= user.up_xp %></span>
+      </div>
+      <strong id="level">Level <%= user.level ? user.level : '0' %></strong>
+      <strong id="money">$ <%= user.balance ? user.balance.toLocaleString() : '0' %></strong>
+      <div class="empty"></div>
+      <strong id="rep">+<%= user.rep ? user.rep.toLocaleString() : '0' %> rep</strong>
+      <strong id="xp">XP <%= user.xp ? user.xp.toLocaleString() : '0' %></strong>
+    </div>
+  </div>
+
+  <div class="other-infos">
+    <div class="bg">
+      <h1>Your background:</h1>
+      <img src="<%= user.background_image ? user.background_image : "/images/default.svg" %>" alt="Background image">
+    </div>
+
+    <div class="bio">
+      <h1>Your bio</h1>
+      <div class="bio-box">
+        <p><%= user.bio ? user.bio : '' %></p>
+      </div>
+    </div>
+  </div>
+</main>

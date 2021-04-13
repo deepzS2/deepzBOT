@@ -2,6 +2,7 @@ yarn-error.log
 .env
 node_modules
 package-lock.json
+tags
 dist
 coverage
 .vscode

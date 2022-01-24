@@ -1,25 +1,45 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/ban-types */
-import knex from 'knex'
+import 'reflect-metadata'
+import path from 'path'
+import { ConnectionOptions, createConnection, Repository } from 'typeorm'
 
-import { Guild, User } from '@customTypes/database'
+import { databaseConfig } from '../config'
+import { Guild } from './entities/Guild'
+import { User } from './entities/User'
 
-const { development, production } = require('./knexfile')
+const config: ConnectionOptions = Object.assign(
+  { entities: [path.join(__dirname, 'entities', '*.{ts,js}')] },
+  databaseConfig
+)
 
-const db =
-  process.env.NODE_ENV === 'prod' ? knex(production) : knex(development)
+export const UsersRepository = async (): Promise<Repository<User>> => {
+  const connection = await createConnection(config)
+  return connection.getRepository(User)
+}
 
-db.migrate
-  .latest()
-  .then((res) => {
-    console.log(
-      `Number of migrations: ${res[0]}\nMigrations runned: ${res[1].join('')}`
-    )
-  })
-  .catch((err) => {
-    console.error(err)
-  })
+export const GuildsRepository = async (): Promise<Repository<Guild>> => {
+  const connection = await createConnection(config)
+  return connection.getRepository(Guild)
+}
 
-export const Users = () => db<User>('users')
+export async function insertUser(id: string, username: string): Promise<void> {
+  const Users = await UsersRepository()
 
-export const Guilds = () => db<Guild>('guilds')
+  const user = new User()
+  user.id = id
+  user.username = username
+
+  await Users.insert(user)
+}
+
+export async function insertGuild(id: string, name: string): Promise<void> {
+  const Guilds = await GuildsRepository()
+
+  const guild = new Guild()
+  guild.id = id
+  guild.name = name
+
+  await Guilds.insert(guild)
+}
+
+export type IGuildsRepository = Repository<Guild>
+export type IUsersRepository = Repository<User>

@@ -1,29 +1,69 @@
-import {CommandType} from '../@types/command'
-import {botConfig} from '../config'
-import {client} from '../index'
-import {Event} from '../structures/Event'
+import { CommandType } from '../@types/command'
+import { botConfig } from '../config'
+import { createUser, getUserByID, updateUser } from '../database/dal/user'
+import { client } from '../index'
+import { Event } from '../structures/Event'
 
 export default new Event('messageCreate', async (message) => {
-  const {prefix} = botConfig
+  const { prefix } = botConfig
 
-  if (!message.author.bot && message.content.startsWith(prefix)) {
-    if (message.channel.type === 'DM') return
+  // Not the own bot xd
+  if (message.author.bot) return 
 
-    const args = message.content.slice(prefix.length).trim().split(/ +/g)
-    const command = args.shift().toLowerCase()
+  try {
+    const user = await checkIfUserExists(message.author.id, message.author.username)
 
-    const cmd: CommandType = client.commands.get(command)
+    if (user) {
+      await updateUser(user.id, {
+        xp: user.xp + Math.floor(Math.random() * 15) + 10,
+        balance: user.balance + Math.floor(Math.random() * 7) + 3
+      })
+    }
+  } catch (error) {
+    console.error(error)
+  } finally {
+    // Command starts with prefix
+    if (message.content.startsWith(prefix)) {
+      // No DMs here...
+      if (message.channel.type === 'DM') return
 
-    if (!cmd) return
+      const args = message.content.slice(prefix.length).trim().split(/ +/g)
+      const command = args.shift().toLowerCase()
 
-    message.channel.sendTyping()
+      const cmd: CommandType = client.commands.get(command)
 
-    const response = await cmd.run({
-      args,
-      client,
-      message,
-    })
+      if (!cmd) return
 
-    if (response && typeof response === 'string') message.channel.send(response)
+      // Show typing :D (I guess)
+      message.channel.sendTyping()
+
+      // The response is a string or nothing always so it's easy to handle with slash and message
+      const response = await cmd.run({
+        args,
+        client,
+        message,
+      })
+
+      if (response && typeof response === 'string') message.channel.send(response)
+    }
   }
 })
+
+async function checkIfUserExists(id: string, username: string) {
+  try {
+    let user = await getUserByID(id)
+
+    if (user.username !== username) {
+      user = await updateUser(id, { username })
+    }
+
+    return user
+  } catch (error) {
+    if ((error as Error).message === 'User not found with that ID') {
+      const user = await createUser({ id, username })
+      return user
+    } else {
+      throw error
+    }
+  }
+}

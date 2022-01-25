@@ -1,18 +1,17 @@
-import {CommandInteractionOptionResolver} from 'discord.js'
+import { CommandInteractionOptionResolver } from 'discord.js'
 
-import {ExtendedInteraction} from '../@types/command'
-import {client} from '../index'
-import {Event} from '../structures/Event'
+import { ExtendedInteraction } from '../@types/command'
+import { client } from '../index'
+import { Event } from '../structures/Event'
 
 export default new Event('interactionCreate', async (interaction) => {
   if (interaction.isCommand()) {
     await interaction.deferReply()
-
     const command = client.commands.get(interaction.commandName)
 
-    if (!command)
-      return interaction.followUp('You have used a non existent command')
+    if (!command) return
 
+    // The response is a string or nothing always so it's easy to handle with slash and message
     const response = await command.run({
       args: interaction.options as CommandInteractionOptionResolver,
       client,

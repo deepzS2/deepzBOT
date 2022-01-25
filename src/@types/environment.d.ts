@@ -1,7 +1,7 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
-      NODE_ENV: 'dev' | 'prod' | 'debug'
+      NODE_ENV: 'dev' | 'prod' 
 
       TOKEN: string
       PREFIX: string
@@ -31,6 +31,17 @@ export interface BotConfiguration {
   botOwnerRoleName: string
   enableReactions: boolean
   guildId: string
+}
+
+export interface DatabaseConfiguration {
+  dialect: 'postgres' | 'sqlite'
+  host: string
+  port?: number
+  username: string
+  password: string
+  name: string
+  storage?: string
+  logging: boolean
 }
 
 export {}

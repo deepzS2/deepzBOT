@@ -6,14 +6,14 @@ import {
   Intents,
 } from 'discord.js'
 import glob from 'glob'
-import {promisify} from 'util'
+import { promisify } from 'util'
 
-import {RegisterCommandsOptions} from '@customTypes/client'
-import {CommandType} from '@customTypes/command'
-import {BotConfiguration} from '@customTypes/environment'
-import {Event} from '@root/structures/Event'
+import { RegisterCommandsOptions } from '@customTypes/client'
+import { CommandType } from '@customTypes/command'
+import { BotConfiguration } from '@customTypes/environment'
+import { Event } from '@root/structures/Event'
 
-import {botConfig} from '../config'
+import { botConfig } from '../config'
 
 const globPromise = promisify(glob)
 
@@ -31,12 +31,18 @@ export class ExtendedClient extends Client {
     })
   }
 
+  /**
+   * Start the bot validating the config, registering modules and logging in
+   */
   start() {
     this.validateConfig(botConfig)
     this.registerModules()
     this.login(botConfig.token)
   }
 
+  /**
+   * Load all commands and events
+   */
   async registerModules(): Promise<void> {
     const slashCommands: ApplicationCommandDataResolvable[] = []
     const commandFiles = await globPromise(
@@ -48,15 +54,12 @@ export class ExtendedClient extends Client {
 
       if (!command.name) return
 
-      this.commands.set(command.name, command)
-      slashCommands.push(command)
-    })
+      // If not a slash command or both
+      if (!command.slash || command.slash === 'both')
+        this.commands.set(command.name, command)
 
-    this.on('ready', () => {
-      this.registerCommands({
-        commands: slashCommands,
-        guildId: botConfig.guildId,
-      })
+      // If a slash command or both
+      if (command.slash || command.slash === 'both') slashCommands.push(command)
     })
 
     // Event
@@ -64,11 +67,26 @@ export class ExtendedClient extends Client {
     eventFiles.forEach(async (filePath) => {
       const event: Event<keyof ClientEvents> = await this.importFile(filePath)
 
-      this.on(event.event, event.run)
+      if (event.event === 'ready') {
+        // When ready register commands!
+        this.on(event.event, (args) => {
+          event.run(args)
+          this.registerCommands({
+            commands: slashCommands,
+            guildId: botConfig.guildId,
+          })
+        })
+      } else {
+        this.on(event.event, event.run)
+      }
     })
   }
 
-  async registerCommands({commands, guildId}: RegisterCommandsOptions) {
+  /**
+   * Register slash commands
+   */
+  async registerCommands({ commands, guildId }: RegisterCommandsOptions) {
+    // If provided a guild id the slash command will only work on that guild!
     if (guildId) {
       this.guilds.cache.get(guildId)?.commands.set(commands)
       console.log(`Registering commands to ${guildId}`)
@@ -78,6 +96,9 @@ export class ExtendedClient extends Client {
     }
   }
 
+  /**
+   * Import file with import()
+   */
   async importFile(filePath: string): Promise<any> {
     const imported = await import(filePath)
 

@@ -1,4 +1,6 @@
-import { Message, GuildMember } from 'discord.js'
+import { Message, GuildMember, MessageMentions } from 'discord.js'
+
+import { client } from '.'
 
 export const functions = {
   /**
@@ -9,7 +11,7 @@ export const functions = {
   getMember: function (msg: Message, toFind = ''): GuildMember {
     toFind = toFind.toLowerCase()
 
-    let target = msg.guild.member(toFind)
+    let target = msg.guild.members.cache.get(toFind)
 
     if (!target && msg.mentions.members) target = msg.mentions.members.first()
 
@@ -26,6 +28,17 @@ export const functions = {
 
     return target
   },
+  // getUserFromMention: function (mention: string) {
+  //   if (!mention) return
+
+  //   const matches = mention.match(MessageMentions.USERS_PATTERN)
+
+  //   if (!matches) return
+
+  //   const id = matches[1]
+
+  //   return client.users.cache.get(id)
+  // },
   formatDate: function (date: Date): string {
     return new Intl.DateTimeFormat('pt-BR').format(date)
   },

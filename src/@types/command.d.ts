@@ -7,7 +7,7 @@ import {
   Message,
 } from 'discord.js'
 
-import {ExtendedClient} from '../structures/Client'
+import { ExtendedClient } from '../structures/Client'
 
 export interface ExtendedInteraction extends CommandInteraction {
   member: GuildMember
@@ -24,6 +24,6 @@ type RunFunction = (options: RunOptions) => unknown | string
 
 export type CommandType = {
   userPermissions?: PermissionResolvable[]
-  slash: boolean | 'both'
+  slash?: boolean | 'both'
   run: RunFunction
 } & ChatInputApplicationCommandData

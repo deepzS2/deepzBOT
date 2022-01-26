@@ -12,6 +12,7 @@ declare global {
       GUILD: number
 
       OSU_API_KEY: string
+      STEAM_TOKEN: string
       TENOR_KEY: string
       TRACKER_API_KEY: string
       TWITCH_API_KEY: string

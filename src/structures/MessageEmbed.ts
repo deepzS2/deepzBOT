@@ -1,4 +1,3 @@
-import { embedGlobalColor } from 'config'
 import {
   ColorResolvable,
   EmbedAuthorData,
@@ -6,6 +5,8 @@ import {
   EmbedFooterData,
   MessageEmbed,
 } from 'discord.js'
+
+import { embedGlobalColor } from '@root/config'
 
 interface EmbedOptions {
   color?: ColorResolvable

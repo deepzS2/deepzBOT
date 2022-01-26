@@ -1,4 +1,3 @@
-import { botConfig } from 'config'
 import {
   ApplicationCommandDataResolvable,
   Client,
@@ -15,6 +14,8 @@ import {
   CommandType,
   BotConfiguration,
 } from '@myTypes'
+import { botConfig } from '@root/config'
+import logger from '@root/logger'
 import { Event } from '@structures/Event'
 
 const globPromise = promisify(glob)
@@ -100,10 +101,10 @@ export class ExtendedClient extends Client {
     // If provided a guild id the slash command will only work on that guild!
     if (guildId) {
       this.guilds.cache.get(guildId)?.commands.set(commands)
-      console.log(`Registering commands to ${guildId}`)
+      logger.info(`Registering commands to ${guildId}`)
     } else {
       this.application?.commands.set(commands)
-      console.log('Registering global commands')
+      logger.info('Registering global commands')
     }
   }
 

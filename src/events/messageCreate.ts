@@ -1,9 +1,10 @@
-import { botConfig } from 'config'
 import { MessageEmbed } from 'discord.js'
-import { client } from 'index'
 
 import { UserDAL } from '@database/index'
 import { CommandType } from '@myTypes'
+import { botConfig } from '@root/config'
+import { client } from '@root/index'
+import logger from '@root/logger'
 import { Event } from '@structures/Event'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 
@@ -25,7 +26,7 @@ export default new Event('messageCreate', async (message) => {
       })
     }
   } catch (error) {
-    console.error(error)
+    logger.error(error)
   } finally {
     // Command starts with prefix
     if (message.content.startsWith(prefix)) {

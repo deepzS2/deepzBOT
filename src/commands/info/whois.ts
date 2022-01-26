@@ -4,8 +4,8 @@ import {
   EmbedFieldData,
   GuildMember,
 } from 'discord.js'
-import { formatDate } from 'functions'
 
+import { formatDate } from '@root/functions'
 import { Command } from '@structures/Command'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 

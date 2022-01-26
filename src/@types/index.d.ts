@@ -7,6 +7,11 @@ import {
 } from './command'
 import { GetAllGuildsFilters, GetAllUsersFilters } from './dal'
 import { BotConfiguration, DatabaseConfiguration } from './environment'
+import {
+  IGetPlayerSummariesResponse,
+  IResolveVanityURLResponse,
+  IPlayerBansResponse,
+} from './fetchs'
 
 export {
   RegisterCommandsOptions,
@@ -18,4 +23,7 @@ export {
   GetAllUsersFilters,
   BotConfiguration,
   DatabaseConfiguration,
+  IGetPlayerSummariesResponse,
+  IResolveVanityURLResponse,
+  IPlayerBansResponse,
 }

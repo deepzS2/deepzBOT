@@ -1,7 +1,7 @@
 import { stripIndents } from 'common-tags'
-import { client } from 'index'
 
 import { GuildDAL } from '@database/index'
+import { client } from '@root/index'
 import { Event } from '@structures/Event'
 
 export default new Event('guildCreate', async (guild) => {

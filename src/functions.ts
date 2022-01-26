@@ -1,7 +1,8 @@
 import dayjs from 'dayjs'
 import { MessageMentions } from 'discord.js'
+
 import 'dayjs/locale/pt-br'
-import { client } from 'index'
+import { client } from '@root/index'
 
 /**
  * Return a User object from mention

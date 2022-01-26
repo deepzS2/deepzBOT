@@ -37,4 +37,6 @@ export const databaseConfig: DatabaseConfiguration = {
   logging: false,
 }
 
+export const steamToken = process.env.STEAM_TOKEN
+
 export const embedGlobalColor = '#483D3F'

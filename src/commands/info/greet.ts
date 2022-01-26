@@ -1,5 +1,4 @@
-import { botConfig } from 'config'
-
+import { botConfig } from '@root/config'
 import { Command } from '@structures/Command'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 

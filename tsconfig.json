@@ -50,7 +50,8 @@
       // "@assets/*": ["assets/*"],
       // "@utils/*": ["utils/*"],
       "@services/*": ["services/*"],
-      "@structures/*": ["structures/*"]
+      "@structures/*": ["structures/*"],
+      "@root/*": ["./*"]
     }
   },
   "include": ["src/**/*"],

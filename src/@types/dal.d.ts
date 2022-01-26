@@ -3,6 +3,6 @@ interface GlobalFilters {
   includedDeleted?: boolean
 }
 
-export interface GetAllUsersFilters extends GlobalFilters {}
+export type GetAllUsersFilters = GlobalFilters
 
-export interface GetAllGuildsFilters extends GlobalFilters {}
+export type GetAllGuildsFilters = GlobalFilters

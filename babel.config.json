@@ -1,0 +1,15 @@
+{
+  "presets": ["@babel/preset-typescript"],
+  "plugins": [["module-resolver", {
+    "root": ["./src"],
+    "alias": {
+      "@commands": "commands",
+      // "@reactions": "reactions",
+      "@database": "database",
+      // "@assets": "assets",
+      // "@utils": "utils",
+      "@services": "services",
+      "@myTypes": "@types/index"
+    }
+  }]]
+}

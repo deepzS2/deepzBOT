@@ -1,22 +1,26 @@
-import { CommandType } from '../@types/command'
-import { botConfig } from '../config'
-import { createUser, getUserByID, updateUser } from '../database/dal/user'
-import { client } from '../index'
-import { Event } from '../structures/Event'
+import { botConfig } from 'config'
+import { client } from 'index'
+
+import { UserDAL } from '@database/index'
+import { CommandType } from '@myTypes'
+import { Event } from '@structures/Event'
 
 export default new Event('messageCreate', async (message) => {
   const { prefix } = botConfig
 
   // Not the own bot xd
-  if (message.author.bot) return 
+  if (message.author.bot) return
 
   try {
-    const user = await checkIfUserExists(message.author.id, message.author.username)
+    const user = await checkIfUserExists(
+      message.author.id,
+      message.author.username
+    )
 
     if (user) {
-      await updateUser(user.id, {
+      await UserDAL.updateUser(user.id, {
         xp: user.xp + Math.floor(Math.random() * 15) + 10,
-        balance: user.balance + Math.floor(Math.random() * 7) + 3
+        balance: user.balance + Math.floor(Math.random() * 7) + 3,
       })
     }
   } catch (error) {
@@ -44,23 +48,24 @@ export default new Event('messageCreate', async (message) => {
         message,
       })
 
-      if (response && typeof response === 'string') message.channel.send(response)
+      if (response && typeof response === 'string')
+        message.channel.send(response)
     }
   }
 })
 
 async function checkIfUserExists(id: string, username: string) {
   try {
-    let user = await getUserByID(id)
+    let user = await UserDAL.getUserByID(id)
 
     if (user.username !== username) {
-      user = await updateUser(id, { username })
+      user = await UserDAL.updateUser(id, { username })
     }
 
     return user
   } catch (error) {
     if ((error as Error).message === 'User not found with that ID') {
-      const user = await createUser({ id, username })
+      const user = await UserDAL.createUser({ id, username })
       return user
     } else {
       throw error

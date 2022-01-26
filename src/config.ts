@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 
-import { BotConfiguration, DatabaseConfiguration } from '@customTypes/environment'
+import { BotConfiguration, DatabaseConfiguration } from '@myTypes'
 
 // .env
 dotenv.config()

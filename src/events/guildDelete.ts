@@ -1,7 +1,6 @@
-import { Event } from '../structures/Event'
-import { deleteGuild } from '../database/dal/guild'
+import { GuildDAL } from '@database/index'
+import { Event } from '@structures/Event'
 
 export default new Event('guildCreate', async (guild) => {
-  await deleteGuild(guild.id)
+  await GuildDAL.deleteGuild(guild.id)
 })
-

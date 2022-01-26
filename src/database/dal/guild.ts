@@ -1,15 +1,19 @@
 import { Op } from 'sequelize'
-import { GetAllGuildsFilters } from '../../@types/dal'
-import { Guild } from '..'
-import { GuildInput, GuildOutput } from '../models/Guild'
 
-export const createGuild = async (payload: GuildInput): Promise<GuildOutput> => {
+import { Guild } from '@database/connection'
+import { GuildInput, GuildOutput } from '@database/models/Guild'
+import { GetAllGuildsFilters } from '@myTypes'
+
+const createGuild = async (payload: GuildInput): Promise<GuildOutput> => {
   const guild = await Guild.create(payload)
 
   return guild
 }
 
-export const updateGuild = async (id: string, payload: Partial<GuildInput>): Promise<GuildOutput> => {
+const updateGuild = async (
+  id: string,
+  payload: Partial<GuildInput>
+): Promise<GuildOutput> => {
   const guild = await Guild.findByPk(id)
 
   if (!guild) {
@@ -20,7 +24,7 @@ export const updateGuild = async (id: string, payload: Partial<GuildInput>): Pro
   return updatedGuild
 }
 
-export const getGuildByID = async (id: string): Promise<GuildOutput> => {
+const getGuildByID = async (id: string): Promise<GuildOutput> => {
   const guild = await Guild.findByPk(id)
 
   if (!guild) {
@@ -30,19 +34,29 @@ export const getGuildByID = async (id: string): Promise<GuildOutput> => {
   return guild
 }
 
-export const deleteGuild = async (id: string): Promise<boolean> => {
+const deleteGuild = async (id: string): Promise<boolean> => {
   const deletedGuildCount = await Guild.destroy({
-    where: { id }
+    where: { id },
   })
 
   return !!deletedGuildCount
 }
 
-export const getAllGuilds = async (filters?: GetAllGuildsFilters): Promise<GuildOutput[]> => {
+const getAllGuilds = async (
+  filters?: GetAllGuildsFilters
+): Promise<GuildOutput[]> => {
   return Guild.findAll({
     where: {
-      ...(filters?.isDeleted && { deletedAt: {[Op.not]: null}})
+      ...(filters?.isDeleted && { deletedAt: { [Op.not]: null } }),
     },
-    ...((filters?.isDeleted || filters?.includedDeleted) && { paranoid: true })
+    ...((filters?.isDeleted || filters?.includedDeleted) && { paranoid: true }),
   })
+}
+
+export default {
+  getAllGuilds,
+  deleteGuild,
+  getGuildByID,
+  updateGuild,
+  createGuild,
 }

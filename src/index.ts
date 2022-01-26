@@ -1,4 +1,4 @@
-import { ExtendedClient } from '@root/structures/Client'
+import { ExtendedClient } from '@structures/Client'
 
 export const client: ExtendedClient = new ExtendedClient()
 

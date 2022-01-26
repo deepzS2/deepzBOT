@@ -1,43 +1,57 @@
 {
   "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
-    "lib": [
-      "es6",
-      "ESNext",
-      "ESNext.Array",
-      "ESNext.AsyncIterable",
-      "ESNext.Intl",
-      "ESNext.Symbol",
-      "DOM"
-    ],
-    "sourceMap": false,
-    "inlineSourceMap": true,
-    "inlineSources": true,
-    "incremental": true,
-    "allowJs": true,
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "removeComments": true,
-    "typeRoots": ["./node_modules/@types", "./src/@types"],
+    // Modules, JS target and libs
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "esModuleInterop": true,
+    "isolatedModules": true,
+
+    // No sourcemaps
+    "sourceMap": false,
+
+    // Allow JS
+    "allowJs": true,
+
+    // Build root and out dir
+    "outDir": "dist",
+    "rootDir": "src",
+
+    // JSON
     "resolveJsonModule": true,
+
+    // Skip .d.ts files check
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+
+    // Correct casing
+    "forceConsistentCasingInFileNames": true,
+
+    // Imports configuration
+    "importHelpers": true,
+
+    // Decorators
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+
+    // Babel compiling
+    "declaration": true,
+    "emitDeclarationOnly": true,
+
+    // Module paths
+    "baseUrl": "src",
     "paths": {
-      "@commands/*": ["./src/commands/*"],
-      "@models/*": ["./src/models/*"],
-      "@reactions/*": ["./src/reactions/*"],
-      "@customTypes/*": ["./src/@types/*"],
-      "@database": ["./src/database"],
-      "@assets/*": ["./src/assets/*"],
-      "@utils/*": ["./src/utils/*"],
-      "@services/*": ["./src/services/*"],
-      "@root/*": ["./src/*"]
+      "@commands/*": ["commands/*"],
+      // "@reactions/*": ["reactions/*"],
+      "@myTypes": ["@types/index"],
+      "@database/*": ["database/*"],
+      // "@assets/*": ["assets/*"],
+      // "@utils/*": ["utils/*"],
+      "@services/*": ["services/*"],
+      "@structures/*": ["structures/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

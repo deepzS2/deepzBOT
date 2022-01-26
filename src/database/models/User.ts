@@ -17,10 +17,13 @@ interface UserAttributes {
   deletedAt?: Date
 }
 
-export interface UserInput extends Optional<UserAttributes, 'bio'> {}
-export interface UserOutput extends Required<UserAttributes> {}
+export type UserInput = Optional<UserAttributes, 'bio'>
+export type UserOutput = Required<UserAttributes>
 
-class User extends Model<UserAttributes, UserInput> implements UserAttributes {
+export class UserModel
+  extends Model<UserAttributes, UserInput>
+  implements UserAttributes
+{
   public id!: string
   public username!: string
   public bio!: string
@@ -38,51 +41,54 @@ class User extends Model<UserAttributes, UserInput> implements UserAttributes {
 }
 
 export default function (sequelize: Sequelize) {
-  return User.init({
-    id: {
-      type: DataTypes.STRING,
-      primaryKey: true
+  return UserModel.init(
+    {
+      id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
+      },
+      username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      bio: {
+        type: DataTypes.STRING,
+      },
+      couple: {
+        type: DataTypes.STRING,
+      },
+      backgroundImage: {
+        type: DataTypes.STRING,
+      },
+      osu: {
+        type: DataTypes.STRING,
+      },
+      reputation: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      balance: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
+      },
+      xp: {
+        type: DataTypes.FLOAT,
+        defaultValue: 0,
+      },
+      daily: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+      },
+      dailyRep: {
+        type: DataTypes.DATE,
+        defaultValue: NOW,
+      },
     },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    bio: {
-      type: DataTypes.STRING
-    },
-    couple: {
-      type: DataTypes.STRING
-    },
-    backgroundImage: {
-      type: DataTypes.STRING
-    },
-    osu: {
-      type: DataTypes.STRING
-    },
-    reputation: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0
-    },
-    balance: {
-      type: DataTypes.FLOAT,
-      defaultValue: 0
-    },
-    xp: {
-      type: DataTypes.FLOAT,
-      defaultValue: 0
-    },
-    daily: {
-      type: DataTypes.DATE,
-      defaultValue: NOW
-    },
-    dailyRep: {
-      type: DataTypes.DATE,
-      defaultValue: NOW
+    {
+      timestamps: true,
+      sequelize,
+      paranoid: true,
+      modelName: 'users',
     }
-  }, {
-    timestamps: true,
-    sequelize,
-    paranoid: true,
-    modelName: 'users'
-  })
+  )
 }

@@ -1,14 +1,18 @@
 import { Op } from 'sequelize'
-import { GetAllUsersFilters } from '../../@types/dal'
-import { User } from '..' 
-import { UserInput, UserOutput } from '../models/User'
 
-export const createUser = async (payload: UserInput): Promise<UserOutput> => {
+import { User } from '@database/connection'
+import { UserInput, UserOutput } from '@database/models/User'
+import { GetAllUsersFilters } from '@myTypes'
+
+const createUser = async (payload: UserInput): Promise<UserOutput> => {
   const user = await User.create(payload)
   return user
 }
 
-export const updateUser = async (id: string, payload: Partial<UserInput>): Promise<UserOutput> => {
+const updateUser = async (
+  id: string,
+  payload: Partial<UserInput>
+): Promise<UserOutput> => {
   const user = await User.findByPk(id)
 
   if (!user) {
@@ -19,8 +23,8 @@ export const updateUser = async (id: string, payload: Partial<UserInput>): Promi
   return updatedUser
 }
 
-export const getUserByID = async (id: string): Promise<UserOutput> => {
-  const user =  await User.findByPk(id)
+const getUserByID = async (id: string): Promise<UserOutput> => {
+  const user = await User.findByPk(id)
 
   if (!user) {
     throw new Error('User not found with that ID')
@@ -29,19 +33,29 @@ export const getUserByID = async (id: string): Promise<UserOutput> => {
   return user
 }
 
-export const deleteUser = async (id: string): Promise<boolean> => {
+const deleteUser = async (id: string): Promise<boolean> => {
   const deletedUserCount = await User.destroy({
-    where: { id }
+    where: { id },
   })
 
   return !!deletedUserCount
 }
 
-export const getAllUsers = async (filters?: GetAllUsersFilters): Promise<UserOutput[]> => {
+const getAllUsers = async (
+  filters?: GetAllUsersFilters
+): Promise<UserOutput[]> => {
   return User.findAll({
     where: {
-      ...(filters?.isDeleted && { deletedAt: {[Op.not]: null}})
+      ...(filters?.isDeleted && { deletedAt: { [Op.not]: null } }),
     },
-    ...((filters?.isDeleted || filters?.includedDeleted) && { paranoid: true })
+    ...((filters?.isDeleted || filters?.includedDeleted) && { paranoid: true }),
   })
+}
+
+export default {
+  getAllUsers,
+  deleteUser,
+  getUserByID,
+  updateUser,
+  createUser,
 }

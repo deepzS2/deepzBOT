@@ -21,10 +21,13 @@ interface GuildAttributes {
   deletedAt?: Date
 }
 
-export interface GuildInput extends Omit<GuildAttributes, 'roles' | 'twitchs'> {}
-export interface GuildOutput extends Required<GuildAttributes> {}
+export type GuildInput = Omit<GuildAttributes, 'roles' | 'twitchs'>
+export type GuildOutput = Required<GuildAttributes>
 
-class Guild extends Model<GuildAttributes, GuildInput> implements GuildAttributes {
+export class GuildModel
+  extends Model<GuildAttributes, GuildInput>
+  implements GuildAttributes
+{
   public id!: string
   public name!: string
   public readonly twitchs!: string
@@ -41,68 +44,73 @@ class Guild extends Model<GuildAttributes, GuildInput> implements GuildAttribute
 }
 
 export default function (sequelize: Sequelize) {
-  return Guild.init({
-    id: {
-      type: DataTypes.STRING,
-      primaryKey: true
-    },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    couple: {
-      type: DataTypes.STRING
-    },
-    twitchs: {
-      type: DataTypes.TEXT,
-    },
-    twitchsVirtual: {
-      type: DataTypes.VIRTUAL,
-      set: function (value) {
-        this.setDataValue('twitchs', (value as string[]).join(','))
+  return GuildModel.init(
+    {
+      id: {
+        type: DataTypes.STRING,
+        primaryKey: true,
       },
-      get: function () {
-        const rawValue = this.getDataValue('twitchs')
-
-        return rawValue.split(',')
-      }
-    },
-    notificationChannel: {
-      type: DataTypes.STRING,
-    },
-    roleMessage: {
-      type: DataTypes.TEXT,
-    },
-    channelRoleMessage: {
-      type: DataTypes.STRING,
-    },
-    roles: {
-      type: DataTypes.TEXT,
-    },
-    rolesVirtual: {
-      type: DataTypes.VIRTUAL,
-      set: function (value) {
-        const roles = (value as Role[]).map(role => `${role.role}/${role.emoji}`)
-
-        this.setDataValue('roles', roles.join(','))
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
-      get: function (): Role[] {
-        const roles = this.getDataValue('roles').split(',')
-        
-        return roles.map(role => {
-          let [name, emoji] = role.split('/')
+      couple: {
+        type: DataTypes.STRING,
+      },
+      twitchs: {
+        type: DataTypes.TEXT,
+      },
+      twitchsVirtual: {
+        type: DataTypes.VIRTUAL,
+        set: function (value) {
+          this.setDataValue('twitchs', (value as string[]).join(','))
+        },
+        get: function () {
+          const rawValue = this.getDataValue('twitchs')
 
-          return {
-            role: name,
-            emoji
-          }
-        })
-      }
+          return rawValue.split(',')
+        },
+      },
+      notificationChannel: {
+        type: DataTypes.STRING,
+      },
+      roleMessage: {
+        type: DataTypes.TEXT,
+      },
+      channelRoleMessage: {
+        type: DataTypes.STRING,
+      },
+      roles: {
+        type: DataTypes.TEXT,
+      },
+      rolesVirtual: {
+        type: DataTypes.VIRTUAL,
+        set: function (value) {
+          const roles = (value as Role[]).map(
+            (role) => `${role.role}/${role.emoji}`
+          )
+
+          this.setDataValue('roles', roles.join(','))
+        },
+        get: function (): Role[] {
+          const roles = this.getDataValue('roles').split(',')
+
+          return roles.map((role) => {
+            const [name, emoji] = role.split('/')
+
+            return {
+              role: name,
+              emoji,
+            }
+          })
+        },
+      },
+    },
+    {
+      timestamps: true,
+      sequelize: sequelize,
+      paranoid: true,
+      modelName: 'guilds',
     }
-  }, {
-    timestamps: true,
-    sequelize: sequelize,
-    paranoid: true,
-    modelName: 'guilds'
-  })
+  )
 }

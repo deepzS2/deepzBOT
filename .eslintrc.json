@@ -1,37 +1,35 @@
 {
   "env": {
     "es2020": true,
-    "node": true,
-    "jest": true
+    "node": true
   },
   "extends": [
-    "standard",
+    "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
-    "prettier/@typescript-eslint",
+    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "ecmaVersion": 11,
-    "sourceType": "module"
-  },
   "plugins": ["@typescript-eslint", "prettier", "eslint-plugin-import-helpers"],
   "rules": {
+    // Default eslint configuration
     "no-new": "off",
     "no-prototype-builtins": "off",
     "no-restricted-syntax": "off",
+    "no-unsafe-finally": "off",
     "semi": "off",
     "no-console": "off",
     "camelcase": "off",
-    "import/prefer-default-export": "off",
+
+    // Typescript
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "prettier/prettier": ["error", {
-      "semi": false,
-      "singleQuote": true
-    }],
+
+    // Import and import gelpers
+    "import/prefer-default-export": "off",
+    "import/no-duplicates": "off",
     "import-helpers/order-imports": [
       "warn",
       {
@@ -47,14 +45,6 @@
           "ignoreCase": true
         }
       }
-    ],
-    "import/no-duplicates": "off"
-  },
-  "settings": {
-    "import/resolver": {
-      "typescript": {
-        "directory": "./tsconfig.json"
-      }
-    }
+    ]
   }
 }

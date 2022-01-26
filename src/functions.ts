@@ -1,6 +1,6 @@
-import { Message, GuildMember, MessageMentions } from 'discord.js'
+import { Message, GuildMember } from 'discord.js'
 
-import { client } from '.'
+// import { client } from '.'
 
 export const functions = {
   /**

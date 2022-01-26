@@ -1,12 +1,19 @@
-yarn-error.log
-.env
+# Node modules
 node_modules
-package-lock.json
-tags
+
+# Dev database
+*.sqlite
+
+# Yarn
+yarn.lock
+yarn-*.log
+
+# Environment variables
+.env
+
+# Builded bot
 dist
 coverage
-.vscode
-test.ts
-tags
 
-TODOs.txt
+# VSCode settings
+.vscode

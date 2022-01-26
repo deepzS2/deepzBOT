@@ -1,4 +1,4 @@
-import { CommandType } from '../@types/command'
+import { CommandType } from '@myTypes'
 
 /**
  * Class for creating a command

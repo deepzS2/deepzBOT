@@ -1,3 +1,4 @@
+import { botConfig } from 'config'
 import {
   ApplicationCommandDataResolvable,
   Client,
@@ -6,16 +7,19 @@ import {
   Intents,
 } from 'discord.js'
 import glob from 'glob'
+import path from 'path'
 import { promisify } from 'util'
 
-import { RegisterCommandsOptions } from '@customTypes/client'
-import { CommandType } from '@customTypes/command'
-import { BotConfiguration } from '@customTypes/environment'
-import { Event } from '@root/structures/Event'
-
-import { botConfig } from '../config'
+import {
+  RegisterCommandsOptions,
+  CommandType,
+  BotConfiguration,
+} from '@myTypes'
+import { Event } from '@structures/Event'
 
 const globPromise = promisify(glob)
+const commandsPath = path.join(__dirname, '..', 'commands', '*', '*{.ts,.js}')
+const eventsPath = path.join(__dirname, '..', 'events', '*{.ts,.js}')
 
 export class ExtendedClient extends Client {
   public readonly commands: Collection<string, CommandType> = new Collection()
@@ -45,9 +49,7 @@ export class ExtendedClient extends Client {
    */
   async registerModules(): Promise<void> {
     const slashCommands: ApplicationCommandDataResolvable[] = []
-    const commandFiles = await globPromise(
-      `${__dirname}/../commands/*/*{.ts,.js}`
-    )
+    const commandFiles = await globPromise(commandsPath)
 
     commandFiles.forEach(async (filePath) => {
       const command: CommandType = await this.importFile(filePath)
@@ -63,7 +65,7 @@ export class ExtendedClient extends Client {
     })
 
     // Event
-    const eventFiles = await globPromise(`${__dirname}/../events/*{.ts,.js}`)
+    const eventFiles = await globPromise(eventsPath)
     eventFiles.forEach(async (filePath) => {
       const event: Event<keyof ClientEvents> = await this.importFile(filePath)
 

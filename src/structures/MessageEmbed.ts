@@ -9,6 +9,7 @@ import {
 
 interface EmbedOptions {
   color?: ColorResolvable
+  description?: string
   thumbnail?: string
   image?: string
   url?: string
@@ -23,12 +24,13 @@ interface EmbedOptions {
  * So it's easy to create a embed
  */
 export default class CustomMessageEmbed extends MessageEmbed {
-  constructor(title: string, description: string, options?: EmbedOptions) {
+  constructor(title: string, options?: EmbedOptions) {
     super()
 
     this.setTitle(title)
-    this.setDescription(description)
     this.setColor(options.color || embedGlobalColor)
+
+    if (options.description) this.setDescription(options.description)
 
     if (options.thumbnail) this.setThumbnail(options.thumbnail)
 

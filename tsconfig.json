@@ -5,8 +5,9 @@
     "lib": ["ESNext"],
     "module": "CommonJS",
     "moduleResolution": "node",
-    "esModuleInterop": true,
     "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
 
     // No sourcemaps
     "sourceMap": false,

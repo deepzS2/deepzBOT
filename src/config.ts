@@ -19,6 +19,7 @@ export const botConfig: BotConfiguration = {
   botOwnerRoleName: process.env.BOT_OWNER_ROLE_NAME,
   enableReactions: true,
   guildId: process.env.GUILD.toString(),
+  ownerId: process.env.OWNER_ID.toString(),
 }
 
 /**
@@ -33,7 +34,7 @@ export const databaseConfig: DatabaseConfiguration = {
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   storage: 'database.sqlite',
-  logging: isDev,
+  logging: false,
 }
 
 export const embedGlobalColor = '#483D3F'

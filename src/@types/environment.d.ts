@@ -8,6 +8,7 @@ declare global {
       BOT_OWNER_ROLE_NAME: string
       ENABLE_REACTIONS: boolean
       ID: number
+      OWNER_ID: number
       GUILD: number
 
       OSU_API_KEY: string
@@ -31,6 +32,7 @@ export interface BotConfiguration {
   botOwnerRoleName: string
   enableReactions: boolean
   guildId: string
+  ownerId: string
 }
 
 export interface DatabaseConfiguration {

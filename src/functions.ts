@@ -1,45 +1,30 @@
-import { Message, GuildMember } from 'discord.js'
+import dayjs from 'dayjs'
+import { MessageMentions } from 'discord.js'
+import 'dayjs/locale/pt-br'
+import { client } from 'index'
 
-// import { client } from '.'
+/**
+ * Return a User object from mention
+ * @param mention Mention string
+ */
+export const getUserFromMentions = (mention: string) => {
+  if (!mention) return
 
-export const functions = {
-  /**
-   * Get member with the params
-   * @param msg Message
-   * @param toFind String with the mention
-   */
-  getMember: function (msg: Message, toFind = ''): GuildMember {
-    toFind = toFind.toLowerCase()
+  const matches = mention.match(MessageMentions.USERS_PATTERN)
 
-    let target = msg.guild.members.cache.get(toFind)
+  if (!matches) return
 
-    if (!target && msg.mentions.members) target = msg.mentions.members.first()
+  const id = matches[1]
 
-    if (!target && toFind) {
-      target = msg.guild.members.cache.find((member) => {
-        return (
-          member.displayName.toLowerCase().includes(toFind) ||
-          member.user.tag.toLowerCase().includes(toFind)
-        )
-      })
-    }
+  return client.users.cache.get(id)
+}
 
-    if (!target) target = msg.member
-
-    return target
-  },
-  // getUserFromMention: function (mention: string) {
-  //   if (!mention) return
-
-  //   const matches = mention.match(MessageMentions.USERS_PATTERN)
-
-  //   if (!matches) return
-
-  //   const id = matches[1]
-
-  //   return client.users.cache.get(id)
-  // },
-  formatDate: function (date: Date): string {
-    return new Intl.DateTimeFormat('pt-BR').format(date)
-  },
+/**
+ * Format to pt-br locale string
+ * @param date The Date object
+ */
+export const formatDate = (date: Date) => {
+  return dayjs(date, {
+    locale: 'pt-br',
+  }).format('DD/MM/YYYY HH:mm:ss')
 }

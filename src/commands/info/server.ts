@@ -30,7 +30,8 @@ export default new Command({
       },
     ]
 
-    return new CustomMessageEmbed(guild.name, 'Server Information', {
+    return new CustomMessageEmbed(guild.name, {
+      description: 'Server Information',
       thumbnail: imageURL,
       fields,
     })

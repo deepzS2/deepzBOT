@@ -35,3 +35,5 @@ export const databaseConfig: DatabaseConfiguration = {
   storage: 'database.sqlite',
   logging: isDev,
 }
+
+export const embedGlobalColor = '#483D3F'

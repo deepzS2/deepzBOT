@@ -1,9 +1,11 @@
 import { botConfig } from 'config'
+import { MessageEmbed } from 'discord.js'
 import { client } from 'index'
 
 import { UserDAL } from '@database/index'
 import { CommandType } from '@myTypes'
 import { Event } from '@structures/Event'
+import CustomMessageEmbed from '@structures/MessageEmbed'
 
 export default new Event('messageCreate', async (message) => {
   const { prefix } = botConfig
@@ -12,10 +14,9 @@ export default new Event('messageCreate', async (message) => {
   if (message.author.bot) return
 
   try {
-    const user = await checkIfUserExists(
-      message.author.id,
-      message.author.username
-    )
+    const { id: userId, username: userTag } = message.author
+
+    const user = await checkIfUserExists(userId, userTag)
 
     if (user) {
       await UserDAL.updateUser(user.id, {
@@ -34,7 +35,10 @@ export default new Event('messageCreate', async (message) => {
       const args = message.content.slice(prefix.length).trim().split(/ +/g)
       const command = args.shift().toLowerCase()
 
-      const cmd: CommandType = client.commands.get(command)
+      // Try get by command name or aliases
+      const cmd: CommandType =
+        client.commands.get(command) ||
+        client.commands.get(client.aliases.get(command))
 
       if (!cmd) return
 
@@ -42,14 +46,24 @@ export default new Event('messageCreate', async (message) => {
       message.channel.sendTyping()
 
       // The response is a string or nothing always so it's easy to handle with slash and message
-      const response = await cmd.run({
+      const responseMessage = await cmd.run({
         args,
         client,
         message,
       })
 
-      if (response && typeof response === 'string')
-        message.channel.send(response)
+      if (!responseMessage) return
+
+      // Embed message
+      if (responseMessage instanceof CustomMessageEmbed)
+        return message.channel.send({
+          embeds: [responseMessage as MessageEmbed],
+        })
+
+      // Simple string message
+      if (typeof responseMessage === 'string') {
+        return message.channel.send(responseMessage)
+      }
     }
   }
 })
@@ -59,7 +73,7 @@ async function checkIfUserExists(id: string, username: string) {
     let user = await UserDAL.getUserByID(id)
 
     if (user.username !== username) {
-      user = await UserDAL.updateUser(id, { username })
+      user = await UserDAL.updateUser(user.id, { username })
     }
 
     return user

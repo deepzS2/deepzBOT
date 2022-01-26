@@ -27,6 +27,10 @@
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "off",
 
+    "prettier/prettier": ["error", {}, {
+      "usePrettierrc": true
+    }],
+
     // Import and import gelpers
     "import/prefer-default-export": "off",
     "import/no-duplicates": "off",

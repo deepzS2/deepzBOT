@@ -5,7 +5,7 @@ interface Role {
   emoji: string
 }
 
-interface GuildAttributes {
+export interface GuildAttributes {
   id: string
   name: string
   twitchs?: string
@@ -28,19 +28,19 @@ export class GuildModel
   extends Model<GuildAttributes, GuildInput>
   implements GuildAttributes
 {
-  public id!: string
-  public name!: string
-  public readonly twitchs!: string
-  public twitchsVirtual!: string[]
-  public couple!: string
-  public notificationChannel!: string
-  public roleMessage!: string
-  public channelRoleMessage!: number
-  public readonly roles!: string
-  public rolesVirtual!: Role[]
-  public readonly createdAt!: Date
-  public readonly updatedAt!: Date
-  public readonly deletedAt!: Date
+  declare id: string
+  declare name: string
+  declare readonly twitchs: string
+  declare twitchsVirtual: string[]
+  declare couple: string
+  declare notificationChannel: string
+  declare roleMessage: string
+  declare channelRoleMessage: number
+  declare readonly roles: string
+  declare rolesVirtual: Role[]
+  declare readonly createdAt: Date
+  declare readonly updatedAt: Date
+  declare readonly deletedAt: Date
 }
 
 export default function (sequelize: Sequelize) {

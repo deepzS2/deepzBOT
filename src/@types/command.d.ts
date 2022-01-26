@@ -7,6 +7,8 @@ import {
   Message,
 } from 'discord.js'
 
+import CustomMessageEmbed from '@structures/MessageEmbed'
+
 import { ExtendedClient } from '../structures/Client'
 
 export interface ExtendedInteraction extends CommandInteraction {
@@ -20,10 +22,11 @@ interface RunOptions {
   args: CommandInteractionOptionResolver | string[]
 }
 
-type RunFunction = (options: RunOptions) => unknown | string
+type RunFunction = (options: RunOptions) => Promise<CustomMessageEmbed | string>
 
 export type CommandType = {
-  userPermissions?: PermissionResolvable[]
+  aliases?: string[]
   slash?: boolean | 'both'
+  userPermissions?: PermissionResolvable[]
   run: RunFunction
 } & ChatInputApplicationCommandData

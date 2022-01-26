@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional, NOW, Sequelize } from 'sequelize'
 
-interface UserAttributes {
+export interface UserAttributes {
   id: string
   username: string
   bio: string
@@ -24,20 +24,20 @@ export class UserModel
   extends Model<UserAttributes, UserInput>
   implements UserAttributes
 {
-  public id!: string
-  public username!: string
-  public bio!: string
-  public couple!: string
-  public backgroundImage!: string
-  public osu!: string
-  public reputation!: number
-  public balance!: number
-  public xp!: number
-  public daily!: Date
-  public dailyRep!: Date
-  public readonly createdAt!: Date
-  public readonly updatedAt!: Date
-  public readonly deletedAt!: Date
+  declare id: string
+  declare username: string
+  declare bio: string | null
+  declare couple: string | null
+  declare backgroundImage: string | null
+  declare osu: null
+  declare reputation: number
+  declare balance: number
+  declare xp: number
+  declare daily: Date
+  declare dailyRep: Date
+  declare readonly createdAt: Date
+  declare readonly updatedAt: Date
+  declare readonly deletedAt: Date
 }
 
 export default function (sequelize: Sequelize) {

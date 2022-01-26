@@ -23,6 +23,7 @@ const eventsPath = path.join(__dirname, '..', 'events', '*{.ts,.js}')
 
 export class ExtendedClient extends Client {
   public readonly commands: Collection<string, CommandType> = new Collection()
+  public readonly aliases: Collection<string, string> = new Collection()
 
   constructor() {
     super({
@@ -56,12 +57,20 @@ export class ExtendedClient extends Client {
 
       if (!command.name) return
 
-      // If not a slash command or both
-      if (!command.slash || command.slash === 'both')
+      if (command.slash === 'both') {
         this.commands.set(command.name, command)
-
-      // If a slash command or both
-      if (command.slash || command.slash === 'both') slashCommands.push(command)
+        command.aliases?.forEach((alias) =>
+          this.aliases.set(alias, command.name)
+        )
+        slashCommands.push(command)
+      } else if (!command.slash) {
+        this.commands.set(command.name, command)
+        command.aliases.forEach((alias) =>
+          this.aliases.set(alias, command.name)
+        )
+      } else {
+        slashCommands.push(command)
+      }
     })
 
     // Event

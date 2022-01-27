@@ -4,9 +4,14 @@ import {
   ExtendedInteraction,
   RunFunction,
   RunOptions,
+  CommandCategory,
 } from './command'
 import { GetAllGuildsFilters, GetAllUsersFilters } from './dal'
-import { BotConfiguration, DatabaseConfiguration } from './environment'
+import {
+  BotConfiguration,
+  DatabaseConfiguration,
+  CategoryEmoji,
+} from './environment'
 import {
   IGetPlayerSummariesResponse,
   IResolveVanityURLResponse,
@@ -26,4 +31,6 @@ export {
   IGetPlayerSummariesResponse,
   IResolveVanityURLResponse,
   IPlayerBansResponse,
+  CommandCategory,
+  CategoryEmoji,
 }

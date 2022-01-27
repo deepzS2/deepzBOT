@@ -22,11 +22,25 @@ interface RunOptions {
   args: CommandInteractionOptionResolver | string[]
 }
 
-type RunFunction = (options: RunOptions) => Promise<CustomMessageEmbed | string>
+type RunFunction = (
+  options: RunOptions
+) => Promise<CustomMessageEmbed | MessagePayload | string>
+
+export type CommandCategory =
+  | 'INFO'
+  | 'FUNNY'
+  | 'CORE'
+  | 'ECONOMY'
+  | 'SOCIAL'
+  | 'AUDIO'
+  | 'MODERATION'
+  | 'GAMES'
 
 export type CommandType = {
   aliases?: string[]
   slash?: boolean | 'both'
+  category: CommandCategory
+  examples?: string[]
   userPermissions?: PermissionResolvable[]
   run: RunFunction
 } & ChatInputApplicationCommandData

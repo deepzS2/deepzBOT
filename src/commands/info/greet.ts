@@ -6,6 +6,7 @@ export default new Command({
   name: 'greet',
   aliases: ['greetings', 'gret'],
   description: 'Sends you a hello world!',
+  category: 'INFO',
   slash: false,
   run: async ({ client }) => {
     const owner = await client.users.fetch(botConfig.ownerId)

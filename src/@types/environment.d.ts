@@ -1,3 +1,5 @@
+import { CommandCategory } from './command'
+
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
@@ -45,6 +47,11 @@ export interface DatabaseConfiguration {
   name: string
   storage?: string
   logging: boolean
+}
+
+export interface CategoryEmoji {
+  name: CommandCategory
+  emoji: string
 }
 
 export {}

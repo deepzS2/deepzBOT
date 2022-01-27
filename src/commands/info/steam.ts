@@ -1,10 +1,10 @@
 import { stripIndents } from 'common-tags'
-import { CommandInteractionOptionResolver } from 'discord.js'
 import fetch from 'node-fetch'
 
 import { IGetPlayerSummariesResponse, IPlayerBansResponse } from '@myTypes'
 import { steamToken } from '@root/config'
 import { formatDate } from '@root/functions'
+import getArgument from '@root/helpers/arguments'
 import getSteamID from '@root/helpers/steam'
 import logger from '@root/logger'
 import { Command } from '@structures/Command'
@@ -24,6 +24,7 @@ export default new Command({
   name: 'steam',
   aliases: ['stm', 'stem'],
   description: 'Try to get a user steam profile information',
+  category: 'INFO',
   options: [
     {
       name: 'id',
@@ -32,11 +33,13 @@ export default new Command({
       required: true,
     },
   ],
+  examples: ['d.steam http://steamcommunity.com/id/deepzqueen'],
   slash: 'both',
   run: async ({ args }) => {
-    const idToSearch =
-      (args as string[])[0] ||
-      (args as CommandInteractionOptionResolver).getString('id')
+    const idToSearch = getArgument('string', args, {
+      argumentName: 'id',
+      index: 0,
+    })
 
     if (!idToSearch) return
 

@@ -11,10 +11,10 @@ const REGEX_STEAMID = /^STEAM_[0-5]:[01]:\d+$/
 const REGEX_STEAMID3 = /^\[U:1:[0-9]+\]$/
 
 // Example: .../id/deepzqueen
-const STEAMCOMMUNITY_ID_URL = 'https://steamcommunity.com/id'
+const STEAMCOMMUNITY_ID_URL = 'steamcommunity.com/id'
 
 // Example: .../profiles/76940218508610
-const STEAMCOMMUNITY_PROFILE_URL = 'http://steamcommunity.com/profiles'
+const STEAMCOMMUNITY_PROFILE_URL = 'steamcommunity.com/profiles'
 
 const URL = (vanityUrl: string) =>
   `http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${steamToken}&vanityurl=${vanityUrl}`
@@ -30,20 +30,22 @@ export default async function getSteamID(dataToSearch: string) {
 
   if (REGEX_STEAMID.test(dataToSearch)) return toSteamID64(dataToSearch)
 
-  if (dataToSearch.startsWith(STEAMCOMMUNITY_PROFILE_URL)) {
-    return dataToSearch.split('/')[-1]
+  if (dataToSearch.includes(STEAMCOMMUNITY_PROFILE_URL)) {
+    return dataToSearch.split('/').pop()
   }
 
-  if (dataToSearch.startsWith(STEAMCOMMUNITY_ID_URL)) {
-    dataToSearch = dataToSearch.split('/')[-1]
+  if (dataToSearch.includes(STEAMCOMMUNITY_ID_URL)) {
+    dataToSearch = dataToSearch.split('/').pop()
   }
 
-  const vanityUrlBody: IResolveVanityURLResponse = await fetch(
-    URL(dataToSearch)
-  ).then((res) => res.json())
+  const body: IResolveVanityURLResponse = await fetch(URL(dataToSearch)).then(
+    (res) => res.json()
+  )
 
-  if (vanityUrlBody.response?.success === 42)
+  if (!body.response || body.response.success === 42)
     throw new Error('I was unable to find a steam profile with that name')
+
+  return body.response.steamid
 }
 
 function toSteamID64(steamid: string) {

@@ -12,7 +12,6 @@ export default new Event('interactionCreate', async (interaction) => {
 
     if (!command) return
 
-    // The response is a string or nothing always so it's easy to handle with slash and message
     const responseMessage = await command.run({
       args: interaction.options as CommandInteractionOptionResolver,
       client,

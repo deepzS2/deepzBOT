@@ -40,9 +40,9 @@ export class ExtendedClient extends Client {
   /**
    * Start the bot validating the config, registering modules and logging in
    */
-  start() {
+  async start() {
     this.validateConfig(botConfig)
-    this.registerModules()
+    await this.registerModules()
     this.login(botConfig.token)
   }
 

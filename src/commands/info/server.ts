@@ -7,6 +7,7 @@ export default new Command({
   name: 'server',
   aliases: ['sv'],
   description: 'Returns the server information',
+  category: 'INFO',
   slash: 'both',
   run: async ({ interaction, message }) => {
     const { guild, member } = interaction || message

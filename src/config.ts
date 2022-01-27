@@ -1,6 +1,10 @@
 import dotenv from 'dotenv'
 
-import { BotConfiguration, DatabaseConfiguration } from '@myTypes'
+import {
+  BotConfiguration,
+  DatabaseConfiguration,
+  CategoryEmoji,
+} from '@myTypes'
 
 // .env
 dotenv.config()
@@ -40,3 +44,38 @@ export const databaseConfig: DatabaseConfiguration = {
 export const steamToken = process.env.STEAM_TOKEN
 
 export const embedGlobalColor = '#483D3F'
+
+export const categoryEmojis: CategoryEmoji[] = [
+  {
+    name: 'INFO',
+    emoji: '🔎',
+  },
+  {
+    name: 'FUNNY',
+    emoji: '😄',
+  },
+  {
+    name: 'ECONOMY',
+    emoji: '⚖️',
+  },
+  {
+    name: 'SOCIAL',
+    emoji: '👤',
+  },
+  {
+    name: 'CORE',
+    emoji: 'ℹ️',
+  },
+  {
+    name: 'AUDIO',
+    emoji: '🎶',
+  },
+  {
+    name: 'MODERATION',
+    emoji: '👁️',
+  },
+  {
+    name: 'GAMES',
+    emoji: '🎮',
+  },
+]

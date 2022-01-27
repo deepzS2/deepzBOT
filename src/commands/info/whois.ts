@@ -1,17 +1,16 @@
 import { stripIndents } from 'common-tags'
-import {
-  CommandInteractionOptionResolver,
-  EmbedFieldData,
-  GuildMember,
-} from 'discord.js'
+import { EmbedFieldData, GuildMember } from 'discord.js'
 
 import { formatDate } from '@root/functions'
+import getArgument from '@root/helpers/arguments'
 import { Command } from '@structures/Command'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 
 export default new Command({
   name: 'whois',
   aliases: ['who', 'whis'],
+  description: 'Returns a mentioned user information',
+  category: 'INFO',
   options: [
     {
       name: 'user',
@@ -20,12 +19,13 @@ export default new Command({
       required: true,
     },
   ],
-  description: 'Returns a mentioned user information',
+  examples: ['d.whois @user'],
   slash: 'both',
   run: async ({ message, args, interaction }) => {
-    const member =
-      message?.mentions.members.first() ||
-      (args as CommandInteractionOptionResolver)?.getMentionable('user')
+    const member = getArgument('mention', args, {
+      message,
+      argumentName: 'user',
+    })
 
     const guild = message?.guild || interaction?.guild
 

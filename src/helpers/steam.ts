@@ -55,7 +55,7 @@ function toSteamID64(steamid: string) {
 
   if (!z || !y) return
 
-  return (v + z * 2n + y).toString()
+  return (v + z * BigInt(2) + y).toString()
 }
 
 function fromSteamID3(steamid3: string) {

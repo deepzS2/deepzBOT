@@ -38,7 +38,7 @@
     "@babel/node": "^7.10.1",
     "@babel/preset-env": "^7.10.2",
     "@babel/preset-typescript": "^7.10.1",
-    "@types/node": "^14.0.14",
+    "@types/node": "^14.18.5",
     "axios": "^0.21.3",
     "babel-plugin-module-resolver": "^4.0.0",
     "beautify": "^0.0.8",

@@ -72,6 +72,6 @@
     "tenorjs": "^1.0.7",
     "typeorm": "^0.2.41",
     "typescript": "^3.9.5",
-    "ytdl-core": "^4.5.0"
+    "ytdl-core": "^4.9.2"
   }
 }

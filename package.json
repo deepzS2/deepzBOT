@@ -33,12 +33,12 @@
     "tsconfig-paths": "^3.9.0"
   },
   "dependencies": {
-    "@babel/cli": "^7.10.1",
-    "@babel/core": "^7.10.2",
-    "@babel/node": "^7.10.1",
-    "@babel/preset-env": "^7.10.2",
-    "@babel/preset-typescript": "^7.10.1",
     "@types/node": "^14.18.5",
+    "@babel/cli": "^7.16.7",
+    "@babel/core": "^7.16.7",
+    "@babel/node": "^7.16.7",
+    "@babel/preset-env": "^7.16.7",
+    "@babel/preset-typescript": "^7.16.7",
     "axios": "^0.21.3",
     "babel-plugin-module-resolver": "^4.0.0",
     "beautify": "^0.0.8",
@@ -62,7 +62,7 @@
     "osu-bpdpc": "^0.1.1",
     "osu-pp-calculator": "^0.1.7",
     "parse-ms": "^2.1.0",
-    "pg": "^8.2.1",
+    "pg": "^8.7.1",
     "querystring": "^0.2.0",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",
@@ -72,6 +72,6 @@
     "tenorjs": "^1.0.7",
     "typeorm": "^0.2.41",
     "typescript": "^3.9.5",
-    "ytdl-core": "^4.5.0"
+    "ytdl-core": "^4.9.2"
   }
 }

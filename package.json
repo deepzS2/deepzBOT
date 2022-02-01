@@ -59,7 +59,7 @@
     "node-osu": "^2.2.0",
     "ojsama": "^1.2.5",
     "opusscript": "^0.0.7",
-    "osu-bpdpc": "^0.1.1",
+    "osu-bpdpc": "^0.3.0",
     "osu-pp-calculator": "^0.1.7",
     "parse-ms": "^2.1.0",
     "pg": "^8.7.1",

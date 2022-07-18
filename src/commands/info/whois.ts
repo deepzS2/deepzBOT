@@ -1,5 +1,9 @@
 import { stripIndents } from 'common-tags'
-import { EmbedFieldData, GuildMember } from 'discord.js'
+import {
+  ApplicationCommandOptionType,
+  EmbedField,
+  GuildMember,
+} from 'discord.js'
 
 import { formatDate } from '@root/functions'
 import getArgument from '@root/helpers/arguments'
@@ -15,7 +19,7 @@ export default new Command({
     {
       name: 'user',
       description: 'The target user',
-      type: 'MENTIONABLE',
+      type: ApplicationCommandOptionType.Mentionable,
       required: true,
     },
   ],
@@ -40,7 +44,7 @@ export default new Command({
         .map((r) => r.name)
         .join(', ') || 'none'
 
-    const embedFields: EmbedFieldData[] = [
+    const embedFields: EmbedField[] = [
       {
         name: 'Member Information',
         value: stripIndents`
@@ -48,6 +52,7 @@ export default new Command({
         **>** **Joined at:** ${joined}
         **>** **Roles:** ${roles}
       `,
+        inline: false,
       },
       {
         name: 'User Information',
@@ -57,6 +62,7 @@ export default new Command({
         **>** **Discord Tag:** ${member.user.tag}
         **>** **Created at:** ${created}
       `,
+        inline: false,
       },
     ]
 
@@ -64,6 +70,7 @@ export default new Command({
       embedFields.push({
         name: 'Currently playing',
         value: `**>** **Name:** ${member.presence.activities[0].name}`,
+        inline: false,
       })
     }
 

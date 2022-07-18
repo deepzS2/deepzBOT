@@ -1,4 +1,4 @@
-import { CommandInteractionOptionResolver, MessageEmbed } from 'discord.js'
+import { CommandInteractionOptionResolver, InteractionType } from 'discord.js'
 
 import { ExtendedInteraction } from '@myTypes'
 import { client } from '@root/index'
@@ -6,7 +6,7 @@ import { Event } from '@structures/Event'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 
 export default new Event('interactionCreate', async (interaction) => {
-  if (interaction.isCommand()) {
+  if (interaction.type === InteractionType.ApplicationCommand) {
     await interaction.deferReply()
     const command = client.commands.get(interaction.commandName)
 
@@ -23,7 +23,7 @@ export default new Event('interactionCreate', async (interaction) => {
     // Embed message
     if (responseMessage instanceof CustomMessageEmbed)
       return interaction.followUp({
-        embeds: [responseMessage as MessageEmbed],
+        embeds: [responseMessage],
       })
 
     // Simple string message

@@ -1,9 +1,9 @@
 import {
   ColorResolvable,
   EmbedAuthorData,
-  EmbedFieldData,
+  EmbedField,
+  EmbedBuilder,
   EmbedFooterData,
-  MessageEmbed,
 } from 'discord.js'
 
 import { embedGlobalColor } from '@root/config'
@@ -14,7 +14,7 @@ interface EmbedOptions {
   thumbnail?: string
   image?: string
   url?: string
-  fields?: EmbedFieldData[]
+  fields?: EmbedField[]
   footer?: EmbedFooterData
   author?: EmbedAuthorData
   timestamp?: number | Date | boolean
@@ -24,7 +24,7 @@ interface EmbedOptions {
  * Custom message embed class
  * So it's easy to create a embed
  */
-export default class CustomMessageEmbed extends MessageEmbed {
+export default class CustomMessageEmbed extends EmbedBuilder {
   constructor(title: string, options?: EmbedOptions) {
     super()
 

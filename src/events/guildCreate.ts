@@ -1,4 +1,5 @@
 import { stripIndents } from 'common-tags'
+import { ChannelType, PermissionFlagsBits } from 'discord.js'
 
 import { GuildDAL } from '@database/index'
 import { client } from '@root/index'
@@ -10,9 +11,9 @@ export default new Event('guildCreate', async (guild) => {
   guild.channels.cache.forEach((c) => {
     if (
       !found &&
-      c.type === 'GUILD_TEXT' &&
-      c.permissionsFor(client.user).has('VIEW_CHANNEL') &&
-      c.permissionsFor(client.user).has('SEND_MESSAGES')
+      c.type === ChannelType.GuildText &&
+      c.permissionsFor(client.user).has(PermissionFlagsBits.ViewChannel) &&
+      c.permissionsFor(client.user).has(PermissionFlagsBits.SendMessages)
     ) {
       c.send(stripIndents`
         **Thanks for adding me!! My name is deepz**

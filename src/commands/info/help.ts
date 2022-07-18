@@ -1,8 +1,10 @@
 import {
   BaseApplicationCommandOptionsData,
-  MessageActionRow,
-  MessageSelectMenu,
-  MessageSelectOptionData,
+  SelectMenuBuilder,
+  MessageSelectOption,
+  ApplicationCommandOptionType,
+  parseEmoji,
+  ComponentType,
 } from 'discord.js'
 
 import { CommandCategory, CommandType } from '@myTypes'
@@ -21,7 +23,7 @@ export default new Command({
     {
       name: 'command',
       description: 'A bot command to check the documentation',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
     },
   ],
   description: 'Returns all commands or get the documentation of a command',
@@ -53,21 +55,25 @@ export default new Command({
 
     embed.setDescription(`Hello ${authorUsername}, check my commands here:`)
 
-    const panelOptions: MessageSelectOptionData[] = categoryEmojis.map(
+    const panelOptions: MessageSelectOption[] = categoryEmojis.map(
       (category) => ({
         label: capitalizeString(category.name),
         value: category.name,
-        emoji: category.emoji,
+        emoji: parseEmoji(category.emoji),
         description: 'Check my commands for ' + category.name.toLowerCase(),
+        default: false,
       })
     )
 
-    const panel = new MessageActionRow().addComponents(
-      new MessageSelectMenu()
-        .setCustomId('help_command_category')
-        .setPlaceholder('Choose a category for commands')
-        .addOptions(panelOptions)
-    )
+    const panel = {
+      type: ComponentType.SelectMenu,
+      components: [
+        new SelectMenuBuilder()
+          .setCustomId('help_command_category')
+          .setPlaceholder('Choose a category for commands')
+          .addOptions(panelOptions),
+      ],
+    }
 
     try {
       const dropdown = await sendMessage(message, interaction, {
@@ -129,23 +135,36 @@ function buildHelpMessageForCommand(
       options += `\`${option.name}:\` ${option.description}\n`
     })
 
-    embed
-      .addField(
-        `***Usage***`,
-        `\`${prefix}${command.name}${optionsUsage}\``,
-        true
-      )
-      .addField(`***Options***`, options, true)
+    embed.addFields([
+      {
+        name: `***Usage***`,
+        value: `\`${prefix}${command.name}${optionsUsage}\``,
+        inline: true,
+      },
+      {
+        name: `***Options***`,
+        value: options,
+        inline: true,
+      },
+    ])
   }
 
   if (command.examples) {
     const examples = command.examples.map((example) => `\`${example}\``)
 
-    embed.addField(`***Examples***`, examples.join('\n'))
+    embed.addFields({
+      name: `***Examples***`,
+      value: examples.join('\n'),
+      inline: false,
+    })
   }
 
   return embed
-    .addField(`***Aliases***`, `*__${command.aliases.join(`,\n`)}__*`)
+    .addFields({
+      name: `***Aliases***`,
+      value: `*__${command.aliases.join(`,\n`)}__*`,
+      inline: false,
+    })
     .setFooter({
       text: '[] = optional, <> = obrigatory',
     })

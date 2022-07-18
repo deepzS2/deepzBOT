@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js'
+import { ChannelType } from 'discord.js'
 
 import { UserDAL } from '@database/index'
 import { CommandType } from '@myTypes'
@@ -31,7 +31,7 @@ export default new Event('messageCreate', async (message) => {
     // Command starts with prefix
     if (message.content.startsWith(prefix)) {
       // No DMs here...
-      if (message.channel.type === 'DM') return
+      if (message.channel.type === ChannelType.DM) return
 
       const args = message.content.slice(prefix.length).trim().split(/ +/g)
       const command = args.shift().toLowerCase()
@@ -58,7 +58,7 @@ export default new Event('messageCreate', async (message) => {
       // Embed message
       if (responseMessage instanceof CustomMessageEmbed)
         return message.channel.send({
-          embeds: [responseMessage as MessageEmbed],
+          embeds: [responseMessage],
         })
 
       // Simple string message

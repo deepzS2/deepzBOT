@@ -3,7 +3,7 @@ import {
   Client,
   ClientEvents,
   Collection,
-  Intents,
+  GatewayIntentBits,
 } from 'discord.js'
 import glob from 'glob'
 import path from 'path'
@@ -29,10 +29,10 @@ export class ExtendedClient extends Client {
   constructor() {
     super({
       intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_TYPING,
-        Intents.FLAGS.GUILD_MEMBERS,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageTyping,
+        GatewayIntentBits.GuildMembers,
       ],
     })
   }

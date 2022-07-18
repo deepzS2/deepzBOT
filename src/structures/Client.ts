@@ -1,15 +1,16 @@
+import { Player } from 'discord-player'
 import {
   ApplicationCommandDataResolvable,
   Client,
   ClientEvents,
   Collection,
-  GatewayIntentBits,
+  Intents,
 } from 'discord.js'
 import glob from 'glob'
 import path from 'path'
 import { promisify } from 'util'
 
-import { botConfig } from '@deepz/config'
+import { botConfig, isDev } from '@deepz/config'
 import logger from '@deepz/logger'
 import { RegisterCommandsOptions } from '@deepz/types/client'
 import { CommandType } from '@deepz/types/command'
@@ -23,14 +24,16 @@ const eventsPath = path.join(__dirname, '..', 'events', '*{.ts,.js}')
 export class ExtendedClient extends Client {
   public readonly commands: Collection<string, CommandType> = new Collection()
   public readonly aliases: Collection<string, string> = new Collection()
+  public player: Player
 
   constructor() {
     super({
       intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.GuildMessageTyping,
-        GatewayIntentBits.GuildMembers,
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_MESSAGE_TYPING,
+        Intents.FLAGS.GUILD_MEMBERS,
+        Intents.FLAGS.GUILD_VOICE_STATES,
       ],
     })
   }
@@ -42,6 +45,13 @@ export class ExtendedClient extends Client {
     this.validateConfig(botConfig)
     await this.registerModules()
     this.login(botConfig.token)
+
+    this.player = new Player(this, {
+      ytdlOptions: {
+        quality: 'highestaudio',
+        highWaterMark: 1 << 25,
+      },
+    })
   }
 
   /**
@@ -83,7 +93,7 @@ export class ExtendedClient extends Client {
           event.run(args)
           this.registerCommands({
             commands: slashCommands,
-            guildId: botConfig.guildId,
+            guildId: isDev && botConfig.guildId,
           })
         })
       } else {

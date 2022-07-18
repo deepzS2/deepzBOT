@@ -1,10 +1,7 @@
 import {
   BaseApplicationCommandOptionsData,
-  SelectMenuBuilder,
-  MessageSelectOption,
-  ApplicationCommandOptionType,
-  parseEmoji,
-  ComponentType,
+  MessageSelectMenu,
+  MessageSelectOptionData,
 } from 'discord.js'
 
 import { botConfig, categoryEmojis } from '@deepz/config'
@@ -23,65 +20,66 @@ export default new Command({
     {
       name: 'command',
       description: 'A bot command to check the documentation',
-      type: ApplicationCommandOptionType.String,
+      type: 'STRING',
+      required: false,
     },
   ],
   description: 'Returns all commands or get the documentation of a command',
-  examples: ['d.help greet'],
+  examples: ['/help greet'],
   slash: 'both',
   run: async ({ client, args, message, interaction }) => {
-    const owner = await client.users.fetch(botConfig.ownerId)
-    const command = getArgument('string', args, {
-      argumentName: 'command',
-      index: 0,
-    })
-
-    const embed = new CustomMessageEmbed('', {
-      author: { name: 'Help Menu', iconURL: client.user.displayAvatarURL() },
-      footer: {
-        text: `Developer: ${owner.tag}`,
-        iconURL: owner.displayAvatarURL(),
-      },
-    })
-
-    if (command) {
-      return client.commands.has(command)
-        ? buildHelpMessageForCommand(embed, client.commands.get(command))
-        : `**I didn't found any command with that name... Please try \`d.help\` to find all commands you can use.**`
-    }
-
-    const authorUsername =
-      message?.author.username || interaction?.user.username
-
-    embed.setDescription(`Hello ${authorUsername}, check my commands here:`)
-
-    const panelOptions: MessageSelectOption[] = categoryEmojis.map(
-      (category) => ({
-        label: capitalizeString(category.name),
-        value: category.name,
-        emoji: parseEmoji(category.emoji),
-        description: 'Check my commands for ' + category.name.toLowerCase(),
-        default: false,
-      })
-    )
-
-    const panel = {
-      type: ComponentType.SelectMenu,
-      components: [
-        new SelectMenuBuilder()
-          .setCustomId('help_command_category')
-          .setPlaceholder('Choose a category for commands')
-          .addOptions(panelOptions),
-      ],
-    }
-
     try {
+      const owner = await client.users.fetch(botConfig.ownerId)
+      const command = getArgument('string', args, {
+        argumentName: 'command',
+        index: 0,
+      })
+
+      const embed = new CustomMessageEmbed(' ', {
+        author: { name: 'Help Menu', iconURL: client.user.displayAvatarURL() },
+        footer: {
+          text: `Developer: ${owner.tag}`,
+          iconURL: owner.displayAvatarURL(),
+        },
+      })
+
+      if (command) {
+        return client.commands.has(command)
+          ? buildHelpMessageForCommand(embed, client.commands.get(command))
+          : `**I didn't found any command with that name... Please try \`/help\` to find all commands you can use.**`
+      }
+
+      const authorUsername =
+        message?.author.username || interaction?.user.username
+
+      embed.setDescription(`Hello ${authorUsername}, check my commands here:`)
+
+      const panelOptions: MessageSelectOptionData[] = categoryEmojis.map(
+        (category) => ({
+          label: capitalizeString(category.name),
+          value: category.name,
+          emoji: category.emoji,
+          description: 'Check my commands for ' + category.name.toLowerCase(),
+          default: false,
+        })
+      )
+
+      const selectPanel = new MessageSelectMenu()
+        .setCustomId('help_command_category')
+        .setPlaceholder('Choose a category for commands')
+        .addOptions(panelOptions)
+
       const dropdown = await sendMessage({
         message,
         interaction,
         content: {
           embeds: [embed],
-          components: [panel],
+          components: [
+            {
+              type: 'ACTION_ROW',
+              components: [selectPanel],
+            },
+          ],
           ephemeral: true,
         },
       })
@@ -91,12 +89,12 @@ export default new Command({
         time: 1000 * 10,
       })
 
-      collector.on('collect', (collected) => {
+      collector.on('collect', async (collected) => {
         if (
           collected.isSelectMenu() &&
           collected.customId === 'help_command_category'
         ) {
-          collected.deferUpdate()
+          await collected.deferUpdate()
 
           const value = collected.values[0] as CommandCategory
           const cmds = client.commands
@@ -109,8 +107,23 @@ export default new Command({
             )}\` here:\n${cmds.join(' ')}`
           )
 
-          dropdown.edit({ embeds: [embed], components: [panel] })
+          dropdown.edit({
+            embeds: [embed],
+            components: [
+              {
+                type: 'ACTION_ROW',
+                components: [selectPanel],
+              },
+            ],
+          })
         }
+      })
+
+      collector.on('end', async () => {
+        await dropdown.edit({
+          embeds: [embed],
+          components: [],
+        })
       })
     } catch (error) {
       logger.error(error)

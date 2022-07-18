@@ -5,20 +5,6 @@
     ["@babel/plugin-transform-runtime", { "regenerator": true }],
     "@babel/proposal-class-properties",
     "@babel/proposal-object-rest-spread",
-
-    // Module resolver
-    ["module-resolver", {
-      "alias": {
-        "@commands": "./src/commands",
-        // "@reactions": "reactions",
-        "@database": "./src/database",
-        // "@assets": "assets",
-        // "@utils": "utils",
-        "@services": "./src/services",
-        "@structures": "./src/structures",
-        "@myTypes": "./src/@types/index",
-        "@root": "./src"
-      }
-  }]
-]
+    "tsconfig-paths-module-resolver"
+  ]
 }

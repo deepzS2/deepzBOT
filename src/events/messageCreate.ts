@@ -1,5 +1,3 @@
-import { ChannelType } from 'discord.js'
-
 import { UserDAL } from '@database/index'
 import { botConfig } from '@deepz/config'
 import { client } from '@deepz/index'
@@ -8,6 +6,7 @@ import { CommandType } from '@deepz/types/command'
 import { Event } from '@structures/Event'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 
+// Now messages have blank content?
 export default new Event('messageCreate', async (message) => {
   const { prefix } = botConfig
 
@@ -31,7 +30,7 @@ export default new Event('messageCreate', async (message) => {
     // Command starts with prefix
     if (message.content.startsWith(prefix)) {
       // No DMs here...
-      if (message.channel.type === ChannelType.DM) return
+      if (message.channel.type === 'DM') return
 
       const args = message.content.slice(prefix.length).trim().split(/ +/g)
       const command = args.shift().toLowerCase()

@@ -1,5 +1,4 @@
 import { stripIndents } from 'common-tags'
-import { ApplicationCommandOptionType } from 'discord.js'
 import fetch from 'node-fetch'
 
 import { steamToken } from '@deepz/config'
@@ -33,11 +32,11 @@ export default new Command({
     {
       name: 'id',
       description: 'Steam ID, Steam ID64, Steam ID3 or Custom URL',
-      type: ApplicationCommandOptionType.String,
+      type: 'STRING',
       required: true,
     },
   ],
-  examples: ['d.steam http://steamcommunity.com/id/deepzqueen'],
+  examples: ['/steam http://steamcommunity.com/id/deepzqueen'],
   slash: 'both',
   run: async ({ args }) => {
     const idToSearch = getArgument('string', args, {

@@ -1,4 +1,4 @@
-import { EmbedField } from 'discord.js'
+import { EmbedFieldData } from 'discord.js'
 
 import { Command } from '@structures/Command'
 import CustomMessageEmbed from '@structures/MessageEmbed'
@@ -13,10 +13,10 @@ export default new Command({
     const { guild, member } = interaction || message
 
     const imageURL = guild.iconURL({
-      extension: 'png',
+      format: 'png',
     })
 
-    const fields: EmbedField[] = [
+    const fields: EmbedFieldData[] = [
       {
         name: 'Created on',
         value: guild.createdAt.toLocaleDateString(),

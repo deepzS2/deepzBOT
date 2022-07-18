@@ -1,9 +1,5 @@
 import { stripIndents } from 'common-tags'
-import {
-  ApplicationCommandOptionType,
-  EmbedField,
-  GuildMember,
-} from 'discord.js'
+import { EmbedField, GuildMember } from 'discord.js'
 
 import { formatDate } from '@deepz/functions'
 import getArgument from '@helpers/arguments'
@@ -19,11 +15,11 @@ export default new Command({
     {
       name: 'user',
       description: 'The target user',
-      type: ApplicationCommandOptionType.Mentionable,
+      type: 'MENTIONABLE',
       required: true,
     },
   ],
-  examples: ['d.whois @user'],
+  examples: ['/whois @user'],
   slash: 'both',
   run: async ({ message, args, interaction }) => {
     const member = getArgument('mention', args, {

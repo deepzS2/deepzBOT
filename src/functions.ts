@@ -20,7 +20,7 @@ import { ExtendedInteraction } from './@types/command'
 export const getUserFromMentions = (mention: string) => {
   if (!mention) return
 
-  const matches = mention.match(MessageMentions.UsersPattern)
+  const matches = mention.match(MessageMentions.USERS_PATTERN)
 
   if (!matches) return
 

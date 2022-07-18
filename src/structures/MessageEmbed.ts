@@ -1,8 +1,8 @@
 import {
   ColorResolvable,
   EmbedAuthorData,
-  EmbedField,
-  EmbedBuilder,
+  MessageEmbed,
+  EmbedFieldData,
   EmbedFooterData,
 } from 'discord.js'
 
@@ -14,7 +14,7 @@ interface EmbedOptions {
   thumbnail?: string
   image?: string
   url?: string
-  fields?: EmbedField[]
+  fields?: EmbedFieldData[]
   footer?: EmbedFooterData
   author?: EmbedAuthorData
   timestamp?: number | Date | boolean
@@ -24,30 +24,30 @@ interface EmbedOptions {
  * Custom message embed class
  * So it's easy to create a embed
  */
-export default class CustomMessageEmbed extends EmbedBuilder {
+export default class CustomMessageEmbed extends MessageEmbed {
   constructor(title: string, options?: EmbedOptions) {
     super()
 
     this.setTitle(title)
-    this.setColor(options.color || embedGlobalColor)
+    this.setColor(options?.color || embedGlobalColor)
 
-    if (options.description) this.setDescription(options.description)
+    if (options?.description) this.setDescription(options.description)
 
-    if (options.thumbnail) this.setThumbnail(options.thumbnail)
+    if (options?.thumbnail) this.setThumbnail(options.thumbnail)
 
-    if (options.url) this.setURL(options.url)
+    if (options?.url) this.setURL(options.url)
 
-    if (options.footer) this.setFooter(options.footer)
+    if (options?.footer) this.setFooter(options.footer)
 
-    if (options.author) this.setAuthor(options.author)
+    if (options?.author) this.setAuthor(options.author)
 
-    if (options.fields) this.addFields(options.fields)
+    if (options?.fields) this.addFields(options.fields)
 
-    if (options.timestamp)
+    if (options?.timestamp)
       this.setTimestamp(
         typeof options.timestamp === 'boolean' ? Date.now() : options.timestamp
       )
 
-    if (options.image) this.setImage(options.image)
+    if (options?.image) this.setImage(options.image)
   }
 }

@@ -1,5 +1,6 @@
 import { Player } from 'discord-player'
 import {
+  ActivitiesOptions,
   ApplicationCommandDataResolvable,
   Client,
   ClientEvents,
@@ -22,6 +23,20 @@ const commandsPath = path.join(__dirname, '..', 'commands', '*', '*{.ts,.js}')
 const eventsPath = path.join(__dirname, '..', 'events', '*{.ts,.js}')
 
 export class ExtendedClient extends Client {
+  private readonly activities: ActivitiesOptions[] = [
+    {
+      name: 'Delivering a new version to you!',
+      type: 'PLAYING',
+    },
+    {
+      name: 'Now with slash commands! Try /help',
+      type: 'PLAYING',
+    },
+    {
+      name: 'New version being developed!',
+      type: 'PLAYING',
+    },
+  ]
   public readonly commands: Collection<string, CommandType> = new Collection()
   public readonly aliases: Collection<string, string> = new Collection()
   public player: Player
@@ -52,6 +67,17 @@ export class ExtendedClient extends Client {
         highWaterMark: 1 << 25,
       },
     })
+
+    let i = 0
+    setInterval(() => {
+      const displayingStatus = this.activities[i]
+      this.user.setPresence({
+        status: 'dnd',
+        activities: [displayingStatus],
+      })
+
+      i = i + 1 > this.activities.length - 1 ? 0 : i + 1
+    }, 3 * 60 * 1000)
   }
 
   /**

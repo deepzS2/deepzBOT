@@ -2,12 +2,15 @@ import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType } from 'discord.js'
 import fetch from 'node-fetch'
 
-import { IGetPlayerSummariesResponse, IPlayerBansResponse } from '@myTypes'
-import { steamToken } from '@root/config'
-import { formatDate } from '@root/functions'
-import getArgument from '@root/helpers/arguments'
-import getSteamID from '@root/helpers/steam'
-import logger from '@root/logger'
+import { steamToken } from '@deepz/config'
+import { formatDate } from '@deepz/functions'
+import logger from '@deepz/logger'
+import {
+  IGetPlayerSummariesResponse,
+  IPlayerBansResponse,
+} from '@deepz/types/fetchs/steam'
+import getArgument from '@helpers/arguments'
+import getSteamID from '@helpers/steam'
 import { Command } from '@structures/Command'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 

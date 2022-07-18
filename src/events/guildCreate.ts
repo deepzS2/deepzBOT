@@ -2,7 +2,7 @@ import { stripIndents } from 'common-tags'
 import { ChannelType, PermissionFlagsBits } from 'discord.js'
 
 import { GuildDAL } from '@database/index'
-import { client } from '@root/index'
+import { client } from '@deepz/index'
 import { Event } from '@structures/Event'
 
 export default new Event('guildCreate', async (guild) => {

@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 
-import { IResolveVanityURLResponse } from '@myTypes'
-import { steamToken } from '@root/config'
+import { steamToken } from '@deepz/config'
+import { IResolveVanityURLResponse } from '@deepz/types/fetchs/steam'
 
 // Credits: https://github.com/12pt/steamid-converter
 const BASE_NUM = BigInt('76561197960265728')

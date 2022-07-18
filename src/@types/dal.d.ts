@@ -1,4 +1,4 @@
-interface GlobalFilters {
+export interface GlobalFilters {
   isDeleted?: boolean
   includedDeleted?: boolean
 }

@@ -5,8 +5,8 @@ import {
   GuildMember,
 } from 'discord.js'
 
-import { formatDate } from '@root/functions'
-import getArgument from '@root/helpers/arguments'
+import { formatDate } from '@deepz/functions'
+import getArgument from '@helpers/arguments'
 import { Command } from '@structures/Command'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 

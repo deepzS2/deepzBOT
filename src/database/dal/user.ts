@@ -2,7 +2,7 @@ import { Op } from 'sequelize'
 
 import { User } from '@database/connection'
 import { UserInput, UserOutput } from '@database/models/User'
-import { GetAllUsersFilters } from '@myTypes'
+import { GetAllUsersFilters } from '@deepz/types/dal'
 
 const createUser = async (payload: UserInput): Promise<UserOutput> => {
   const user = await User.create(payload)

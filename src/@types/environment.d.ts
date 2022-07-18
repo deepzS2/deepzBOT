@@ -53,5 +53,3 @@ export interface CategoryEmoji {
   name: CommandCategory
   emoji: string
 }
-
-export {}

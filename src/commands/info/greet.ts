@@ -1,4 +1,4 @@
-import { botConfig } from '@root/config'
+import { botConfig } from '@deepz/config'
 import { Command } from '@structures/Command'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 

@@ -9,13 +9,11 @@ import glob from 'glob'
 import path from 'path'
 import { promisify } from 'util'
 
-import {
-  RegisterCommandsOptions,
-  CommandType,
-  BotConfiguration,
-} from '@myTypes'
-import { botConfig } from '@root/config'
-import logger from '@root/logger'
+import { botConfig } from '@deepz/config'
+import logger from '@deepz/logger'
+import { RegisterCommandsOptions } from '@deepz/types/client'
+import { CommandType } from '@deepz/types/command'
+import { BotConfiguration } from '@deepz/types/environment'
 import { Event } from '@structures/Event'
 
 const globPromise = promisify(glob)

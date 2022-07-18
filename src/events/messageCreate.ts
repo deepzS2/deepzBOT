@@ -1,10 +1,10 @@
 import { ChannelType } from 'discord.js'
 
 import { UserDAL } from '@database/index'
-import { CommandType } from '@myTypes'
-import { botConfig } from '@root/config'
-import { client } from '@root/index'
-import logger from '@root/logger'
+import { botConfig } from '@deepz/config'
+import { client } from '@deepz/index'
+import logger from '@deepz/logger'
+import { CommandType } from '@deepz/types/command'
 import { Event } from '@structures/Event'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 

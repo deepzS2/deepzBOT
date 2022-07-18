@@ -7,11 +7,11 @@ import {
   ComponentType,
 } from 'discord.js'
 
-import { CommandCategory, CommandType } from '@myTypes'
-import { botConfig, categoryEmojis } from '@root/config'
-import { capitalizeString, sendMessage } from '@root/functions'
-import getArgument from '@root/helpers/arguments'
-import logger from '@root/logger'
+import { botConfig, categoryEmojis } from '@deepz/config'
+import { capitalizeString, sendMessage } from '@deepz/functions'
+import logger from '@deepz/logger'
+import { CommandCategory, CommandType } from '@deepz/types/command'
+import getArgument from '@helpers/arguments'
 import { Command } from '@structures/Command'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 
@@ -76,10 +76,14 @@ export default new Command({
     }
 
     try {
-      const dropdown = await sendMessage(message, interaction, {
-        embeds: [embed],
-        components: [panel],
-        ephemeral: true,
+      const dropdown = await sendMessage({
+        message,
+        interaction,
+        content: {
+          embeds: [embed],
+          components: [panel],
+          ephemeral: true,
+        },
       })
 
       const collector = dropdown.createMessageComponentCollector({

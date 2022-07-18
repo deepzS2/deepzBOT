@@ -1,4 +1,4 @@
-import { CommandType } from '@myTypes'
+import { CommandType } from '@deepz/types/command'
 
 /**
  * Class for creating a command

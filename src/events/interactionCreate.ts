@@ -1,7 +1,7 @@
 import { CommandInteractionOptionResolver, InteractionType } from 'discord.js'
 
-import { ExtendedInteraction } from '@myTypes'
-import { client } from '@root/index'
+import { client } from '@deepz/index'
+import { ExtendedInteraction } from '@deepz/types/command'
 import { Event } from '@structures/Event'
 import CustomMessageEmbed from '@structures/MessageEmbed'
 

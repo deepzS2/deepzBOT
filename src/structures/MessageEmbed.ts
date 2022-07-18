@@ -6,7 +6,7 @@ import {
   EmbedFooterData,
 } from 'discord.js'
 
-import { embedGlobalColor } from '@root/config'
+import { embedGlobalColor } from '@deepz/config'
 
 interface EmbedOptions {
   color?: ColorResolvable

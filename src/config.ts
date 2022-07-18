@@ -1,13 +1,4 @@
-import dotenv from 'dotenv'
-
-import {
-  BotConfiguration,
-  DatabaseConfiguration,
-  CategoryEmoji,
-} from '@myTypes'
-
-// .env
-dotenv.config()
+import 'dotenv/config'
 
 /**
  * Check if node env is 'dev'
@@ -17,7 +8,7 @@ export const isDev = process.env.NODE_ENV !== 'prod'
 /**
  * Bot configuration environment variables
  */
-export const botConfig: BotConfiguration = {
+export const botConfig: DeepzEnvironment.BotConfiguration = {
   token: process.env.TOKEN,
   prefix: process.env.PREFIX,
   botOwnerRoleName: process.env.BOT_OWNER_ROLE_NAME,
@@ -30,7 +21,7 @@ export const botConfig: BotConfiguration = {
  * Bot database environment variables
  * Note that storage is for sqlite3 (development environment)
  */
-export const databaseConfig: DatabaseConfiguration = {
+export const databaseConfig: DeepzEnvironment.DatabaseConfiguration = {
   dialect: isDev ? 'sqlite' : 'postgres',
   name: process.env.DATABASE_NAME,
   host: process.env.DATABASE_HOST,
@@ -45,7 +36,7 @@ export const steamToken = process.env.STEAM_TOKEN
 
 export const embedGlobalColor = '#483D3F'
 
-export const categoryEmojis: CategoryEmoji[] = [
+export const categoryEmojis: DeepzEnvironment.CategoryEmoji[] = [
   {
     name: 'INFO',
     emoji: '🔎',

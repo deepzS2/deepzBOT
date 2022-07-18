@@ -15,7 +15,7 @@ export interface IPlayerBansResponse {
   players?: PlayerBan[]
 }
 
-interface PlayerBan {
+export interface PlayerBan {
   VACBanned: boolean
   CommunityBanned: boolean
   SteamId: string
@@ -25,7 +25,7 @@ interface PlayerBan {
   EconomyBan: string
 }
 
-interface PlayerSummary {
+export interface PlayerSummary {
   steamid: string
   communityvisibilitystate: number
   profilestate: number

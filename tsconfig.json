@@ -40,18 +40,20 @@
     "declaration": true,
     "emitDeclarationOnly": true,
 
+    "typeRoots": ["./node_modules/@types", "./src/@types"],
+    "types": ["discord.js", "node"],
+
     // Module paths
     "baseUrl": "src",
     "paths": {
+      "@deepz/types/*": ["@types/*"],
       "@commands/*": ["commands/*"],
-      // "@reactions/*": ["reactions/*"],
-      "@myTypes": ["@types/index"],
+      "@helpers/*": ["helpers/*"],
       "@database/*": ["database/*"],
-      // "@assets/*": ["assets/*"],
-      // "@utils/*": ["utils/*"],
-      "@services/*": ["services/*"],
       "@structures/*": ["structures/*"],
-      "@root/*": ["./*"]
+      "@events/*": ["events/*"],
+      "@services/*": ["services/*"],
+      "@deepz/*": ["./*"]
     }
   },
   "include": ["src/**/*"],

@@ -2,7 +2,7 @@ import { Op } from 'sequelize'
 
 import { Guild } from '@database/connection'
 import { GuildInput, GuildOutput } from '@database/models/Guild'
-import { GetAllGuildsFilters } from '@myTypes'
+import { GetAllGuildsFilters } from '@deepz/types/dal'
 
 const createGuild = async (payload: GuildInput): Promise<GuildOutput> => {
   const guild = await Guild.create(payload)

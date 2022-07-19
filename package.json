@@ -68,7 +68,7 @@
     "request": "^2.88.2",
     "request-promise-native": "^1.0.8",
     "simple-youtube-api": "^5.2.1",
-    "sqlite3": "^5.0.2",
+    "sqlite3": "^5.0.8",
     "tenorjs": "^1.0.7",
     "typeorm": "^0.2.41",
     "typescript": "^3.9.5",

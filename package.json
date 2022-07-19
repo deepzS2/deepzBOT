@@ -12,6 +12,7 @@
     "lint": "eslint --fix --ext .ts,.js src/"
   },
   "devDependencies": {
+    "@types/beautify": "^0.0.0",
     "@types/common-tags": "^1.8.1",
     "@types/glob": "^7.2.0",
     "@types/node": "^18.0.6",
@@ -49,6 +50,7 @@
     "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.11.0",
     "babel-plugin-tsconfig-paths-module-resolver": "^1.0.3",
+    "beautify": "^0.0.8",
     "common-tags": "^1.8.2",
     "dayjs": "^1.11.3",
     "discord-player": "^5.2.2",

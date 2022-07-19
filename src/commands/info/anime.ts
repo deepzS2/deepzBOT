@@ -1,10 +1,12 @@
 import dayjs from 'dayjs'
-import { CommandInteractionOptionResolver } from 'discord.js'
+import { CommandInteractionOptionResolver, MessageSelectMenu } from 'discord.js'
 
+import { sendMessage } from '@deepz/functions'
 import logger from '@deepz/logger'
 import {
   IAnime,
   IAnimeByIdFetchResponse,
+  IAnimesFetchResponse,
   IGenre,
   IGenresByAnimeFetchResponse,
 } from '@deepz/types/fetchs/kitsu'
@@ -31,7 +33,7 @@ export default new Command({
     },
   ],
   slash: 'both',
-  run: async ({ client, args }) => {
+  run: async ({ client, interaction, args }) => {
     try {
       const interactionArgs = args as CommandInteractionOptionResolver
       const searchTerm = interactionArgs.getString('searchterm')
@@ -54,13 +56,94 @@ export default new Command({
         return createAnimeEmbed(anime, genres, client)
       }
 
+      const { data: animes } = await request<IAnimesFetchResponse>(
+        `${URL}/anime?filter[text]=${searchTerm}`
+      )
+
+      const selectAnimeMenu = new MessageSelectMenu()
+        .setCustomId('select_anime_menu')
+        .setPlaceholder('Choose an anime present on the list!')
+        .addOptions(
+          animes.map((anime) => ({
+            label:
+              anime.attributes.titles.en ||
+              anime.attributes.titles.en_jp ||
+              anime.attributes.titles.ja_jp,
+            value: anime.id,
+            default: false,
+          }))
+        )
+
+      const selectMessage = await sendMessage({
+        interaction,
+        content: {
+          embeds: [createAnimeSelectList(animes, client)],
+          components: [
+            {
+              type: 'ACTION_ROW',
+              components: [selectAnimeMenu],
+            },
+          ],
+        },
+      })
+
       // TODO: Search anime by title and display the choices
+      const collector = selectMessage.createMessageComponentCollector({
+        time: 10000,
+      })
+
+      collector.on('collect', async (collected) => {
+        if (
+          collected.isSelectMenu() &&
+          collected.customId === 'select_anime_menu' &&
+          collected.values.length
+        ) {
+          await collected.deferUpdate()
+
+          const value = collected.values[0]
+          const animeSelected = animes.find((anime) => anime.id === value)
+
+          const { data: genres } = await request<IGenresByAnimeFetchResponse>(
+            animeSelected.relationships.genres.links.related
+          )
+
+          selectMessage.edit({
+            embeds: [createAnimeEmbed(animeSelected, genres, client)],
+            components: [],
+          })
+        }
+      })
+
+      collector.on('end', async (collected) => {
+        if (!collected.size && selectMessage.deletable) {
+          await selectMessage.delete()
+        }
+      })
     } catch (error) {
       logger.error(error)
       return `***Something went wrong getting the anime data!***`
     }
   },
 })
+
+function createAnimeSelectList(animes: IAnime[], client: ExtendedClient) {
+  return new CustomMessageEmbed('Select an anime!', {
+    description: `Type the number present on the list or type \`exit\` if no results are found!`,
+    author: {
+      name: 'List of animes search result!',
+      iconURL: client.user.displayAvatarURL(),
+    },
+  }).addFields(
+    animes.map((anime, index) => {
+      return {
+        name: `${convertToEmoji(index)} ${
+          anime.attributes.titles.en || anime.attributes.titles.en_jp
+        }`,
+        value: anime.attributes.titles.ja_jp,
+      }
+    })
+  )
+}
 
 function createAnimeEmbed(
   anime: IAnime,
@@ -115,4 +198,51 @@ function createAnimeEmbed(
   }
 
   return embed
+}
+
+function convertToEmoji(index) {
+  let number = ''
+  switch (index) {
+    case 0:
+      number = ':one:'
+      break
+
+    case 1:
+      number = ':two:'
+      break
+
+    case 2:
+      number = ':three:'
+      break
+
+    case 3:
+      number = ':four:'
+      break
+
+    case 4:
+      number = ':five:'
+      break
+
+    case 5:
+      number = ':six:'
+      break
+
+    case 6:
+      number = ':seven:'
+      break
+
+    case 7:
+      number = ':eight:'
+      break
+
+    case 8:
+      number = ':nine:'
+      break
+
+    case 9:
+      number = ':keycap_ten:'
+      break
+  }
+
+  return number
 }

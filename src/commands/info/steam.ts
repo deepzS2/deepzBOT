@@ -34,7 +34,7 @@ export default new Command({
   ],
   examples: ['/steam http://steamcommunity.com/id/deepzqueen'],
   slash: 'both',
-  run: async ({ args, interaction }) => {
+  run: async ({ interaction }) => {
     const idToSearch = interaction.options.getString('id')
 
     const summariesUrl = (id: string) =>

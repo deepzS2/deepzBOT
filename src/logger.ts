@@ -1,3 +1,7 @@
 import pino from 'pino'
 
-export default pino()
+import { isDev } from './config'
+
+export default pino({
+  enabled: isDev,
+})

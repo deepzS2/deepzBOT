@@ -1,8 +1,8 @@
 import { stripIndents } from 'common-tags'
 
-import { GuildDAL } from '@database/index'
+import { GuildDAL } from '@database'
 import { client } from '@deepz/index'
-import { Event } from '@structures/Event'
+import { Event } from '@structures'
 
 export default new Event('guildCreate', async (guild) => {
   const found = false

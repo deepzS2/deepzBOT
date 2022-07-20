@@ -2,17 +2,13 @@ import { stripIndents } from 'common-tags'
 import fetch from 'node-fetch'
 
 import { steamToken } from '@deepz/config'
-import { formatDate } from '@deepz/functions'
 import logger from '@deepz/logger'
 import {
   IGetPlayerSummariesResponse,
   IPlayerBansResponse,
 } from '@deepz/types/fetchs/steam'
-import getArgument from '@helpers/arguments'
-import getSteamID from '@helpers/steam'
-import { Command } from '@structures/Command'
-import CustomMessageEmbed from '@structures/MessageEmbed'
-
+import { getSteamID } from '@helpers'
+import { Command, CustomMessageEmbed } from '@structures'
 const states = [
   'Offline',
   'Online',
@@ -38,13 +34,8 @@ export default new Command({
   ],
   examples: ['/steam http://steamcommunity.com/id/deepzqueen'],
   slash: 'both',
-  run: async ({ args }) => {
-    const idToSearch = getArgument('string', args, {
-      argumentName: 'id',
-      index: 0,
-    })
-
-    if (!idToSearch) return
+  run: async ({ args, interaction }) => {
+    const idToSearch = interaction.options.getString('id')
 
     const summariesUrl = (id: string) =>
       `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamToken}&steamids=${id}`
@@ -84,9 +75,9 @@ export default new Command({
               ? playerSummary.loccountrycode.toLowerCase()
               : 'white'
           }:
-          **Account Created:** ${formatDate(
-            new Date(playerSummary.timecreated * 1000)
-          )}
+          **Account Created:** ${new Date(
+            playerSummary.timecreated * 1000
+          ).format('MM/DD/YYYY')}
           **Bans:** Vac: ${playerBans.NumberOfVACBans || '0'}, Game: ${
           playerBans.NumberOfGameBans
         }

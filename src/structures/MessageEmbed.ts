@@ -24,7 +24,7 @@ interface EmbedOptions {
  * Custom message embed class
  * So it's easy to create a embed
  */
-export default class CustomMessageEmbed extends MessageEmbed {
+export class CustomMessageEmbed extends MessageEmbed {
   constructor(title: string, options?: EmbedOptions) {
     super()
 

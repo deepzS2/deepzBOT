@@ -8,7 +8,7 @@ import fetch, { RequestInfo, RequestInit } from 'node-fetch'
  * additional information you want to send to the server.
  * @returns A function that returns a promise that resolves to a generic type.
  */
-export default async function request<Response = any>(
+export async function request<Response = any>(
   url: RequestInfo,
   init?: RequestInit
 ) {

@@ -1,7 +1,7 @@
 import { stripIndent } from 'common-tags'
 
 import logger from '@deepz/logger'
-import { Command } from '@structures/Command'
+import { Command } from '@structures'
 
 export default new Command({
   name: 'pause',

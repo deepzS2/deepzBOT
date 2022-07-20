@@ -3,8 +3,7 @@ import { QueryType } from 'discord-player'
 import { CommandInteractionOptionResolver } from 'discord.js'
 
 import logger from '@deepz/logger'
-import { Command } from '@structures/Command'
-import CustomMessageEmbed from '@structures/MessageEmbed'
+import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
   name: 'play',

@@ -5,12 +5,10 @@ import {
 } from 'discord.js'
 
 import { botConfig, categoryEmojis } from '@deepz/config'
-import { capitalizeString, sendMessage } from '@deepz/functions'
 import logger from '@deepz/logger'
 import { CommandCategory, CommandType } from '@deepz/types/command'
-import getArgument from '@helpers/arguments'
-import { Command } from '@structures/Command'
-import CustomMessageEmbed from '@structures/MessageEmbed'
+import { getArgument, sendMessage } from '@helpers'
+import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
   name: 'help',
@@ -56,7 +54,7 @@ export default new Command({
 
       const panelOptions: MessageSelectOptionData[] = categoryEmojis.map(
         (category) => ({
-          label: capitalizeString(category.name),
+          label: String(category.name).capitalize(),
           value: category.name,
           emoji: category.emoji,
           description: 'Check my commands for ' + category.name.toLowerCase(),
@@ -70,8 +68,7 @@ export default new Command({
         .addOptions(panelOptions)
 
       const dropdown = await sendMessage({
-        message,
-        interaction,
+        message: interaction ?? message,
         content: {
           embeds: [embed],
           components: [
@@ -102,9 +99,9 @@ export default new Command({
             .map((cmd) => `\`${cmd.name}\``)
 
           embed.setDescription(
-            `Hello ${authorUsername}, check my commands of category \`${capitalizeString(
+            `Hello ${authorUsername}, check my commands of category \`${String(
               value
-            )}\` here:\n${cmds.join(' ')}`
+            ).capitalize()}\` here:\n${cmds.join(' ')}`
           )
 
           dropdown.edit({

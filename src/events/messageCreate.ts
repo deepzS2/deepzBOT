@@ -1,10 +1,9 @@
-import { UserDAL } from '@database/index'
+import { UserDAL } from '@database'
 import { botConfig } from '@deepz/config'
 import { client } from '@deepz/index'
 import logger from '@deepz/logger'
 import { CommandType } from '@deepz/types/command'
-import { Event } from '@structures/Event'
-import CustomMessageEmbed from '@structures/MessageEmbed'
+import { Event, CustomMessageEmbed } from '@structures'
 
 // Now messages have blank content?
 export default new Event('messageCreate', async (message) => {

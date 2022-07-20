@@ -2,8 +2,7 @@ import beautify from 'beautify'
 import { CommandInteractionOptionResolver } from 'discord.js'
 
 import { botConfig } from '@deepz/config'
-import { Command } from '@structures/Command'
-import CustomMessageEmbed from '@structures/MessageEmbed'
+import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
   name: 'eval',

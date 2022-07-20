@@ -13,22 +13,22 @@ interface ArgumentOptions {
   message?: Message
 }
 
-function getArgument(
+export function getArgument(
   type: 'string',
   obj: ArgumentObject,
   options: ArgumentOptions
 ): string
-function getArgument(
+export function getArgument(
   type: 'integer',
   obj: ArgumentObject,
   options: ArgumentOptions
 ): number
-function getArgument(
+export function getArgument(
   type: 'mention',
   obj: ArgumentObject,
   options: ArgumentOptions
 ): GuildMember
-function getArgument(
+export function getArgument(
   type: ArgumentTypes,
   obj: ArgumentObject,
   options: ArgumentOptions
@@ -61,5 +61,3 @@ function getArgument(
 
   return null
 }
-
-export default getArgument

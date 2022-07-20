@@ -5,7 +5,7 @@
     "lib": ["ESNext"],
     "module": "CommonJS",
     "moduleResolution": "node",
-    "isolatedModules": true,
+    "isolatedModules": false,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
 
@@ -47,12 +47,12 @@
     "baseUrl": "src",
     "paths": {
       "@deepz/types/*": ["@types/*"],
-      "@commands/*": ["commands/*"],
-      "@helpers/*": ["helpers/*"],
-      "@database/*": ["database/*"],
-      "@structures/*": ["structures/*"],
+      "@commands/": ["commands/*"],
+      "@helpers": ["helpers/index"],
+      "@database": ["database/index"],
+      "@structures": ["structures/index"],
       "@events/*": ["events/*"],
-      "@services/*": ["services/*"],
+      "@services": ["services/index"],
       "@deepz/*": ["./*"]
     }
   },

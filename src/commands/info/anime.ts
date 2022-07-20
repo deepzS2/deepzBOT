@@ -1,7 +1,6 @@
 import dayjs from 'dayjs'
 import { CommandInteractionOptionResolver, MessageSelectMenu } from 'discord.js'
 
-import { sendMessage } from '@deepz/functions'
 import logger from '@deepz/logger'
 import {
   IAnime,
@@ -10,10 +9,8 @@ import {
   IGenre,
   IGenresByAnimeFetchResponse,
 } from '@deepz/types/fetchs/kitsu'
-import request from '@helpers/request'
-import { ExtendedClient } from '@structures/Client'
-import { Command } from '@structures/Command'
-import CustomMessageEmbed from '@structures/MessageEmbed'
+import { sendMessage, request } from '@helpers'
+import { ExtendedClient, Command, CustomMessageEmbed } from '@structures'
 
 // https://kitsu.docs.apiary.io/
 const URL = `https://kitsu.io/api/edge`
@@ -75,7 +72,7 @@ export default new Command({
         )
 
       const selectMessage = await sendMessage({
-        interaction,
+        message: interaction,
         content: {
           embeds: [createAnimeSelectList(animes, client)],
           components: [

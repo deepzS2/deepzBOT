@@ -1,8 +1,7 @@
 import { stripIndent } from 'common-tags'
 
 import logger from '@deepz/logger'
-import { Command } from '@structures/Command'
-import CustomMessageEmbed from '@structures/MessageEmbed'
+import { Command, CustomMessageEmbed } from '@structures'
 
 const SONGS_PER_PAGE = 10
 

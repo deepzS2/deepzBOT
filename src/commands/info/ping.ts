@@ -1,4 +1,4 @@
-import { Command } from '@structures/Command'
+import { Command } from '@structures'
 
 export default new Command({
   name: 'ping',

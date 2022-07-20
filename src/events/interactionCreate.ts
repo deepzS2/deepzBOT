@@ -2,8 +2,7 @@ import { CommandInteractionOptionResolver } from 'discord.js'
 
 import { client } from '@deepz/index'
 import { ExtendedInteraction } from '@deepz/types/command'
-import { Event } from '@structures/Event'
-import CustomMessageEmbed from '@structures/MessageEmbed'
+import { Event, CustomMessageEmbed } from '@structures'
 
 export default new Event('interactionCreate', async (interaction) => {
   if (interaction.isApplicationCommand()) {

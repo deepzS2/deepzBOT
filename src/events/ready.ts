@@ -1,6 +1,6 @@
-import { initializeDatabase } from '@database/index'
+import { initializeDatabase } from '@database'
 import logger from '@deepz/logger'
-import { Event } from '@structures/Event'
+import { Event } from '@structures'
 
 export default new Event('ready', async () => {
   await initializeDatabase()

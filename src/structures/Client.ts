@@ -16,7 +16,7 @@ import logger from '@deepz/logger'
 import { RegisterCommandsOptions } from '@deepz/types/client'
 import { CommandType } from '@deepz/types/command'
 import { BotConfiguration } from '@deepz/types/environment'
-import { Event } from '@structures/Event'
+import { Event } from '@structures'
 
 const globPromise = promisify(glob)
 const commandsPath = path.join(__dirname, '..', 'commands', '*', '*{.ts,.js}')

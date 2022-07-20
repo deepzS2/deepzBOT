@@ -1,10 +1,8 @@
 import { stripIndents } from 'common-tags'
 import { EmbedField, GuildMember } from 'discord.js'
 
-import { formatDate } from '@deepz/functions'
-import getArgument from '@helpers/arguments'
-import { Command } from '@structures/Command'
-import CustomMessageEmbed from '@structures/MessageEmbed'
+import { getArgument } from '@helpers'
+import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
   name: 'whois',
@@ -31,8 +29,8 @@ export default new Command({
 
     if (!member || !(member instanceof GuildMember) || !guild) return
 
-    const joined = formatDate(member.joinedAt)
-    const created = formatDate(member.user.createdAt)
+    const joined = member.joinedAt.format('MM/DD/YYYY')
+    const created = member.user.createdAt.format('MM/DD/YYYY')
 
     const roles =
       member.roles.cache

@@ -1,8 +1,9 @@
 import { Sequelize } from 'sequelize'
 
-import CreateGuildModel, { GuildModel } from '@database/models/Guild'
-import CreateUserModel, { UserModel } from '@database/models/User'
 import { databaseConfig } from '@deepz/config'
+
+import CreateGuildModel, { GuildModel } from './models/Guild'
+import CreateUserModel, { UserModel } from './models/User'
 
 export const connection = new Sequelize(
   databaseConfig.name,

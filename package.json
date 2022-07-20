@@ -1,13 +1,13 @@
 {
   "name": "deepz_bot",
-  "version": "1.0.0",
-  "main": "dist/bot/index.js",
+  "version": "2.0.0",
+  "main": "dist/index.js",
   "author": "deepzS2",
   "license": "MIT",
   "scripts": {
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "build:tsc": "tsc",
-    "start": "NODE_ENV=prod node dist/index.js",
+    "start": "NODE_ENV=prod pm2 start dist/index.js",
     "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts | pino-pretty -i pid,hostname -t yyyy-mm-dd HH:MM:ss",
     "lint": "eslint --fix --ext .ts,.js src/"
   },

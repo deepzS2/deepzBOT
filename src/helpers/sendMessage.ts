@@ -3,9 +3,8 @@ import {
   Message,
   MessagePayload,
   InteractionReplyOptions,
+  CommandInteraction,
 } from 'discord.js'
-
-import { ExtendedInteraction } from '@deepz/types/command'
 
 /**
  * It sends a message to a channel
@@ -13,9 +12,9 @@ import { ExtendedInteraction } from '@deepz/types/command'
  * @returns A Promise that resolves to a Message or null.
  */
 export async function sendMessage(options: {
-  message?: Message | ExtendedInteraction
+  message?: Message | CommandInteraction
   content?: MessagePayload | MessageOptions | InteractionReplyOptions | string
-}): Promise<null | Message<boolean>> {
+}): Promise<Message<boolean>> {
   if (!options.message || !options.content) return
 
   if (isMessageInteraction(options.message)) {
@@ -30,7 +29,7 @@ export async function sendMessage(options: {
 }
 
 const isMessageInteraction = (
-  message: Message | ExtendedInteraction
-): message is ExtendedInteraction => {
-  return (<ExtendedInteraction>message).followUp !== undefined
+  message: Message | CommandInteraction
+): message is CommandInteraction => {
+  return (<CommandInteraction>message).followUp !== undefined
 }

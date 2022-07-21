@@ -1,5 +1,6 @@
 import { CommandInteractionOptionResolver } from 'discord.js'
 
+import logger from '@deepz/logger'
 import { ExtendedInteraction } from '@deepz/types/command'
 import { Event, CustomMessageEmbed } from '@structures'
 
@@ -29,22 +30,26 @@ export default new Event('interactionCreate', async (client, interaction) => {
       },
     })
 
-    const responseMessage = await command.run({
-      args: interaction.options as CommandInteractionOptionResolver,
-      client,
-      interaction: interaction as ExtendedInteraction,
-    })
-
-    if (!responseMessage) return
-
-    // Embed message
-    if (responseMessage instanceof CustomMessageEmbed)
-      return interaction.followUp({
-        embeds: [responseMessage],
+    try {
+      const responseMessage = await command.run({
+        args: interaction.options as CommandInteractionOptionResolver,
+        client,
+        interaction: interaction as ExtendedInteraction,
       })
 
-    // Simple string message
-    if (typeof responseMessage === 'string')
-      return interaction.followUp(responseMessage)
+      if (!responseMessage) return
+
+      // Embed message
+      if (responseMessage instanceof CustomMessageEmbed)
+        return interaction.followUp({
+          embeds: [responseMessage],
+        })
+
+      // Simple string message
+      if (typeof responseMessage === 'string')
+        return interaction.followUp(responseMessage)
+    } catch (error) {
+      logger.error('Error with command ' + command.name, error)
+    }
   }
 })

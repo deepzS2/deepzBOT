@@ -5,6 +5,7 @@ import {
   GuildMember,
   PermissionResolvable,
   Message,
+  MessagePayload,
 } from 'discord.js'
 
 import CustomMessageEmbed from '@structures/MessageEmbed'

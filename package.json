@@ -8,7 +8,7 @@
     "build": "babel src --extensions \".js,.ts\" --out-dir dist --copy-files --no-copy-ignored",
     "build:tsc": "tsc",
     "start": "NODE_ENV=prod pm2 start dist/index.js --watch",
-    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts | pino-pretty -i pid,hostname -t yyyy-mm-dd HH:MM:ss",
+    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts",
     "lint": "eslint --fix --ext .ts,.js src/"
   },
   "devDependencies": {
@@ -49,6 +49,7 @@
     "@babel/preset-typescript": "^7.18.6",
     "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.11.0",
+    "@prisma/client": "^4.1.0",
     "babel-plugin-tsconfig-paths-module-resolver": "^1.0.3",
     "beautify": "^0.0.8",
     "common-tags": "^1.8.2",
@@ -62,6 +63,8 @@
     "node-fetch": "2",
     "pg": "^8.7.3",
     "pino": "^8.2.0",
+    "pino-pretty": "^8.1.0",
+    "prisma": "^4.1.0",
     "sequelize": "^6.21.3",
     "sqlite3": "^5.0.9",
     "ytdl-core": "^4.11.0"

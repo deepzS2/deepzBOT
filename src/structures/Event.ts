@@ -1,9 +1,12 @@
 import { ClientEvents } from 'discord.js'
 
+import { ExtendedClient } from './Client'
+
 /**
  * Event callback
  */
 type RunFunction<Key extends keyof ClientEvents> = (
+  client: ExtendedClient,
   ...args: ClientEvents[Key]
 ) => any
 

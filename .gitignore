@@ -17,3 +17,12 @@ coverage
 
 # VSCode settings
 .vscode
+
+# Aws SSH for deployment
+aws.sh
+
+# Development database
+prisma/dev*.dv
+
+# Logs
+logs

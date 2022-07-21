@@ -1,6 +1,9 @@
-import { GuildDAL } from '@database'
 import { Event } from '@structures'
 
-export default new Event('guildCreate', async (guild) => {
-  await GuildDAL.deleteGuild(guild.id)
+export default new Event('guildCreate', async (client, guild) => {
+  await client.database.guild.delete({
+    where: {
+      discordId: guild.id,
+    },
+  })
 })

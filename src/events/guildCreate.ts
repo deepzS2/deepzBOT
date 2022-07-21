@@ -1,10 +1,8 @@
 import { stripIndents } from 'common-tags'
 
-import { GuildDAL } from '@database'
-import { client } from '@deepz/index'
 import { Event } from '@structures'
 
-export default new Event('guildCreate', async (guild) => {
+export default new Event('guildCreate', async (client, guild) => {
   const found = false
 
   guild.channels.cache.forEach((c) => {
@@ -22,8 +20,10 @@ export default new Event('guildCreate', async (guild) => {
     }
   })
 
-  await GuildDAL.createGuild({
-    id: guild.id,
-    name: guild.name,
+  await client.database.guild.create({
+    data: {
+      discordId: guild.id,
+      name: guild.name,
+    },
   })
 })

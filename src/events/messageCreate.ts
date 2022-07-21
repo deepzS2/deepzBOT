@@ -1,30 +1,38 @@
-import { UserDAL } from '@database'
 import { botConfig } from '@deepz/config'
-import { client } from '@deepz/index'
 import logger from '@deepz/logger'
 import { CommandType } from '@deepz/types/command'
 import { Event, CustomMessageEmbed } from '@structures'
 
 // Now messages have blank content?
-export default new Event('messageCreate', async (message) => {
+export default new Event('messageCreate', async (client, message) => {
   const { prefix } = botConfig
 
   // Not the own bot xd
   if (message.author.bot) return
 
   try {
-    const { id: userId, username: userTag } = message.author
+    const { id, username } = message.author
 
-    const user = await checkIfUserExists(userId, userTag)
-
-    if (user) {
-      await UserDAL.updateUser(user.id, {
-        xp: user.xp + Math.floor(Math.random() * 15) + 10,
-        balance: user.balance + Math.floor(Math.random() * 7) + 3,
-      })
-    }
+    // Ensure that the user exists in database by when updating if does not exists create the user or just update
+    await client.database.user.upsert({
+      where: {
+        discordId: id,
+      },
+      create: {
+        discordId: id,
+        username: username,
+      },
+      update: {
+        experience: {
+          increment: Math.floor(Math.random() * 15) + 10,
+        },
+        balance: {
+          increment: Math.floor(Math.random() * 7) + 3,
+        },
+      },
+    })
   } catch (error) {
-    logger.error(error)
+    logger.error('Error upserting the user in database!', error)
   } finally {
     // Command starts with prefix
     if (message.content.startsWith(prefix)) {
@@ -66,22 +74,3 @@ export default new Event('messageCreate', async (message) => {
     }
   }
 })
-
-async function checkIfUserExists(id: string, username: string) {
-  try {
-    let user = await UserDAL.getUserByID(id)
-
-    if (user.username !== username) {
-      user = await UserDAL.updateUser(user.id, { username })
-    }
-
-    return user
-  } catch (error) {
-    if ((error as Error).message === 'User not found with that ID') {
-      const user = await UserDAL.createUser({ id, username })
-      return user
-    } else {
-      throw error
-    }
-  }
-}

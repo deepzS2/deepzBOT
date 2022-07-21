@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  // url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  // Essentials
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  discordId String    @unique
+  username  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Economy
+  dailyMoney  DateTime  @default(now())
+  balance     Float     @default(0)
+
+  // Profile
+  reputation        Int       @default(0)
+  experience        Float     @default(0)
+  bio               String? 
+  backgroundImage   Bytes?
+  couple            String?
+
+  // Games
+  osu       String?
+  valorant  String?
+}
+
+model Guild {
+  // Essentials
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  discordId   String    @unique
+  name        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Twitch
+  twitchUsers               TwitchUser[]
+  twitchNotificationChannel String?   
+
+  // Roles
+  roles               Roles[]
+  roleMessage         String?
+  channelRoleMessage  String?
+}
+
+model TwitchUser {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  guild     Guild     @relation(fields: [guildId], references: [id])
+  guildId   String 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Roles {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  name      String 
+  guild     Guild     @relation(fields: [guildId], references: [id])
+  guildId   String 
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

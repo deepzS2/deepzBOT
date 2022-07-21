@@ -49,7 +49,6 @@
       "@deepz/types/*": ["@types/*"],
       "@commands/": ["commands/*"],
       "@helpers": ["helpers/index"],
-      "@database": ["database/index"],
       "@structures": ["structures/index"],
       "@events/*": ["events/*"],
       "@services": ["services/index"],

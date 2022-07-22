@@ -1,3 +1,5 @@
+import { Queue } from 'discord-music-player'
+
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@structures'
 
@@ -17,7 +19,7 @@ export default new Command({
   slash: 'both',
   run: async ({ client, interaction }) => {
     try {
-      const queue = await client.player.getQueue(interaction.guildId)
+      const queue: Queue = await client.player.getQueue(interaction.guildId)
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
@@ -25,20 +27,20 @@ export default new Command({
       const skipDestination = interaction.options.getNumber('to')
 
       if (!skipDestination) {
-        const currentSong = queue.current
+        const currentSong = queue.nowPlaying
 
         queue.skip()
 
         return new CustomMessageEmbed(' ', {
-          description: `${currentSong.title} has been skipped!`,
+          description: `${currentSong.name} has been skipped!`,
           thumbnail: currentSong.thumbnail,
         })
       }
 
-      if (skipDestination > queue.tracks.length)
+      if (skipDestination > queue.songs.length)
         return `***Invalid track index***`
 
-      queue.skipTo(skipDestination - 1)
+      queue.skip(skipDestination - 1)
 
       return `***Skipped ahead to track ${skipDestination} index***`
     } catch (error) {

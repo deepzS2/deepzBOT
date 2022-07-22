@@ -1,4 +1,4 @@
-import { Player } from 'discord-player'
+import { Player } from 'discord-music-player'
 import {
   ActivitiesOptions,
   ApplicationCommandDataResolvable,
@@ -43,10 +43,9 @@ export class ExtendedClient extends Client {
   public readonly commands: Collection<string, CommandType> = new Collection()
   public readonly aliases: Collection<string, string> = new Collection()
   public readonly player = new Player(this, {
-    ytdlOptions: {
-      quality: 'highestaudio',
-      highWaterMark: 1 << 25,
-    },
+    leaveOnEmpty: false,
+    quality: 'high',
+    deafenOnJoin: true,
   })
 
   constructor() {

@@ -18,7 +18,7 @@ export default new Command({
       queue.shuffle()
 
       return stripIndent`
-        ***The queue of ${queue.tracks.length} songs have been shuffled!***
+        ***The queue of ${queue.songs.length} songs have been shuffled!***
       `
     } catch (error) {
       logger.error(error)

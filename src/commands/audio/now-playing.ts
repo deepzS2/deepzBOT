@@ -1,3 +1,5 @@
+import { Queue } from 'discord-music-player'
+
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@structures'
 
@@ -9,19 +11,19 @@ export default new Command({
   slash: 'both',
   run: async ({ client, interaction }) => {
     try {
-      const queue = await client.player.getQueue(interaction.guildId)
+      const queue: Queue = await client.player.getQueue(interaction.guildId)
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
       const bar = queue.createProgressBar({
-        length: 19,
+        size: 19,
       })
-      const song = queue.current
+      const song = queue.nowPlaying
 
       return new CustomMessageEmbed(' ', {
         thumbnail: song.thumbnail,
-        description: `Current playing [${song.title}](${song.url})\n\n${bar}`,
+        description: `Current playing [${song.name}](${song.url})\n\n${bar}`,
       })
     } catch (error) {
       logger.error(error)

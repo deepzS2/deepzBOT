@@ -16,7 +16,8 @@ export default new Command({
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
-      queue.destroy(true)
+      queue.stop()
+      queue.leave()
 
       return stripIndent`
         ***Music queue stopped... Thanks for listening!***

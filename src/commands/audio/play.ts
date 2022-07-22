@@ -1,5 +1,4 @@
 import dayjs from 'dayjs'
-import { QueryType } from 'discord-player'
 import { CommandInteractionOptionResolver } from 'discord.js'
 
 import logger from '@deepz/logger'
@@ -57,8 +56,8 @@ export default new Command({
     if (!interaction.member.voice.channel)
       return `***You need to be in a voice channel to use this command!***`
 
-    const queue = await client.player.createQueue(interaction.guild)
-    if (!queue.connection) await queue.connect(interaction.member.voice.channel)
+    const queue = await client.player.createQueue(interaction.guild.id)
+    if (!queue.connection) await queue.join(interaction.member.voice.channel)
 
     const embed = new CustomMessageEmbed(' ')
 
@@ -66,21 +65,17 @@ export default new Command({
       if (args.getSubcommand() === 'song') {
         const url = args.getString('url', true)
 
-        const result = await client.player.search(url, {
+        const song = await queue.play(url, {
           requestedBy: interaction.user,
-          searchEngine: QueryType.YOUTUBE_VIDEO,
         })
 
-        if (result.tracks.length === 0) {
+        if (!song) {
           return `***No result...***`
         }
 
-        const song = result.tracks[0]
-
-        await queue.addTrack(song)
         embed
           .setDescription(
-            `**[${song.title}](${song.url})** has been added to the queue!`
+            `**[${song.name}](${song.url})** has been added to the queue!`
           )
           .setThumbnail(song.thumbnail)
           .setFooter({ text: `Duration: ${song.duration}` })
@@ -89,56 +84,46 @@ export default new Command({
       if (args.getSubcommand() === 'playlist') {
         const url = args.getString('url', true)
 
-        const result = await client.player.search(url, {
+        const playlist = await queue.playlist(url, {
           requestedBy: interaction.user,
-          searchEngine: QueryType.YOUTUBE_PLAYLIST,
         })
 
-        if (result.tracks.length === 0) {
+        if (!playlist.songs.length) {
           return `***No result...***`
         }
 
-        const playlist = result.playlist
-        const duration = playlist.tracks.reduce(
-          (prev, curr) => curr.durationMS + prev,
+        const duration = playlist.songs.reduce(
+          (prev, curr) => curr.milliseconds + prev,
           0
         )
 
-        await queue.addTracks(playlist.tracks)
         embed
           .setDescription(
-            `**${result.tracks.length} songs from [${playlist.title}](${playlist.url})** has been added to the queue!`
+            `**${playlist.songs.length} songs from [${playlist.name}](${playlist.url})** has been added to the queue!`
           )
-          .setThumbnail(playlist.thumbnail)
           .setFooter({
             text: `Duration: ${dayjs(duration).format('DD HH:mm:ss')}`,
           })
       }
 
       if (args.getSubcommand() === 'search') {
-        const url = args.getString('searchterms', true)
+        const searchterms = args.getString('searchterms', true)
 
-        const result = await client.player.search(url, {
+        const song = await queue.play(searchterms, {
           requestedBy: interaction.user,
-          searchEngine: QueryType.AUTO,
         })
 
-        if (result.tracks.length === 0) {
+        if (!song) {
           return `***No result...***`
         }
 
-        const song = result.tracks[0]
-
-        await queue.addTrack(song)
         embed
           .setDescription(
-            `**[${song.title}](${song.url})** has been added to the queue!`
+            `**[${song.name}](${song.url})** has been added to the queue!`
           )
           .setThumbnail(song.thumbnail)
           .setFooter({ text: `Duration: ${song.duration}` })
       }
-
-      if (!queue.playing) await queue.play()
 
       return embed
     } catch (error) {

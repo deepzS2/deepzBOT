@@ -1,4 +1,5 @@
 import { stripIndent } from 'common-tags'
+import { Queue } from 'discord-music-player'
 
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@structures'
@@ -21,28 +22,28 @@ export default new Command({
   slash: 'both',
   run: async ({ client, interaction }) => {
     try {
-      const queue = await client.player.getQueue(interaction.guildId)
+      const queue: Queue = await client.player.getQueue(interaction.guildId)
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
-      const pages = Math.ceil(queue.tracks.length / SONGS_PER_PAGE) || 1
+      const pages = Math.ceil(queue.songs.length / SONGS_PER_PAGE) || 1
       const currentPage = interaction.options.getNumber('page') || 1
 
       if (currentPage > pages)
         return `***Wait... There are only ${pages} pages in this queue!***`
 
-      const queueString = queue.tracks
+      const queueString = queue.songs
         .slice(
-          currentPage * SONGS_PER_PAGE,
-          currentPage * SONGS_PER_PAGE + SONGS_PER_PAGE
+          (currentPage - 1) * SONGS_PER_PAGE,
+          (currentPage - 1) * SONGS_PER_PAGE + SONGS_PER_PAGE
         )
         .map((track, i) => {
-          return `**${currentPage * SONGS_PER_PAGE + i + 1}.** \`[${
+          return `**${(currentPage - 1) * SONGS_PER_PAGE + i + 1}.** \`[${
             track.duration
-          }]\` ${track.title} -- <@${track.requestedBy.id}>`
+          }]\` ${track.name} -- <@${track.requestedBy.id}>\n`
         })
 
-      const currentSong = queue.current
+      const currentSong = queue.nowPlaying
 
       return new CustomMessageEmbed(' ', {
         description:
@@ -50,14 +51,14 @@ export default new Command({
           stripIndent`
                 ${
                   currentSong
-                    ? `\`[${currentSong.duration}]\` ${currentSong.title} -- <@${currentSong.requestedBy.id}>`
+                    ? `\`[${currentSong.duration}]\` ${currentSong.name} -- <@${currentSong.requestedBy.id}>`
                     : 'None'
                 }
                 \n\n
-                **Queue**\n${queueString}
+                **Queue**\n${queueString.join('\n')}
               `,
         footer: {
-          text: `Page ${currentPage + 1} of ${pages}`,
+          text: `Page ${currentPage} of ${pages}`,
         },
         thumbnail: currentSong.thumbnail,
       })

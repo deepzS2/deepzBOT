@@ -57,6 +57,8 @@ export default new Command({
   slash: 'both',
   run: async ({ interaction, client }) => {
     try {
+      await interaction.deferReply()
+
       if (interaction.options.getSubcommand() === 'set') {
         const name = interaction.options.getString('username')
         const tag = interaction.options.getString('tagline')

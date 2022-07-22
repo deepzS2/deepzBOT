@@ -7,7 +7,6 @@ import {
   IGetMMRResponse,
 } from '@deepz/types/fetchs/valorant'
 import { request } from '@helpers'
-import { NotFoundError } from '@prisma/client/runtime'
 import { Command, CustomMessageEmbed } from '@structures'
 
 /*
@@ -88,6 +87,9 @@ export default new Command({
         },
       })
 
+      if (!valorant)
+        return `***You didn't have assigned your discord to your Valorant account! Try using \`/valorant set\`***`
+
       const [name, tag] = valorant.split('#')
 
       const { accountData, ranked, rankedHistory } = await fetchData(name, tag)
@@ -117,10 +119,6 @@ export default new Command({
       })
     } catch (error) {
       logger.error(error)
-
-      if (error instanceof NotFoundError) {
-        return `***You didn't have assigned your discord to your Valorant account! Try using \`/valorant set\`***`
-      }
 
       if (error.message === 'Not found user!') {
         return `***I didn't found any user with that username and tag... Check if it's correct!***`

@@ -21,9 +21,5 @@ export default pino(
       },
     },
   },
-  pino.multistream([
-    {
-      stream: createWriteStream(logFileDestination, { flags: 'w' }),
-    },
-  ])
+  pino.destination(logFileDestination)
 )

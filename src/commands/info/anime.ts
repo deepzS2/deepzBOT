@@ -1,5 +1,5 @@
 import dayjs from 'dayjs'
-import { CommandInteractionOptionResolver, MessageSelectMenu } from 'discord.js'
+import { MessageSelectMenu } from 'discord.js'
 
 import logger from '@deepz/logger'
 import {
@@ -9,7 +9,7 @@ import {
   IGenre,
   IGenresByAnimeFetchResponse,
 } from '@deepz/types/fetchs/kitsu'
-import { sendMessage, request } from '@helpers'
+import { sendMessage, request, isInteraction } from '@helpers'
 import { ExtendedClient, Command, CustomMessageEmbed } from '@structures'
 
 // https://kitsu.docs.apiary.io/
@@ -32,8 +32,9 @@ export default new Command({
   slash: 'both',
   run: async ({ client, interaction, args }) => {
     try {
-      const interactionArgs = args as CommandInteractionOptionResolver
-      const searchTerm = interactionArgs.getString('searchterm')
+      const searchTerm = isInteraction(args)
+        ? args.getString('searchterm')
+        : args[0]
 
       if (!searchTerm) {
         const id = Math.floor(Math.random() * ANIMES_NUMBER)

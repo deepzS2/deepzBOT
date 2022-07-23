@@ -6,7 +6,7 @@ import {
   IGetMMRHistoryResponse,
   IGetMMRResponse,
 } from '@deepz/types/fetchs/valorant'
-import { request } from '@helpers'
+import { isInteraction, request } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
 
 /*
@@ -55,13 +55,13 @@ export default new Command({
   examples: ['/valorant username:deepzS2 tagline:BR1'],
   category: 'GAMES',
   slash: 'both',
-  run: async ({ interaction, client }) => {
+  run: async ({ interaction, client, args }) => {
     try {
-      await interaction.deferReply()
+      const subcommand = isInteraction(args) ? args.getSubcommand() : args[0]
 
-      if (interaction.options.getSubcommand() === 'set') {
-        const name = interaction.options.getString('username')
-        const tag = interaction.options.getString('tagline')
+      if (subcommand === 'set') {
+        const name = isInteraction(args) ? args.getString('username') : args[1]
+        const tag = isInteraction(args) ? args.getString('tagline') : args[2]
 
         const accountData = await request<IGetAccountResponse>(
           getAccountUrl(name, tag)

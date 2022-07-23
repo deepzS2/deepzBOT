@@ -1,7 +1,7 @@
 import { stripIndents } from 'common-tags'
 import { EmbedField, GuildMember } from 'discord.js'
 
-import { getArgument } from '@helpers'
+import { isInteraction } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
@@ -20,10 +20,9 @@ export default new Command({
   examples: ['/whois @user'],
   slash: 'both',
   run: async ({ message, args, interaction }) => {
-    const member = getArgument('mention', args, {
-      message,
-      argumentName: 'user',
-    })
+    const member = isInteraction(args)
+      ? args.getMentionable('user')
+      : message.mentions.members.first()
 
     const guild = message?.guild || interaction?.guild
 

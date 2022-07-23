@@ -7,7 +7,7 @@ import {
   IGetPlayerSummariesResponse,
   IPlayerBansResponse,
 } from '@deepz/types/fetchs/steam'
-import { getSteamID } from '@helpers'
+import { getSteamID, isInteraction } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
 const states = [
   'Offline',
@@ -34,8 +34,8 @@ export default new Command({
   ],
   examples: ['/steam http://steamcommunity.com/id/deepzqueen'],
   slash: 'both',
-  run: async ({ interaction }) => {
-    const idToSearch = interaction.options.getString('id')
+  run: async ({ args }) => {
+    const idToSearch = isInteraction(args) ? args.getString('id') : args[0]
 
     const summariesUrl = (id: string) =>
       `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamToken}&steamids=${id}`

@@ -2,6 +2,7 @@ import { stripIndent } from 'common-tags'
 import { Queue } from 'discord-music-player'
 
 import logger from '@deepz/logger'
+import { isInteraction } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
 
 const SONGS_PER_PAGE = 10
@@ -20,14 +21,16 @@ export default new Command({
     },
   ],
   slash: 'both',
-  run: async ({ client, interaction }) => {
+  run: async ({ client, interaction, args }) => {
     try {
       const queue: Queue = await client.player.getQueue(interaction.guildId)
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
       const pages = Math.ceil(queue.songs.length / SONGS_PER_PAGE) || 1
-      const currentPage = interaction.options.getNumber('page') || 1
+      const currentPage = isInteraction(args)
+        ? args.getNumber('page') || 1
+        : parseInt(args[0]) || 1
 
       if (currentPage > pages)
         return `***Wait... There are only ${pages} pages in this queue!***`

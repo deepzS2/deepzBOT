@@ -31,5 +31,5 @@ export async function sendMessage(options: {
 const isMessageInteraction = (
   message: Message | CommandInteraction
 ): message is CommandInteraction => {
-  return (<CommandInteraction>message).followUp !== undefined
+  return 'followUp' in message
 }

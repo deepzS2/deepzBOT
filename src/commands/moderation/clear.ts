@@ -1,6 +1,5 @@
-import { stripIndents } from 'common-tags'
-
 import logger from '@deepz/logger'
+import { isInteraction } from '@helpers'
 import { Command } from '@structures'
 
 export default new Command({
@@ -19,9 +18,13 @@ export default new Command({
       maxValue: 100,
     },
   ],
-  run: async ({ interaction }) => {
+  run: async ({ interaction, args }) => {
     try {
-      const amount = interaction.options.getInteger('amount')
+      const amount = isInteraction(args)
+        ? args.getInteger('amount')
+        : parseInt(args[0])
+
+      if (isNaN(amount)) return `***Please provide a valid number...***`
 
       const { size } = await interaction.channel.bulkDelete(amount)
 

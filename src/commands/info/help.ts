@@ -7,7 +7,7 @@ import {
 import { botConfig, categoryEmojis } from '@deepz/config'
 import logger from '@deepz/logger'
 import { CommandCategory, CommandType } from '@deepz/types/command'
-import { getArgument, sendMessage } from '@helpers'
+import { isInteraction, sendMessage } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
@@ -28,10 +28,7 @@ export default new Command({
   run: async ({ client, args, message, interaction }) => {
     try {
       const owner = await client.users.fetch(botConfig.ownerId)
-      const command = getArgument('string', args, {
-        argumentName: 'command',
-        index: 0,
-      })
+      const command = isInteraction(args) ? args.getString('command') : args[0]
 
       const embed = new CustomMessageEmbed(' ', {
         author: { name: 'Help Menu', iconURL: client.user.displayAvatarURL() },

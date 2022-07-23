@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
-import { CommandInteractionOptionResolver } from 'discord.js'
 
 import logger from '@deepz/logger'
+import { isInteraction } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
@@ -52,7 +52,6 @@ export default new Command({
   ],
   slash: 'both',
   run: async ({ client, interaction, args }) => {
-    args = args as CommandInteractionOptionResolver
     if (!interaction.member.voice.channel)
       return `***You need to be in a voice channel to use this command!***`
 
@@ -62,8 +61,10 @@ export default new Command({
     const embed = new CustomMessageEmbed(' ')
 
     try {
-      if (args.getSubcommand() === 'song') {
-        const url = args.getString('url', true)
+      const subcommand = isInteraction(args) ? args.getSubcommand() : args[0]
+
+      if (subcommand === 'song') {
+        const url = isInteraction(args) ? args.getString('url', true) : args[1]
 
         const song = await queue.play(url, {
           requestedBy: interaction.user,
@@ -81,8 +82,8 @@ export default new Command({
           .setFooter({ text: `Duration: ${song.duration}` })
       }
 
-      if (args.getSubcommand() === 'playlist') {
-        const url = args.getString('url', true)
+      if (subcommand === 'playlist') {
+        const url = isInteraction(args) ? args.getString('url', true) : args[1]
 
         const playlist = await queue.playlist(url, {
           requestedBy: interaction.user,
@@ -106,8 +107,10 @@ export default new Command({
           })
       }
 
-      if (args.getSubcommand() === 'search') {
-        const searchterms = args.getString('searchterms', true)
+      if (subcommand === 'search') {
+        const searchterms = isInteraction(args)
+          ? args.getString('searchterms', true)
+          : args[1]
 
         const song = await queue.play(searchterms, {
           requestedBy: interaction.user,

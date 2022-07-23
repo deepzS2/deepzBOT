@@ -1,63 +1,23 @@
-import {
-  CommandInteractionOptionResolver,
-  GuildMember,
-  Message,
-} from 'discord.js'
+import { CommandInteractionOptionResolver, Message } from 'discord.js'
 
 type ArgumentObject = string[] | CommandInteractionOptionResolver
-type ArgumentTypes = 'string' | 'integer' | 'mention'
 
-interface ArgumentOptions {
-  argumentName: string
-  index?: number
-  message?: Message
+/**
+ * It checks if the arguments is the type of CommandInteractionOptionResolver
+ * @param {ArgumentObject} args - ArgumentObject
+ * @returns A function that takes an argument of type ArgumentObject and returns a boolean.
+ */
+export function isInteraction(
+  args: ArgumentObject
+): args is CommandInteractionOptionResolver {
+  return 'data' in args
 }
 
-export function getArgument(
-  type: 'string',
-  obj: ArgumentObject,
-  options: ArgumentOptions
-): string
-export function getArgument(
-  type: 'integer',
-  obj: ArgumentObject,
-  options: ArgumentOptions
-): number
-export function getArgument(
-  type: 'mention',
-  obj: ArgumentObject,
-  options: ArgumentOptions
-): GuildMember
-export function getArgument(
-  type: ArgumentTypes,
-  obj: ArgumentObject,
-  options: ArgumentOptions
-): string | number | GuildMember {
-  if (obj instanceof CommandInteractionOptionResolver) {
-    switch (type) {
-      case 'string':
-        return obj.getString(options.argumentName)
-      case 'mention':
-        return obj.getMentionable(options.argumentName) as GuildMember
-      case 'integer':
-        return obj.getInteger(options.argumentName)
-      default:
-        return obj.getString(options.argumentName)
-    }
-  }
-
-  if (obj.length > 0) {
-    switch (type) {
-      case 'mention':
-        return options.message?.mentions.members.first()
-      case 'string':
-        return obj[options.index]
-      case 'integer': {
-        const parsed = parseInt(obj[options.index])
-        return isNaN(parsed) && parsed
-      }
-    }
-  }
-
-  return null
+/**
+ * It takes a message and returns the members that were mentioned in that message
+ * @param {Message} message - Message
+ * @returns A collection of members that were mentioned in the message.
+ */
+export function getMentions(message: Message) {
+  return message.mentions.users
 }

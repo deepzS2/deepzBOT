@@ -1,4 +1,5 @@
 import logger from '@deepz/logger'
+import { getMentions, isInteraction } from '@helpers'
 import { tenor } from '@services'
 import { Command, CustomMessageEmbed } from '@structures'
 
@@ -15,16 +16,16 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction }) => {
-    const user = interaction.options.getUser('user')
+  run: async ({ interaction, args, message }) => {
+    const user = isInteraction(args)
+      ? args.getUser('user')
+      : getMentions(message).first()
 
     try {
       const result = await tenor.search({
         query: 'slap anime',
         type: 'gif',
       })
-
-      console.dir(result)
 
       const gifs = result.results
       const toSend = Math.floor(Math.random() * (gifs.length - 1) + 1)

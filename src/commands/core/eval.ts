@@ -17,8 +17,11 @@ export default new Command({
   ],
   category: 'CORE',
   slash: 'both',
-  run: async ({ client, interaction, args }) => {
-    if (interaction.user.id !== botConfig.ownerId)
+  run: async ({ client, interaction, args, message }) => {
+    if (
+      interaction?.user.id !== botConfig.ownerId ||
+      message?.author.id !== botConfig.ownerId
+    )
       return `***Sorry... You can't use that***`
 
     const toEval = isInteraction(args) ? args.getString('code') : args[0]

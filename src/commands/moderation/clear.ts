@@ -18,7 +18,7 @@ export default new Command({
       maxValue: 100,
     },
   ],
-  run: async ({ interaction, args }) => {
+  run: async ({ interaction, args, message }) => {
     try {
       const amount = isInteraction(args)
         ? args.getInteger('amount')
@@ -28,8 +28,10 @@ export default new Command({
 
       const { size } = await interaction.channel.bulkDelete(amount)
 
-      await interaction.channel.send({
-        content: `***Deleted ${size} message(s) requested by ${interaction.user.tag}.***`,
+      await (interaction || message).channel.send({
+        content: `***Deleted ${size} message(s) requested by ${
+          interaction?.user.tag || message?.author.tag
+        }.***`,
       })
     } catch (error) {
       logger.error(error)

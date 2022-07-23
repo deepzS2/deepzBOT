@@ -33,7 +33,9 @@ export default new Command({
       return new CustomMessageEmbed(' ', {
         image: gifs[toSend].media[0].gif.url,
         color: '#4360FB',
-        description: `***${interaction.user.username}, you slapped ${user.username} :angry:***`,
+        description: `***${
+          interaction?.user.username || message?.author.id
+        }, you slapped ${user.username} :angry:***`,
       })
     } catch (error) {
       logger.error(error)

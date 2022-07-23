@@ -51,7 +51,7 @@ export default new Command({
     },
   ],
   slash: 'both',
-  run: async ({ client, interaction, args }) => {
+  run: async ({ client, interaction, args, message }) => {
     if (!interaction.member.voice.channel)
       return `***You need to be in a voice channel to use this command!***`
 
@@ -67,7 +67,7 @@ export default new Command({
         const url = isInteraction(args) ? args.getString('url', true) : args[1]
 
         const song = await queue.play(url, {
-          requestedBy: interaction.user,
+          requestedBy: interaction?.user || message?.author,
         })
 
         if (!song) {
@@ -86,7 +86,7 @@ export default new Command({
         const url = isInteraction(args) ? args.getString('url', true) : args[1]
 
         const playlist = await queue.playlist(url, {
-          requestedBy: interaction.user,
+          requestedBy: interaction?.user || message?.author,
         })
 
         if (!playlist.songs.length) {
@@ -113,7 +113,7 @@ export default new Command({
           : args[1]
 
         const song = await queue.play(searchterms, {
-          requestedBy: interaction.user,
+          requestedBy: interaction?.user || message?.author,
         })
 
         if (!song) {

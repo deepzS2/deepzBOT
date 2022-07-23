@@ -1,6 +1,5 @@
 import { botConfig } from '@deepz/config'
 import logger from '@deepz/logger'
-import { CommandType } from '@deepz/types/command'
 import { Event, CustomMessageEmbed } from '@structures'
 
 // Now messages have blank content?
@@ -33,44 +32,46 @@ export default new Event('messageCreate', async (client, message) => {
     })
   } catch (error) {
     logger.error('Error upserting the user in database!', error)
-  } finally {
-    // Command starts with prefix
-    if (message.content.startsWith(prefix)) {
-      // No DMs here...
-      if (message.channel.type === 'DM') return
+  }
 
-      const args = message.content.slice(prefix.length).trim().split(/ +/g)
-      const command = args.shift().toLowerCase()
+  // No DMs...
+  if (!message.content.startsWith(prefix) && message.channel.type === 'DM')
+    return
 
-      // Try get by command name or aliases
-      const cmd: CommandType =
-        client.commands.get(command) ||
-        client.commands.get(client.aliases.get(command))
+  const args = message.content.slice(prefix.length).trim().split(/ +/g)
+  const command = args.shift().toLowerCase()
 
-      if (!cmd) return
+  // Try get by command name or aliases
+  const cmd =
+    client.commands.get(command) ||
+    client.commands.get(client.aliases.get(command))
 
-      // Show typing :D (I guess)
-      message.channel.sendTyping()
+  if (!cmd) return
 
-      // The response is a string or nothing always so it's easy to handle with slash and message
-      const responseMessage = await cmd.run({
-        args,
-        client,
-        message,
+  try {
+    // Show typing :D (I guess)
+    await message.channel.sendTyping()
+
+    // The response is a string or nothing always so it's easy to handle with slash and message
+    const responseMessage = await cmd.run({
+      args,
+      client,
+      message,
+    })
+
+    if (!responseMessage) return
+
+    // Embed message
+    if (responseMessage instanceof CustomMessageEmbed)
+      return message.channel.send({
+        embeds: [responseMessage],
       })
 
-      if (!responseMessage) return
-
-      // Embed message
-      if (responseMessage instanceof CustomMessageEmbed)
-        return message.channel.send({
-          embeds: [responseMessage],
-        })
-
-      // Simple string message
-      if (typeof responseMessage === 'string') {
-        return message.channel.send(responseMessage)
-      }
+    // Simple string message
+    if (typeof responseMessage === 'string') {
+      return message.channel.send(responseMessage)
     }
+  } catch (error) {
+    logger.error(error, 'Error with ' + cmd.name + ' command')
   }
 })

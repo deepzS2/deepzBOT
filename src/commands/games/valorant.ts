@@ -55,7 +55,7 @@ export default new Command({
   examples: ['/valorant username:deepzS2 tagline:BR1'],
   category: 'GAMES',
   slash: 'both',
-  run: async ({ interaction, client, args }) => {
+  run: async ({ interaction, client, args, message }) => {
     try {
       const subcommand = isInteraction(args) ? args.getSubcommand() : args[0]
 
@@ -76,7 +76,7 @@ export default new Command({
             valorant: `${name}#${tag}`,
           },
           where: {
-            discordId: interaction.user.id,
+            discordId: interaction?.user.id || message?.author.id,
           },
         })
 
@@ -85,7 +85,7 @@ export default new Command({
 
       const { valorant } = await client.database.user.findUniqueOrThrow({
         where: {
-          discordId: interaction.user.id,
+          discordId: interaction?.user.id || message?.author.id,
         },
       })
 

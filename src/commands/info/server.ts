@@ -8,6 +8,7 @@ export default new Command({
   description: 'Returns the server information',
   category: 'INFO',
   slash: 'both',
+  examples: ['d.server'],
   run: async ({ interaction, message }) => {
     const { guild, member } = interaction || message
 

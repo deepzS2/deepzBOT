@@ -8,9 +8,12 @@ export default new Command({
   description: 'Shuffles the entire song queue!',
   category: 'AUDIO',
   slash: 'both',
-  run: async ({ client, interaction }) => {
+  examples: ['d.shuffle'],
+  run: async ({ client, interaction, message }) => {
     try {
-      const queue = await client.player.getQueue(interaction.guildId)
+      const queue = await client.player.getQueue(
+        (interaction || message).guildId
+      )
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`

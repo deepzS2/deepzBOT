@@ -17,7 +17,7 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['/whois @user'],
+  examples: ['d.whois @user'],
   slash: 'both',
   run: async ({ message, args, interaction }) => {
     const member = isInteraction(args)

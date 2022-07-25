@@ -43,9 +43,11 @@ export class ExtendedClient extends Client {
   public readonly commands: Collection<string, CommandType> = new Collection()
   public readonly aliases: Collection<string, string> = new Collection()
   public readonly player = new Player(this, {
-    leaveOnEmpty: false,
+    leaveOnEmpty: true,
     quality: 'high',
     deafenOnJoin: true,
+    leaveOnStop: true,
+    leaveOnEnd: false,
   })
 
   constructor() {

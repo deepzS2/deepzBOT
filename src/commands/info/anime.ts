@@ -29,12 +29,13 @@ export default new Command({
       required: false,
     },
   ],
+  examples: ['d.anime boku no...'],
   slash: 'both',
   run: async ({ client, interaction, args }) => {
     try {
       const searchTerm = isInteraction(args)
         ? args.getString('searchterm')
-        : args[0]
+        : args.join(' ')
 
       if (!searchTerm) {
         const id = Math.floor(Math.random() * ANIMES_NUMBER)

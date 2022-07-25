@@ -8,6 +8,7 @@ export default new Command({
   description: 'Displays the information about the bot!',
   category: 'CORE',
   slash: 'both',
+  examples: ['d.invite'],
   run: async () => {
     return `**Here's my invite: ${INVITE_URL}**`
   },

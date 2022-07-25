@@ -26,11 +26,14 @@ export default new Command({
       type: 'SUB_COMMAND',
     },
   ],
-  run: async ({ client, args, interaction }) => {
+  examples: ['d.loop queue', 'd.loop song', 'd.loop disable'],
+  run: async ({ client, args, interaction, message }) => {
     const subcommand = isInteraction(args) ? args.getSubcommand() : args[0]
 
     try {
-      const queue = await client.player.getQueue(interaction.guildId)
+      const queue = await client.player.getQueue(
+        (interaction || message).guildId
+      )
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`

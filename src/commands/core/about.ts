@@ -9,6 +9,7 @@ export default new Command({
   description: 'Displays the information about the bot!',
   category: 'CORE',
   slash: 'both',
+  examples: ['d.about'],
   run: async ({ client }) => {
     const owner = await client.users.fetch(botConfig.ownerId)
 

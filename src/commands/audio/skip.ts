@@ -18,9 +18,12 @@ export default new Command({
     },
   ],
   slash: 'both',
-  run: async ({ client, interaction, args }) => {
+  examples: ['d.skip', 'd.skip 3'],
+  run: async ({ client, interaction, args, message }) => {
     try {
-      const queue: Queue = await client.player.getQueue(interaction.guildId)
+      const queue: Queue = await client.player.getQueue(
+        (interaction || message).guildId
+      )
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`

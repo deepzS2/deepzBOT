@@ -16,6 +16,7 @@ export default new Command({
       required: true,
     },
   ],
+  examples: ['d.slap @user'],
   run: async ({ interaction, args, message }) => {
     const user = isInteraction(args)
       ? args.getUser('user')

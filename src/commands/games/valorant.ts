@@ -24,8 +24,9 @@ const getMMRHistoryUrl = (name: string, tag: string) =>
 
 export default new Command({
   name: 'valorant',
+  aliases: ['vava', 'valo', 'va'],
   description:
-    'Gets your Valorant account info assign your discord to your Valorant account!',
+    'Gets your Valorant account info assigning your discord to your Valorant account!',
   options: [
     {
       name: 'set',
@@ -52,7 +53,7 @@ export default new Command({
       type: 'SUB_COMMAND',
     },
   ],
-  examples: ['/valorant username:deepzS2 tagline:BR1'],
+  examples: ['d.valorant set deepzS2 BR1', 'd.valorant get'],
   category: 'GAMES',
   slash: 'both',
   run: async ({ interaction, client, args, message }) => {

@@ -50,13 +50,21 @@ export default new Command({
       ],
     },
   ],
+  examples: [
+    'd.play song https://youtu.be/Cl5Vkd4N03Q?list=RDik2YF05iX2w',
+    'd.play playlist https://www.youtube.com/watch?v=Cl5Vkd4N03Q&list=RDik2YF05iX2w&index=3',
+    'd.play search after dark',
+  ],
   slash: 'both',
   run: async ({ client, interaction, args, message }) => {
-    if (!interaction.member.voice.channel)
+    if (!(interaction || message).member.voice.channel)
       return `***You need to be in a voice channel to use this command!***`
 
-    const queue = await client.player.createQueue(interaction.guild.id)
-    if (!queue.connection) await queue.join(interaction.member.voice.channel)
+    const queue = await client.player.createQueue(
+      (interaction || message).guild.id
+    )
+    if (!queue.connection)
+      await queue.join((interaction || message).member.voice.channel)
 
     const embed = new CustomMessageEmbed(' ')
 
@@ -110,7 +118,7 @@ export default new Command({
       if (subcommand === 'search') {
         const searchterms = isInteraction(args)
           ? args.getString('searchterms', true)
-          : args[1]
+          : args.join(' ')
 
         const song = await queue.play(searchterms, {
           requestedBy: interaction?.user || message?.author,

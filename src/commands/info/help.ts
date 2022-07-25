@@ -23,7 +23,7 @@ export default new Command({
     },
   ],
   description: 'Returns all commands or get the documentation of a command',
-  examples: ['/help greet'],
+  examples: ['d.help play', 'd.help'],
   slash: 'both',
   run: async ({ client, args, message, interaction }) => {
     try {
@@ -138,10 +138,16 @@ function buildHelpMessageForCommand(
     let optionsUsage = ''
     let options = ''
 
-    command.options.forEach((option) => {
-      optionsUsage += (option as BaseApplicationCommandOptionsData).required
-        ? ` <${option.name}>`
-        : ` [${option.name}]`
+    command.options.forEach((option, index) => {
+      if (option.type === 'SUB_COMMAND') {
+        optionsUsage += ` <${option.name}> ${
+          index < command.options.length - 1 ? '|' : ''
+        }`
+      } else {
+        optionsUsage += (option as BaseApplicationCommandOptionsData).required
+          ? ` <${option.name}>`
+          : ` [${option.name}]`
+      }
 
       options += `\`${option.name}:\` ${option.description}\n`
     })

@@ -9,9 +9,12 @@ export default new Command({
   description: 'Display the current playing song information!',
   category: 'AUDIO',
   slash: 'both',
-  run: async ({ client, interaction }) => {
+  examples: ['d.nowplaying'],
+  run: async ({ client, interaction, message }) => {
     try {
-      const queue: Queue = await client.player.getQueue(interaction.guildId)
+      const queue: Queue = await client.player.getQueue(
+        (interaction || message).guildId
+      )
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`

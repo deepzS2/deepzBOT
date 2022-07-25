@@ -9,15 +9,17 @@ export default new Command({
   description: 'Stops the bot and clears the queue!',
   category: 'AUDIO',
   slash: 'both',
-  run: async ({ client, interaction }) => {
+  examples: ['d.stop'],
+  run: async ({ client, interaction, message }) => {
     try {
-      const queue = await client.player.getQueue(interaction.guildId)
+      const queue = await client.player.getQueue(
+        (interaction || message).guildId
+      )
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
       queue.stop()
-      queue.leave()
 
       return stripIndent`
         ***Music queue stopped... Thanks for listening!***

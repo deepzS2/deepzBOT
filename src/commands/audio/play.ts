@@ -1,3 +1,4 @@
+import { Queue } from 'discord-music-player'
 import { Message } from 'discord.js'
 import path from 'path'
 
@@ -69,7 +70,7 @@ export default new Command({
     if (!queue.connection)
       await queue.join((interaction || message).member.voice.channel)
 
-    await shouldSayGoodNight(interaction, message)
+    await shouldSayGoodNight(interaction, message, queue)
 
     const embed = new CustomMessageEmbed(' ')
 
@@ -155,7 +156,8 @@ export default new Command({
 // Just a joke between friends (when joining play a audio of me saying good night on our guild...)
 async function shouldSayGoodNight(
   interaction: ExtendedInteraction,
-  message: Message
+  message: Message,
+  queue: Queue
 ) {
   if ((interaction || message).guild.id === '750149237357936741') {
     const audio = createAudioResource(

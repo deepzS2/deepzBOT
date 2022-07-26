@@ -69,7 +69,7 @@ export default new Command({
     if (!queue.connection)
       await queue.join((interaction || message).member.voice.channel)
 
-    shouldSayGoodNight(interaction, message)
+    await shouldSayGoodNight(interaction, message)
 
     const embed = new CustomMessageEmbed(' ')
 

@@ -1,6 +1,9 @@
-import dayjs from 'dayjs'
+import { Message } from 'discord.js'
+import path from 'path'
 
 import logger from '@deepz/logger'
+import { ExtendedInteraction } from '@deepz/types/command'
+import { createAudioResource } from '@discordjs/voice'
 import { isInteraction } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
 
@@ -66,6 +69,8 @@ export default new Command({
     if (!queue.connection)
       await queue.join((interaction || message).member.voice.channel)
 
+    shouldSayGoodNight(interaction, message)
+
     const embed = new CustomMessageEmbed(' ')
 
     try {
@@ -111,7 +116,9 @@ export default new Command({
             `**${playlist.songs.length} songs from [${playlist.name}](${playlist.url})** has been added to the queue!`
           )
           .setFooter({
-            text: `Duration: ${dayjs(duration).format('DD HH:mm:ss')}`,
+            text: `Duration: ${Date.duration(duration, 'milliseconds').format(
+              'HH:mm:ss'
+            )}`,
           })
       }
 
@@ -144,3 +151,19 @@ export default new Command({
     }
   },
 })
+
+// Just a joke between friends (when joining play a audio of me saying good night on our guild...)
+async function shouldSayGoodNight(
+  interaction: ExtendedInteraction,
+  message: Message
+) {
+  if ((interaction || message).guild.id === '750149237357936741') {
+    const audio = createAudioResource(
+      path.join(__dirname, '..', '..', 'assets', 'boa noite.mp3')
+    )
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    await queue.connection.playAudioStream(audio)
+  }
+}

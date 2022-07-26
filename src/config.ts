@@ -1,9 +1,7 @@
 import 'dotenv/config'
 import { CategoryEmoji, BotConfiguration } from '@deepz/types/environment'
 
-/**
- * Check if node env is 'dev'
- */
+export const isProd = process.env.NODE_ENV === 'prod'
 export const isDev = process.env.NODE_ENV !== 'prod'
 
 export const botConfig: BotConfiguration = {

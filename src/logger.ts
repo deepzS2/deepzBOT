@@ -1,6 +1,7 @@
-import { createWriteStream } from 'fs'
 import path from 'path'
 import pino from 'pino'
+
+import { isProd } from './config'
 
 const logFileDestination = path.join(
   __dirname,
@@ -9,9 +10,10 @@ const logFileDestination = path.join(
   `${new Date().format('MM-DD-YYYY')}.log`
 )
 
-export default pino(
-  {
-    transport: {
+const transport = pino.transport({
+  targets: [
+    {
+      level: isProd ? 'info' : 'trace',
       target: 'pino-pretty',
       options: {
         colorize: true,
@@ -20,6 +22,15 @@ export default pino(
         ignore: 'pid,hostname',
       },
     },
-  },
-  pino.destination(logFileDestination)
-)
+    {
+      level: isProd ? 'info' : 'trace',
+      target: 'pino/file',
+      options: {
+        destination: logFileDestination,
+        append: true,
+      },
+    },
+  ],
+})
+
+export default pino(transport)

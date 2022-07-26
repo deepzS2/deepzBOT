@@ -1,6 +1,13 @@
 import dayjs from 'dayjs'
+import duration, { CreateDurationType } from 'dayjs/plugin/duration'
+
+dayjs.extend(duration)
 
 declare global {
+  interface DateConstructor {
+    duration: CreateDurationType
+  }
+
   interface Date {
     /**
      * Turn a date into dayjs instance
@@ -22,5 +29,7 @@ Date.prototype.toDayJs = function (this: Date) {
 Date.prototype.format = function (this: Date, template: string) {
   return dayjs(this).format(template)
 }
+
+Date.duration = dayjs.duration
 
 export {}

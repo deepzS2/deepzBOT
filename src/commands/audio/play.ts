@@ -159,7 +159,10 @@ async function shouldSayGoodNight(
   message: Message,
   queue: Queue
 ) {
-  if ((interaction || message).guild.id === '750149237357936741') {
+  if (
+    (interaction || message).guild.id === '750149237357936741' &&
+    !queue.isPlaying
+  ) {
     const audio = createAudioResource(
       path.join(__dirname, '..', '..', 'assets', 'boa noite.mp3')
     )

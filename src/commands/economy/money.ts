@@ -1,9 +1,6 @@
-import { stripIndents } from 'common-tags'
-
-import { botConfig } from '@deepz/config'
 import logger from '@deepz/logger'
 import { isInteraction } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
+import { Command } from '@structures'
 
 export default new Command({
   name: 'money',

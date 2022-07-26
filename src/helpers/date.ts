@@ -6,6 +6,7 @@ dayjs.extend(duration)
 declare global {
   interface DateConstructor {
     duration: CreateDurationType
+    dayjs(): dayjs.Dayjs
   }
 
   interface Date {
@@ -31,5 +32,6 @@ Date.prototype.format = function (this: Date, template: string) {
 }
 
 Date.duration = dayjs.duration
+Date.dayjs = dayjs
 
 export {}

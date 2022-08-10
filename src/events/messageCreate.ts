@@ -6,7 +6,7 @@ import { Event, CustomMessageEmbed } from '@structures'
 export default new Event('messageCreate', async (client, message) => {
   const { prefix } = botConfig
 
-  // Not the own bot xd
+  // Not a BOT
   if (message.author.bot) return
 
   try {
@@ -35,7 +35,7 @@ export default new Event('messageCreate', async (client, message) => {
   }
 
   // No DMs...
-  if (!message.content.startsWith(prefix) && message.channel.type === 'DM')
+  if (!message.content.startsWith(prefix) || message.channel.type === 'DM')
     return
 
   const args = message.content.slice(prefix.length).trim().split(/ +/g)

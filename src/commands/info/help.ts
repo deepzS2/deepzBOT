@@ -1,5 +1,7 @@
+import { stripIndents } from 'common-tags'
 import {
   BaseApplicationCommandOptionsData,
+  Collection,
   MessageSelectMenu,
   MessageSelectOptionData,
 } from 'discord.js'
@@ -9,6 +11,10 @@ import logger from '@deepz/logger'
 import { CommandCategory, CommandType } from '@deepz/types/command'
 import { isInteraction, sendMessage } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
+
+function commandsToString(commands: Collection<string, CommandType>) {
+  return commands.map((cmd) => `\`${cmd.name}\``).join(' ')
+}
 
 export default new Command({
   name: 'help',
@@ -47,7 +53,14 @@ export default new Command({
       const authorUsername =
         message?.author.username || interaction?.user.username
 
-      embed.setDescription(`Hello ${authorUsername}, check my commands here:`)
+      const cmds = client.commands
+
+      embed.setDescription(
+        stripIndents`
+          Hello ${authorUsername}, check my commands here: 
+          ${commandsToString(cmds)}
+        `
+      )
 
       const panelOptions: MessageSelectOptionData[] = categoryEmojis.map(
         (category) => ({
@@ -91,14 +104,12 @@ export default new Command({
           await collected.deferUpdate()
 
           const value = collected.values[0] as CommandCategory
-          const cmds = client.commands
-            .filter((cmd) => cmd.category === value)
-            .map((cmd) => `\`${cmd.name}\``)
 
           embed.setDescription(
-            `Hello ${authorUsername}, check my commands of category \`${String(
-              value
-            ).capitalize()}\` here:\n${cmds.join(' ')}`
+            stripIndents`
+              Hello ${authorUsername}, check my commands of category \`${value.capitalize()}\` here:
+              ${commandsToString(cmds.filter((cmd) => cmd.category === value))}
+            `
           )
 
           dropdown.edit({
@@ -110,6 +121,8 @@ export default new Command({
               },
             ],
           })
+
+          collector.resetTimer()
         }
       })
 

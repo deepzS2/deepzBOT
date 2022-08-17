@@ -1,3 +1,5 @@
+import { ApplicationCommandOptionType } from 'discord.js'
+
 import logger from '@deepz/logger'
 import { isInteraction } from '@helpers'
 import { Command } from '@structures'
@@ -11,7 +13,7 @@ export default new Command({
   options: [
     {
       name: 'text',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       description: 'The text to your bio',
       required: true,
     },

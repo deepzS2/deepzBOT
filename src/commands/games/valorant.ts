@@ -1,4 +1,5 @@
 import { stripIndents } from 'common-tags'
+import { ApplicationCommandOptionType } from 'discord.js'
 
 import logger from '@deepz/logger'
 import {
@@ -31,18 +32,18 @@ export default new Command({
     {
       name: 'set',
       description: 'Assign your discord account to Valorant!',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       options: [
         {
           name: 'username',
           description: 'Username of the player in Valorant',
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           required: true,
         },
         {
           name: 'tagline',
           description: 'Tagline of the player in Valorant',
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           required: true,
         },
       ],
@@ -50,7 +51,7 @@ export default new Command({
     {
       name: 'get',
       description: 'Get your Valorant account details',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
   ],
   examples: ['d.valorant set deepzS2 BR1', 'd.valorant get'],

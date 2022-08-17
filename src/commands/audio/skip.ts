@@ -1,4 +1,5 @@
 import { Queue } from 'discord-music-player'
+import { ApplicationCommandOptionType } from 'discord.js'
 
 import logger from '@deepz/logger'
 import { isInteraction } from '@helpers'
@@ -11,7 +12,7 @@ export default new Command({
   category: 'AUDIO',
   options: [
     {
-      type: 'NUMBER',
+      type: ApplicationCommandOptionType.Number,
       name: 'to',
       description: 'The track to skip to',
       required: false,

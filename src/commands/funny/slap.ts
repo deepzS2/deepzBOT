@@ -1,3 +1,5 @@
+import { ApplicationCommandOptionType } from 'discord.js'
+
 import logger from '@deepz/logger'
 import { getMentions, isInteraction } from '@helpers'
 import { tenor } from '@services'
@@ -12,7 +14,7 @@ export default new Command({
     {
       name: 'user',
       description: 'User to slap',
-      type: 'USER',
+      type: ApplicationCommandOptionType.User,
       required: true,
     },
   ],

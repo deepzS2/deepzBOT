@@ -1,3 +1,5 @@
+import { ApplicationCommandOptionType } from 'discord.js'
+
 import logger from '@deepz/logger'
 import { IGetTermMeanings } from '@deepz/types/fetchs/urbandictionary'
 import { isInteraction, request } from '@helpers'
@@ -13,7 +15,7 @@ export default new Command({
     {
       name: 'searchterm',
       description: 'Term to search',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],

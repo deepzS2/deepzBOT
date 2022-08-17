@@ -1,4 +1,4 @@
-import { User } from 'discord.js'
+import { User, ApplicationCommandOptionType } from 'discord.js'
 
 import logger from '@deepz/logger'
 import { isInteraction } from '@helpers'
@@ -15,7 +15,7 @@ export default new Command({
     {
       name: 'user',
       description: 'User to give reputation',
-      type: 'USER',
+      type: ApplicationCommandOptionType.User,
       required: true,
     },
   ],

@@ -5,7 +5,7 @@ import { ExtendedInteraction } from '@deepz/types/command'
 import { Event, CustomMessageEmbed } from '@structures'
 
 export default new Event('interactionCreate', async (client, interaction) => {
-  if (interaction.isApplicationCommand()) {
+  if (interaction.isCommand()) {
     const command = client.commands.get(interaction.commandName)
 
     if (!command) return

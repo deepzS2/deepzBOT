@@ -1,5 +1,5 @@
 import { Queue } from 'discord-music-player'
-import { Message } from 'discord.js'
+import { ApplicationCommandOptionType, Message } from 'discord.js'
 import path from 'path'
 
 import logger from '@deepz/logger'
@@ -15,12 +15,12 @@ export default new Command({
   category: 'AUDIO',
   options: [
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'song',
       description: 'Loads a single song from a URL',
       options: [
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'url',
           description: 'The song URL',
           required: true,
@@ -28,12 +28,12 @@ export default new Command({
       ],
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'playlist',
       description: 'Loads a playlist from a URL',
       options: [
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'url',
           description: 'The playlist URL',
           required: true,
@@ -41,12 +41,12 @@ export default new Command({
       ],
     },
     {
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
       name: 'search',
       description: 'Searches for song based on provided keywords',
       options: [
         {
-          type: 'STRING',
+          type: ApplicationCommandOptionType.String,
           name: 'searchterms',
           description: 'The search keywords',
           required: true,

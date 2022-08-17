@@ -1,6 +1,5 @@
-import { stripIndents } from 'common-tags'
+import { ApplicationCommandOptionType } from 'discord.js'
 
-import { botConfig } from '@deepz/config'
 import { isInteraction } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
 
@@ -16,11 +15,11 @@ export default new Command({
     {
       name: 'question',
       description: 'Question',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],
-  run: async ({ client, message, interaction, args }) => {
+  run: async ({ message, interaction, args }) => {
     const question = isInteraction(args)
       ? args.getString('question')
       : args.join(' ')
@@ -41,10 +40,12 @@ export default new Command({
         {
           name: 'Question',
           value: question,
+          inline: false,
         },
         {
           name: 'Answer',
           value: answer,
+          inline: false,
         },
       ],
     })

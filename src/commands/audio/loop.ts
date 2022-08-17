@@ -1,4 +1,5 @@
 import { RepeatMode } from 'discord-music-player'
+import { ApplicationCommandOptionType } from 'discord.js'
 
 import logger from '@deepz/logger'
 import { isInteraction } from '@helpers'
@@ -13,17 +14,17 @@ export default new Command({
     {
       name: 'queue',
       description: 'Loops the current queue',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
     {
       name: 'song',
       description: 'Loops only the current song from the queue',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
     {
       name: 'disable',
       description: 'Disable the loop',
-      type: 'SUB_COMMAND',
+      type: ApplicationCommandOptionType.Subcommand,
     },
   ],
   examples: ['d.loop queue', 'd.loop song', 'd.loop disable'],

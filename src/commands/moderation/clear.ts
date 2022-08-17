@@ -1,3 +1,5 @@
+import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord.js'
+
 import logger from '@deepz/logger'
 import { isInteraction } from '@helpers'
 import { Command } from '@structures'
@@ -7,12 +9,12 @@ export default new Command({
   description: 'Clear the message history!',
   category: 'MODERATION',
   slash: 'both',
-  userPermissions: ['ADMINISTRATOR'],
+  userPermissions: ['Administrator'],
   options: [
     {
       name: 'amount',
       description: 'Amount of messages',
-      type: 'INTEGER',
+      type: ApplicationCommandOptionType.Integer,
       required: true,
       minValue: 1,
       maxValue: 100,
@@ -20,6 +22,9 @@ export default new Command({
   ],
   run: async ({ interaction, args, message }) => {
     try {
+      if (!message.member.permissions.has(PermissionFlagsBits.Administrator))
+        return
+
       const amount = isInteraction(args)
         ? args.getInteger('amount')
         : parseInt(args[0])

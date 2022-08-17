@@ -35,8 +35,7 @@ export default new Event('messageCreate', async (client, message) => {
   }
 
   // No DMs...
-  if (!message.content.startsWith(prefix) || message.channel.type === 'DM')
-    return
+  if (!message.content.startsWith(prefix) || message.channel.isDMBased()) return
 
   const args = message.content.slice(prefix.length).trim().split(/ +/g)
   const command = args.shift().toLowerCase()

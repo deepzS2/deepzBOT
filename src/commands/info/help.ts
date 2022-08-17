@@ -2,8 +2,10 @@ import { stripIndents } from 'common-tags'
 import {
   BaseApplicationCommandOptionsData,
   Collection,
-  MessageSelectMenu,
-  MessageSelectOptionData,
+  SelectMenuBuilder,
+  SelectMenuComponentOptionData,
+  ApplicationCommandOptionType,
+  ComponentType,
 } from 'discord.js'
 
 import { botConfig, categoryEmojis } from '@deepz/config'
@@ -24,7 +26,7 @@ export default new Command({
     {
       name: 'command',
       description: 'A bot command to check the documentation',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: false,
     },
   ],
@@ -62,7 +64,7 @@ export default new Command({
         `
       )
 
-      const panelOptions: MessageSelectOptionData[] = categoryEmojis.map(
+      const panelOptions: SelectMenuComponentOptionData[] = categoryEmojis.map(
         (category) => ({
           label: String(category.name).capitalize(),
           value: category.name,
@@ -72,7 +74,7 @@ export default new Command({
         })
       )
 
-      const selectPanel = new MessageSelectMenu()
+      const selectPanel = new SelectMenuBuilder()
         .setCustomId('help_command_category')
         .setPlaceholder('Choose a category for commands')
         .addOptions(panelOptions)
@@ -83,7 +85,7 @@ export default new Command({
           embeds: [embed],
           components: [
             {
-              type: 'ACTION_ROW',
+              type: ComponentType.ActionRow,
               components: [selectPanel],
             },
           ],
@@ -116,7 +118,7 @@ export default new Command({
             embeds: [embed],
             components: [
               {
-                type: 'ACTION_ROW',
+                type: ComponentType.ActionRow,
                 components: [selectPanel],
               },
             ],
@@ -152,7 +154,7 @@ function buildHelpMessageForCommand(
     let options = ''
 
     command.options.forEach((option, index) => {
-      if (option.type === 'SUB_COMMAND') {
+      if (option.type === ApplicationCommandOptionType.Subcommand) {
         optionsUsage += ` <${option.name}> ${
           index < command.options.length - 1 ? '|' : ''
         }`

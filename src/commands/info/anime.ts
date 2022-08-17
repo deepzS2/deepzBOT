@@ -1,5 +1,9 @@
 import dayjs from 'dayjs'
-import { MessageSelectMenu } from 'discord.js'
+import {
+  ComponentType,
+  SelectMenuBuilder,
+  ApplicationCommandOptionType,
+} from 'discord.js'
 
 import logger from '@deepz/logger'
 import {
@@ -23,7 +27,7 @@ export default new Command({
   category: 'INFO',
   options: [
     {
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       name: 'searchterm',
       description: 'The anime title to search',
       required: false,
@@ -59,7 +63,7 @@ export default new Command({
         `${URL}/anime?filter[text]=${searchTerm}`
       )
 
-      const selectAnimeMenu = new MessageSelectMenu()
+      const selectAnimeMenu = new SelectMenuBuilder()
         .setCustomId('select_anime_menu')
         .setPlaceholder('Choose an anime present on the list!')
         .addOptions(
@@ -79,7 +83,7 @@ export default new Command({
           embeds: [createAnimeSelectList(animes, client)],
           components: [
             {
-              type: 'ACTION_ROW',
+              type: ComponentType.ActionRow,
               components: [selectAnimeMenu],
             },
           ],
@@ -167,33 +171,42 @@ function createAnimeEmbed(
         } users`,
       },
     }
-  )
-    .addField('Type', anime.attributes.showType, true)
-    .addField('Current status', anime.attributes.status, true)
-    .addField(
-      'Aired from',
-      `${dayjs(anime.attributes.startDate).format('MM/DD/YYYY')} to ${dayjs(
-        anime.attributes.endDate
-      ).format('MM/DD/YYYY')}`
-    )
-    .addField(
-      'Genres',
-      genres.map((genre) => genre.attributes.name).join(', '),
-      true
-    )
+  ).addFields([
+    {
+      name: 'Type',
+      value: anime.attributes.showType,
+      inline: true,
+    },
+    {
+      name: 'Current status',
+      value: anime.attributes.status,
+      inline: true,
+    },
+    {
+      name: 'Aired from',
+      value: `${dayjs(anime.attributes.startDate).format(
+        'MM/DD/YYYY'
+      )} to ${dayjs(anime.attributes.endDate).format('MM/DD/YYYY')}`,
+    },
+    {
+      name: 'Genres',
+      value: genres.map((genre) => genre.attributes.name).join(', '),
+      inline: true,
+    },
+  ])
 
   if (anime.attributes.showType !== 'movie') {
-    embed.addField(
-      'Episodes',
-      `${anime.attributes.episodeCount} episodes with ${anime.attributes.episodeLength} minutes per episode`,
-      true
-    )
+    embed.addFields({
+      name: 'Episodes',
+      value: `${anime.attributes.episodeCount} episodes with ${anime.attributes.episodeLength} minutes per episode`,
+      inline: true,
+    })
   } else {
-    embed.addField(
-      'Movie length',
-      `${anime.attributes.episodeLength} minutes`,
-      true
-    )
+    embed.addFields({
+      name: 'Movie length',
+      value: `${anime.attributes.episodeLength} minutes`,
+      inline: true,
+    })
   }
 
   return embed

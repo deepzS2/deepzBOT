@@ -1,5 +1,9 @@
 import { stripIndents } from 'common-tags'
-import { EmbedField, GuildMember } from 'discord.js'
+import {
+  ApplicationCommandOptionType,
+  EmbedField,
+  GuildMember,
+} from 'discord.js'
 
 import { isInteraction } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
@@ -13,7 +17,7 @@ export default new Command({
     {
       name: 'user',
       description: 'The target user',
-      type: 'MENTIONABLE',
+      type: ApplicationCommandOptionType.Mentionable,
       required: true,
     },
   ],

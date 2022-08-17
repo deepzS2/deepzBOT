@@ -1,4 +1,5 @@
 import beautify from 'beautify'
+import { ApplicationCommandOptionType } from 'discord.js'
 
 import { botConfig } from '@deepz/config'
 import { isInteraction } from '@helpers'
@@ -11,7 +12,7 @@ export default new Command({
     {
       name: 'code',
       description: 'The code in JavaScript to evaluate!',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],
@@ -36,18 +37,23 @@ export default new Command({
           text: client.user.username,
           iconURL: client.user.displayAvatarURL(),
         },
-      })
-        .addField(
-          'To evaluate:',
-          `\`\`\`js\n${beautify(toEval, { format: 'js' })}\n\`\`\``
-        )
-        .addField(
-          'Evaluated:',
-          typeof evaluated === 'object'
-            ? beautify(JSON.stringify(evaluated), { format: 'json' })
-            : evaluated
-        )
-        .addField('Typeof:', typeof evaluated)
+      }).addFields([
+        {
+          name: 'To evaluate:',
+          value: `\`\`\`js\n${beautify(toEval, { format: 'js' })}\n\`\`\``,
+        },
+        {
+          name: 'Evaluated:',
+          value:
+            typeof evaluated === 'object'
+              ? beautify(JSON.stringify(evaluated), { format: 'json' })
+              : evaluated,
+        },
+        {
+          name: 'Typeof:',
+          value: typeof evaluated,
+        },
+      ])
     } catch (error) {
       return new CustomMessageEmbed(':x: Error!', {
         color: '#4360FB',

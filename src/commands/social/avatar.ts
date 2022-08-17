@@ -1,4 +1,4 @@
-import { User } from 'discord.js'
+import { ApplicationCommandOptionType, User } from 'discord.js'
 
 import { isInteraction } from '@helpers'
 import { Command, CustomMessageEmbed } from '@structures'
@@ -13,7 +13,7 @@ export default new Command({
     {
       name: 'user',
       description: 'The user to get avatar',
-      type: 'USER',
+      type: ApplicationCommandOptionType.User,
       required: false,
     },
   ],
@@ -25,7 +25,7 @@ export default new Command({
 
     const avatar = (user ?? author).displayAvatarURL({
       size: 2048,
-      dynamic: true,
+      extension: 'png',
     })
 
     return new CustomMessageEmbed(`**${(user ?? author).username}**`, {

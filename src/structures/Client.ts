@@ -5,7 +5,8 @@ import {
   Client,
   ClientEvents,
   Collection,
-  Intents,
+  ActivityType,
+  GatewayIntentBits,
 } from 'discord.js'
 import glob from 'glob'
 import path from 'path'
@@ -27,15 +28,15 @@ export class ExtendedClient extends Client {
   private readonly ACTIVITIES: ActivitiesOptions[] = [
     {
       name: 'Delivering a new version to you!',
-      type: 'PLAYING',
+      type: ActivityType.Playing,
     },
     {
       name: 'Now with slash commands! Try /help',
-      type: 'PLAYING',
+      type: ActivityType.Playing,
     },
     {
       name: 'New version being developed!',
-      type: 'PLAYING',
+      type: ActivityType.Playing,
     },
   ]
 
@@ -53,11 +54,11 @@ export class ExtendedClient extends Client {
   constructor() {
     super({
       intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.GUILD_MESSAGE_TYPING,
-        Intents.FLAGS.GUILD_MEMBERS,
-        Intents.FLAGS.GUILD_VOICE_STATES,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageTyping,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildVoiceStates,
       ],
     })
   }

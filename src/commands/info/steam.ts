@@ -1,4 +1,5 @@
 import { stripIndents } from 'common-tags'
+import { ApplicationCommandOptionType } from 'discord.js'
 import fetch from 'node-fetch'
 
 import { steamToken } from '@deepz/config'
@@ -28,7 +29,7 @@ export default new Command({
     {
       name: 'id',
       description: 'Steam ID, Steam ID64, Steam ID3 or Custom URL',
-      type: 'STRING',
+      type: ApplicationCommandOptionType.String,
       required: true,
     },
   ],

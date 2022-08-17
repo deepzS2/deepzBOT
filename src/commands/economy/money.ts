@@ -1,3 +1,5 @@
+import { ApplicationCommandOptionType } from 'discord.js'
+
 import logger from '@deepz/logger'
 import { isInteraction } from '@helpers'
 import { Command } from '@structures'
@@ -14,13 +16,13 @@ export default new Command({
     {
       name: 'user',
       description: 'User to transfer or check balance',
-      type: 'USER',
+      type: ApplicationCommandOptionType.User,
       required: false,
     },
     {
       name: 'amount',
       description: 'Amount to transfer to the user',
-      type: 'NUMBER',
+      type: ApplicationCommandOptionType.Number,
       required: false,
     },
   ],

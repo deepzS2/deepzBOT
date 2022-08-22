@@ -22,8 +22,8 @@ export default new Command({
   ],
   run: async ({ interaction, args, message }) => {
     try {
-      if (!message.member.permissions.has(PermissionFlagsBits.Administrator))
-        return
+      if (!message?.member.permissions.has(PermissionFlagsBits.Administrator))
+        return `You don't have permission to use this command!`
 
       const amount = isInteraction(args)
         ? args.getInteger('amount')
@@ -41,7 +41,7 @@ export default new Command({
     } catch (error) {
       logger.error(error)
 
-      await interaction.channel.send({
+      await (interaction ?? message).channel.send({
         content: `***I could not delete the messages! Try again later...***`,
       })
     }

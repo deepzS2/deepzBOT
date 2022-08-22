@@ -13,6 +13,7 @@ export const botConfig: BotConfiguration = {
   ownerId: process.env.OWNER_ID.toString(),
 }
 
+export const trackerApiKey = process.env.TRACKER_API_KEY
 export const tenorKey = process.env.TENOR_KEY
 export const steamToken = process.env.STEAM_TOKEN
 export const embedGlobalColor = '#483D3F'

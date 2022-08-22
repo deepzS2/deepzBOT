@@ -26,3 +26,6 @@ prisma/dev*.dv
 
 # Logs
 logs
+
+# Thunder Client
+thunder-tests

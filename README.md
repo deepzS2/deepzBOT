@@ -30,11 +30,11 @@ With the new versions of Discord, they created something amazing called [Slash c
 ## Commands categories list
 - [x] [Audio](src/commands/audio) - The bot can play music;
 - [x] [Core](src/commands/core) - For the bot developing and documentation for the users;
-- [ ] [Economy](src/commands/economy) - Economy system actually stored on database;
-- [ ] [Funny](src/commands/funny) - Funny commands;
+- [x] [Economy](src/commands/economy) - Economy system actually stored on database;
+- [x] [Funny](src/commands/funny) - Funny commands;
 - [x] [Information](src/commands/info) - Information commands, like `help`, etc.;
-- [ ] [Moderation](src/commands/moderation) - For moderating the discord guild;
-- [ ] [Social](src/commands/social) - XP, profile, bio, etc. stored on database.
+- [x] [Moderation](src/commands/moderation) - For moderating the discord guild;
+- [x] [Social](src/commands/social) - XP, profile, bio, etc. stored on database.
 
 ## In action!
 | ![Audio](assets/audio.gif) |

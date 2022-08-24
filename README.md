@@ -22,7 +22,7 @@ Currently the bot is maintained by a single contributor which is [Alan](https://
 With the new versions of Discord, they created something amazing called [Slash commands](https://discordjs.guide/interactions/slash-commands.html) which gives the ability to the user of using commands with interactions like buttons, selects menus, etc. In this version of the BOT, it only uses slash commands implemented since it's so easy and funny to create and interact with the user now!
 
 ## Stack
-- [PostgresSQL](https://www.postgresql.org)
+- [MongoDB](https://www.mongodb.com)
 - [Typescript](https://www.typescriptlang.org/)
 - [Discord.js](https://www.discord.js.org/)
 - [Docker](https://www.docker.com)

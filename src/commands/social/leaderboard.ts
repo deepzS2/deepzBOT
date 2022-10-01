@@ -1,7 +1,7 @@
 import { stripIndents } from 'common-tags'
 
-import { getExperienceInformation } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
+import { getExperienceInformation } from '@deepz/helpers'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'leaderboard',

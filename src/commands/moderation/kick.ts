@@ -5,9 +5,9 @@ import {
   PermissionFlagsBits,
 } from 'discord.js'
 
+import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { isInteraction } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'kick',

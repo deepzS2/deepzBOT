@@ -1,9 +1,9 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 
+import { getMentions, isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { getMentions, isInteraction } from '@helpers'
-import { tenor } from '@services'
-import { Command, CustomMessageEmbed } from '@structures'
+import { tenor } from '@deepz/services'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'kiss',

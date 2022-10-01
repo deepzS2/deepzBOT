@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, User } from 'discord.js'
 
-import { isInteraction } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
+import { isInteraction } from '@deepz/helpers'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'avatar',

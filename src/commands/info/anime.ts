@@ -5,7 +5,9 @@ import {
   ApplicationCommandOptionType,
 } from 'discord.js'
 
+import { sendMessage, request, isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
+import { ExtendedClient, Command, CustomMessageEmbed } from '@deepz/structures'
 import {
   IAnime,
   IAnimeByIdFetchResponse,
@@ -13,8 +15,6 @@ import {
   IGenre,
   IGenresByAnimeFetchResponse,
 } from '@deepz/types/fetchs/kitsu'
-import { sendMessage, request, isInteraction } from '@helpers'
-import { ExtendedClient, Command, CustomMessageEmbed } from '@structures'
 
 // https://kitsu.docs.apiary.io/
 const URL = `https://kitsu.io/api/edge`
@@ -44,24 +44,34 @@ export default new Command({
       if (!searchTerm) {
         const id = Math.floor(Math.random() * ANIMES_NUMBER)
 
-        const { data: anime } = await request<IAnimeByIdFetchResponse>(
-          `${URL}/anime/${id}`
-        )
+        const { data: anime } = await request<IAnimeByIdFetchResponse>({
+          baseURL: URL,
+          url: {
+            value: '/anime/{id}',
+            params: {
+              id,
+            },
+          },
+        })
 
         if (!anime) return INVALID_PROPS_MESSAGE
 
-        const { data: genres } = await request<IGenresByAnimeFetchResponse>(
-          anime.relationships.genres.links.related
-        )
+        const { data: genres } = await request<IGenresByAnimeFetchResponse>({
+          url: anime.relationships.genres.links.related,
+        })
 
         if (!genres) return INVALID_PROPS_MESSAGE
 
         return createAnimeEmbed(anime, genres, client)
       }
 
-      const { data: animes } = await request<IAnimesFetchResponse>(
-        `${URL}/anime?filter[text]=${searchTerm}`
-      )
+      const { data: animes } = await request<IAnimesFetchResponse>({
+        baseURL: URL,
+        url: '/anime',
+        query: {
+          'filter[text]': searchTerm,
+        },
+      })
 
       const selectAnimeMenu = new SelectMenuBuilder()
         .setCustomId('select_anime_menu')
@@ -106,9 +116,9 @@ export default new Command({
           const value = collected.values[0]
           const animeSelected = animes.find((anime) => anime.id === value)
 
-          const { data: genres } = await request<IGenresByAnimeFetchResponse>(
-            animeSelected.relationships.genres.links.related
-          )
+          const { data: genres } = await request<IGenresByAnimeFetchResponse>({
+            url: animeSelected.relationships.genres.links.related,
+          })
 
           selectMessage.edit({
             embeds: [createAnimeEmbed(animeSelected, genres, client)],

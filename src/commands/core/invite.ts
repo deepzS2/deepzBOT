@@ -1,4 +1,4 @@
-import { Command } from '@structures'
+import { Command } from '@deepz/structures'
 
 const INVITE_URL =
   'https://discord.com/oauth2/authorize?client_id=709564503053828137&scope=bot&permissions=334621766'

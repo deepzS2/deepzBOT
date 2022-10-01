@@ -8,7 +8,7 @@ import {
   MessagePayload,
 } from 'discord.js'
 
-import CustomMessageEmbed from '@structures/MessageEmbed'
+import CustomMessageEmbed from '@deepz/structures/MessageEmbed'
 
 import { ExtendedClient } from '../structures/Client'
 

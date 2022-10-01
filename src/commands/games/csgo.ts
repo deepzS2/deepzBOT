@@ -2,14 +2,14 @@ import axios from 'axios'
 import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType } from 'discord.js'
 
+import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
+import { tracker } from '@deepz/services'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 import {
   ICsUserDataResponse,
   ISearchSteamUserResponse,
 } from '@deepz/types/fetchs/csgo'
-import { isInteraction } from '@helpers'
-import { tracker } from '@services'
-import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
   name: 'csgo',

@@ -1,5 +1,5 @@
 import {
-  MessageOptions,
+  BaseMessageOptions,
   Message,
   MessagePayload,
   InteractionReplyOptions,
@@ -13,7 +13,11 @@ import {
  */
 export async function sendMessage(options: {
   message?: Message | CommandInteraction
-  content?: MessagePayload | MessageOptions | InteractionReplyOptions | string
+  content?:
+    | MessagePayload
+    | BaseMessageOptions
+    | InteractionReplyOptions
+    | string
 }): Promise<Message<boolean>> {
   if (!options.message || !options.content) return
 
@@ -23,7 +27,7 @@ export async function sendMessage(options: {
     )) as Message<boolean>
   } else {
     return await options.message.channel.send(
-      options.content as MessagePayload | MessageOptions | string
+      options.content as MessagePayload | BaseMessageOptions | string
     )
   }
 }

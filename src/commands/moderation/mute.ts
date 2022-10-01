@@ -6,9 +6,9 @@ import {
   PermissionFlagsBits,
 } from 'discord.js'
 
+import { isInteraction, sendMessage } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { isInteraction, sendMessage } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 const MUTED_ROLE_NAME = 'Muted'
 

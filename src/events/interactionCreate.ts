@@ -1,8 +1,8 @@
 import { CommandInteractionOptionResolver } from 'discord.js'
 
 import logger from '@deepz/logger'
+import { Event, CustomMessageEmbed } from '@deepz/structures'
 import { ExtendedInteraction } from '@deepz/types/command'
-import { Event, CustomMessageEmbed } from '@structures'
 
 export default new Event('interactionCreate', async (client, interaction) => {
   if (interaction.isCommand()) {

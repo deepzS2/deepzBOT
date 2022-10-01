@@ -16,9 +16,6 @@ const STEAMCOMMUNITY_ID_URL = 'steamcommunity.com/id'
 // Example: .../profiles/76940218508610
 const STEAMCOMMUNITY_PROFILE_URL = 'steamcommunity.com/profiles'
 
-const getApiUrl = (vanityUrl: string) =>
-  `http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/?key=${steamToken}&vanityurl=${vanityUrl}`
-
 /**
  * It takes a string, checks if it's a SteamID64, SteamID3, SteamID, Steam profile URL, or
  * Steam ID URL, and returns a SteamID64
@@ -56,7 +53,13 @@ export async function getSteamID(dataToSearch: string) {
     dataToSearch = id || splitted.pop()
   }
 
-  const body = await request<IResolveVanityURLResponse>(getApiUrl(dataToSearch))
+  const body = await request<IResolveVanityURLResponse>({
+    url: 'http://api.steampowered.com/ISteamUser/ResolveVanityURL/v0001/',
+    query: {
+      key: steamToken,
+      vanityurl: dataToSearch,
+    },
+  })
 
   if (!body.response || body.response.success === 42)
     throw new Error('I was unable to find a steam profile with that name')

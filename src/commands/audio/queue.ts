@@ -2,9 +2,9 @@ import { stripIndent } from 'common-tags'
 import { Queue } from 'discord-music-player'
 import { ApplicationCommandOptionType } from 'discord.js'
 
+import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { isInteraction } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 const SONGS_PER_PAGE = 10
 

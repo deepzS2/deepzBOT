@@ -1,15 +1,15 @@
 import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType } from 'discord.js'
-import fetch from 'node-fetch'
 
 import { steamToken } from '@deepz/config'
+import { request } from '@deepz/helpers'
+import { getSteamID, isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 import {
   IGetPlayerSummariesResponse,
   IPlayerBansResponse,
 } from '@deepz/types/fetchs/steam'
-import { getSteamID, isInteraction } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
 const states = [
   'Offline',
   'Online',
@@ -38,22 +38,24 @@ export default new Command({
   run: async ({ args }) => {
     const idToSearch = isInteraction(args) ? args.getString('id') : args[0]
 
-    const summariesUrl = (id: string) =>
-      `http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${steamToken}&steamids=${id}`
-
-    const bansUrl = (id: string) =>
-      `http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key=${steamToken}&steamids=${id}`
-
     try {
       const steamId = await getSteamID(idToSearch)
 
-      const summariesBody: IGetPlayerSummariesResponse = await fetch(
-        summariesUrl(steamId)
-      ).then((res) => res.json())
+      const summariesBody = await request<IGetPlayerSummariesResponse>({
+        url: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
+        query: {
+          key: steamToken,
+          steamids: steamId,
+        },
+      })
 
-      const bansBody: IPlayerBansResponse = await fetch(bansUrl(steamId)).then(
-        (res) => res.json()
-      )
+      const bansBody = await request<IPlayerBansResponse>({
+        url: 'http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/',
+        query: {
+          key: steamToken,
+          steamids: steamId,
+        },
+      })
 
       if (!summariesBody.response || bansBody.players?.length === 0)
         return 'I was unable to find a steam profile with that name'

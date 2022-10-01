@@ -2,8 +2,8 @@ import beautify from 'beautify'
 import { ApplicationCommandOptionType } from 'discord.js'
 
 import { botConfig } from '@deepz/config'
-import { isInteraction } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
+import { isInteraction } from '@deepz/helpers'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'eval',

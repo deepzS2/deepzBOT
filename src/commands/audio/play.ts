@@ -2,11 +2,11 @@ import { Queue } from 'discord-music-player'
 import { ApplicationCommandOptionType, Message } from 'discord.js'
 import path from 'path'
 
+import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 import { ExtendedInteraction } from '@deepz/types/command'
 import { createAudioResource } from '@discordjs/voice'
-import { isInteraction } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
   name: 'play',
@@ -67,6 +67,7 @@ export default new Command({
     const queue = await client.player.createQueue(
       (interaction || message).guild.id
     )
+
     if (!queue.connection)
       await queue.join((interaction || message).member.voice.channel)
 

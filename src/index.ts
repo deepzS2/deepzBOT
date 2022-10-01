@@ -1,7 +1,7 @@
 import './helpers/string'
 import './helpers/date'
 
-import { ExtendedClient } from '@structures'
+import { ExtendedClient } from '@deepz/structures'
 
 const client: ExtendedClient = new ExtendedClient()
 

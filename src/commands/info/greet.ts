@@ -1,5 +1,5 @@
 import { botConfig } from '@deepz/config'
-import { Command, CustomMessageEmbed } from '@structures'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'greet',

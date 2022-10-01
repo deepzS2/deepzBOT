@@ -1,9 +1,9 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 
+import { isInteraction, request } from '@deepz/helpers'
 import logger from '@deepz/logger'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 import { IGetTermMeanings } from '@deepz/types/fetchs/urbandictionary'
-import { isInteraction, request } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
 
 export default new Command({
   name: 'dictionary',
@@ -26,15 +26,15 @@ export default new Command({
       : args.join(' ')
 
     try {
-      const query = new URLSearchParams({
-        term: searchterm,
-      })
-
       if (!searchterm) return `**:x: I need a term to search...**`
 
-      const { list } = await request<IGetTermMeanings>(
-        `https://api.urbandictionary.com/v0/define?${query}`
-      )
+      const { list } = await request<IGetTermMeanings>({
+        baseURL: 'https://api.urbandictionary.com/v0',
+        url: '/define',
+        query: {
+          term: searchterm,
+        },
+      })
 
       if (!list.length) {
         return `No results found for **${searchterm}**`

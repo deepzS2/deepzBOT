@@ -14,11 +14,11 @@ import { promisify } from 'util'
 
 import { botConfig, isDev } from '@deepz/config'
 import logger from '@deepz/logger'
+import { Event } from '@deepz/structures'
 import { RegisterCommandsOptions } from '@deepz/types/client'
 import { CommandType } from '@deepz/types/command'
 import { BotConfiguration } from '@deepz/types/environment'
 import { PrismaClient } from '@prisma/client'
-import { Event } from '@structures'
 
 const globPromise = promisify(glob)
 const commandsPath = path.join(__dirname, '..', 'commands', '*', '*{.ts,.js}')

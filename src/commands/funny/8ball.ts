@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
+import { isInteraction } from '@deepz/helpers'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 const replies = ['Yes.', 'No.', "I don't know.", 'Ask again later']
 

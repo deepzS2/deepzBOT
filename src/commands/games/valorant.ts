@@ -1,14 +1,14 @@
 import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType } from 'discord.js'
 
+import { isInteraction, request } from '@deepz/helpers'
 import logger from '@deepz/logger'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 import {
   IGetAccountResponse,
   IGetMMRHistoryResponse,
   IGetMMRResponse,
 } from '@deepz/types/fetchs/valorant'
-import { isInteraction, request } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
 
 /*
   First of all, thanks to HenrikDev for this amazing API!
@@ -16,12 +16,7 @@ import { Command, CustomMessageEmbed } from '@structures'
   https://docs.henrikdev.xyz/valorant.html
   https://github.com/Henrik-3
 */
-const getAccountUrl = (name: string, tag: string) =>
-  `https://api.henrikdev.xyz/valorant/v1/account/${name}/${tag}`
-const getMMRUrl = (name: string, tag: string) =>
-  `https://api.henrikdev.xyz/valorant/v1/mmr/na/${name}/${tag}`
-const getMMRHistoryUrl = (name: string, tag: string) =>
-  `https://api.henrikdev.xyz/valorant/v1/mmr-history/na/${name}/${tag}`
+const baseURL = 'https://api.henrikdev.xyz/valorant/v1'
 
 export default new Command({
   name: 'valorant',
@@ -65,9 +60,16 @@ export default new Command({
         const name = isInteraction(args) ? args.getString('username') : args[1]
         const tag = isInteraction(args) ? args.getString('tagline') : args[2]
 
-        const accountData = await request<IGetAccountResponse>(
-          getAccountUrl(name, tag)
-        )
+        const accountData = await request<IGetAccountResponse>({
+          baseURL,
+          url: {
+            value: '/account/{name}/{tag}',
+            params: {
+              name,
+              tag,
+            },
+          },
+        })
 
         if (accountData.status === 404) {
           return `***I didn't found any user with that username and tag... Check if it's correct!***`
@@ -134,18 +136,41 @@ export default new Command({
 })
 
 async function fetchData(name: string, tag: string) {
-  const accountData = await request<IGetAccountResponse>(
-    getAccountUrl(name, tag)
-  )
+  const accountData = await request<IGetAccountResponse>({
+    baseURL,
+    url: {
+      value: '/account/{name}/{tag}',
+      params: {
+        name,
+        tag,
+      },
+    },
+  })
 
   if (accountData.status === 404) {
     throw new Error('Not found user!')
   }
 
-  const ranked = await request<IGetMMRResponse>(getMMRUrl(name, tag))
-  const rankedHistory = await request<IGetMMRHistoryResponse>(
-    getMMRHistoryUrl(name, tag)
-  )
+  const ranked = await request<IGetMMRResponse>({
+    baseURL,
+    url: {
+      value: '/mmr/na/{name}/{tag}',
+      params: {
+        name,
+        tag,
+      },
+    },
+  })
+  const rankedHistory = await request<IGetMMRHistoryResponse>({
+    baseURL,
+    url: {
+      value: 'mmr-history/na/{name}/{tag}',
+      params: {
+        name,
+        tag,
+      },
+    },
+  })
 
   return { accountData, ranked, rankedHistory }
 }

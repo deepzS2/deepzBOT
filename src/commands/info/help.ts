@@ -9,10 +9,10 @@ import {
 } from 'discord.js'
 
 import { botConfig, categoryEmojis } from '@deepz/config'
+import { isInteraction, sendMessage } from '@deepz/helpers'
 import logger from '@deepz/logger'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 import { CommandCategory, CommandType } from '@deepz/types/command'
-import { isInteraction, sendMessage } from '@helpers'
-import { Command, CustomMessageEmbed } from '@structures'
 
 function commandsToString(commands: Collection<string, CommandType>) {
   return commands.map((cmd) => `\`${cmd.name}\``).join(' ')

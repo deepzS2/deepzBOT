@@ -1,6 +1,6 @@
 import { botConfig } from '@deepz/config'
 import logger from '@deepz/logger'
-import { Event, CustomMessageEmbed } from '@structures'
+import { Event, CustomMessageEmbed } from '@deepz/structures'
 
 // Now messages have blank content?
 export default new Event('messageCreate', async (client, message) => {

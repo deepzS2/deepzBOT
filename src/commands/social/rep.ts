@@ -1,8 +1,8 @@
 import { User, ApplicationCommandOptionType } from 'discord.js'
 
+import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { isInteraction } from '@helpers'
-import { Command } from '@structures'
+import { Command } from '@deepz/structures'
 
 export default new Command({
   name: 'rep',

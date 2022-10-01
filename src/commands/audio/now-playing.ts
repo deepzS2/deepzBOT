@@ -1,7 +1,7 @@
 import { Queue } from 'discord-music-player'
 
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@structures'
+import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'nowplaying',

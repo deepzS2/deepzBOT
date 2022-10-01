@@ -71,8 +71,6 @@ export class ExtendedClient extends Client {
     await this.registerModules()
     this.login(botConfig.token)
     this.setPresenceLoop()
-
-    await this.database.$connect()
   }
 
   /**

@@ -3,6 +3,11 @@ import './helpers/date'
 
 import { ExtendedClient } from '@deepz/structures'
 
-const client: ExtendedClient = new ExtendedClient()
+async function bootstrap() {
+  const client: ExtendedClient = new ExtendedClient()
 
-client.start()
+  await client.database.$connect()
+  await client.start()
+}
+
+bootstrap()

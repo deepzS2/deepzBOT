@@ -1,5 +1,5 @@
-import './helpers/string'
-import './helpers/date'
+import './helpers/extensions/string'
+import './helpers/extensions/date'
 
 import { ExtendedClient } from '@deepz/structures'
 

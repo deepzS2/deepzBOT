@@ -1,5 +1,9 @@
 import { Queue } from 'discord-music-player'
-import { ApplicationCommandOptionType, Message } from 'discord.js'
+import {
+  ApplicationCommandOptionType,
+  Message,
+  PermissionFlagsBits,
+} from 'discord.js'
 import path from 'path'
 
 import { isInteraction } from '@deepz/helpers'
@@ -68,8 +72,21 @@ export default new Command({
       (interaction || message).guild.id
     )
 
-    if (!queue.connection)
-      await queue.join((interaction || message).member.voice.channel)
+    if (!queue.connection) {
+      const voiceChannel = (interaction || message).member.voice.channel
+
+      if (!voiceChannel.joinable)
+        return `***I don't have permission to join this channel...***`
+
+      if (
+        voiceChannel
+          .permissionsFor(message.guild.members.me)
+          .has(PermissionFlagsBits.Speak)
+      )
+        return `***I don't have permission to speak...***`
+
+      await queue.join(voiceChannel)
+    }
 
     await shouldSayGoodNight(interaction, message, queue)
 
@@ -168,8 +185,6 @@ async function shouldSayGoodNight(
       path.join(__dirname, '..', '..', 'assets', 'boa noite.mp3')
     )
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     await queue.connection.playAudioStream(audio)
   }
 }

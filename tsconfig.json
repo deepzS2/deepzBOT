@@ -36,10 +36,7 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
 
-    // Babel compiling
-    "declaration": true,
-    "emitDeclarationOnly": true,
-
+    // Types
     "typeRoots": ["./node_modules/@types", "./src/@types"],
     "types": ["discord.js", "node"],
 
@@ -47,11 +44,6 @@
     "baseUrl": "src",
     "paths": {
       "@deepz/types/*": ["@types/*"],
-      "@commands/": ["commands/*"],
-      "@helpers": ["helpers/index"],
-      "@structures": ["structures/index"],
-      "@events/*": ["events/*"],
-      "@services": ["services/index"],
       "@deepz/*": ["./*"]
     }
   },

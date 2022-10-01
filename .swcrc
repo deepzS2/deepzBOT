@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/swcrc",
+  "test": ".*.ts$",
+  "exclude": [".*\\.mp3$"],
+  "jsc": {
+    "target": "es2016",
+    "parser": {
+      "syntax": "typescript",
+      "decorators": true,
+      "dynamicImport": true,
+      "tsx": false
+    },
+    "loose": true,
+    "baseUrl": "src",
+    "paths": {
+      "@deepz/*": ["./*"],
+      "@deepz/types/*": ["@types/*"]
+    },
+    "externalHelpers": false
+  },
+  "module": {
+    "type": "commonjs"
+  },
+  "minify": true
+}

@@ -1,24 +1,20 @@
 import { tenorKey } from '@deepz/config'
-import { request } from '@deepz/helpers'
+import { createRequest } from '@deepz/helpers'
 import { IGifSearchResponse } from '@deepz/types/fetchs/tenor'
 
+const tenorRequest = createRequest({
+  baseURL: 'https://g.tenor.com/v1',
+  params: {
+    key: tenorKey,
+    locale: 'pt_BR',
+  },
+})
+
 class Tenor {
-  private readonly locale: string
-
-  constructor(
-    private readonly apiKey: string,
-    private readonly baseUrl: string
-  ) {
-    this.locale = 'pt_BR'
-  }
-
   async search(options: { query: string; type: 'gif' | 'tinygif' | 'mp4' }) {
-    return await request<IGifSearchResponse>({
-      baseURL: this.baseUrl,
+    return await tenorRequest<IGifSearchResponse>({
       url: '/search',
       query: {
-        key: this.apiKey,
-        locale: this.locale,
         media_filter: options.type,
         q: options.query,
       },
@@ -26,4 +22,4 @@ class Tenor {
   }
 }
 
-export default new Tenor(tenorKey, 'https://g.tenor.com/v1')
+export default new Tenor()

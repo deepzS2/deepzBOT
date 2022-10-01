@@ -2,7 +2,7 @@ import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType } from 'discord.js'
 
 import { steamToken } from '@deepz/config'
-import { request } from '@deepz/helpers'
+import { createRequest } from '@deepz/helpers'
 import { getSteamID, isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
@@ -10,6 +10,7 @@ import {
   IGetPlayerSummariesResponse,
   IPlayerBansResponse,
 } from '@deepz/types/fetchs/steam'
+
 const states = [
   'Offline',
   'Online',
@@ -19,6 +20,10 @@ const states = [
   'Looking to trade',
   'Looking to play',
 ]
+
+const steamApiRequest = createRequest({
+  baseURL: 'http://api.steampowered.com/ISteamUser',
+})
 
 export default new Command({
   name: 'steam',
@@ -41,16 +46,16 @@ export default new Command({
     try {
       const steamId = await getSteamID(idToSearch)
 
-      const summariesBody = await request<IGetPlayerSummariesResponse>({
-        url: 'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/',
+      const summariesBody = await steamApiRequest<IGetPlayerSummariesResponse>({
+        url: '/GetPlayerSummaries/v0002/',
         query: {
           key: steamToken,
           steamids: steamId,
         },
       })
 
-      const bansBody = await request<IPlayerBansResponse>({
-        url: 'http://api.steampowered.com/ISteamUser/GetPlayerBans/v1/',
+      const bansBody = await steamApiRequest<IPlayerBansResponse>({
+        url: '/GetPlayerBans/v1/',
         query: {
           key: steamToken,
           steamids: steamId,

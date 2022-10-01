@@ -1,8 +1,7 @@
-import axios from 'axios'
-
 import { trackerApiKey } from '@deepz/config'
+import { createRequest } from '@deepz/helpers'
 
-const tracker = axios.create({
+const tracker = createRequest({
   baseURL: 'https://public-api.tracker.gg/v2',
   headers: {
     'TRN-Api-Key': trackerApiKey,

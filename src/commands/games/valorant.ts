@@ -1,7 +1,7 @@
 import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction, request } from '@deepz/helpers'
+import { createRequest, isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 import {
@@ -16,7 +16,9 @@ import {
   https://docs.henrikdev.xyz/valorant.html
   https://github.com/Henrik-3
 */
-const baseURL = 'https://api.henrikdev.xyz/valorant/v1'
+const valorantApiRequest = createRequest({
+  baseURL: 'https://api.henrikdev.xyz/valorant/v1',
+})
 
 export default new Command({
   name: 'valorant',
@@ -60,8 +62,7 @@ export default new Command({
         const name = isInteraction(args) ? args.getString('username') : args[1]
         const tag = isInteraction(args) ? args.getString('tagline') : args[2]
 
-        const accountData = await request<IGetAccountResponse>({
-          baseURL,
+        const accountData = await valorantApiRequest<IGetAccountResponse>({
           url: {
             value: '/account/{name}/{tag}',
             params: {
@@ -136,8 +137,7 @@ export default new Command({
 })
 
 async function fetchData(name: string, tag: string) {
-  const accountData = await request<IGetAccountResponse>({
-    baseURL,
+  const accountData = await valorantApiRequest<IGetAccountResponse>({
     url: {
       value: '/account/{name}/{tag}',
       params: {
@@ -151,8 +151,7 @@ async function fetchData(name: string, tag: string) {
     throw new Error('Not found user!')
   }
 
-  const ranked = await request<IGetMMRResponse>({
-    baseURL,
+  const ranked = await valorantApiRequest<IGetMMRResponse>({
     url: {
       value: '/mmr/na/{name}/{tag}',
       params: {
@@ -161,8 +160,7 @@ async function fetchData(name: string, tag: string) {
       },
     },
   })
-  const rankedHistory = await request<IGetMMRHistoryResponse>({
-    baseURL,
+  const rankedHistory = await valorantApiRequest<IGetMMRHistoryResponse>({
     url: {
       value: 'mmr-history/na/{name}/{tag}',
       params: {

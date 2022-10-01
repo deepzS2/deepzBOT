@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosInstance } from 'axios'
 
 interface RequestOptions extends Omit<AxiosRequestConfig, 'url' | 'params'> {
   url: string | { value: string; params: Record<string, string | number> }
@@ -8,17 +8,35 @@ interface RequestOptions extends Omit<AxiosRequestConfig, 'url' | 'params'> {
 const URL_PARAMS_REGEX = /{[A-Za-z0-9]+}/g
 
 /**
+ * Creates a axios instance to use with request function
+ * @param {AxiosRequestConfig} config - AxiosRequestConfig
+ * @returns A function that returns the request
+ */
+export function createRequest(config: AxiosRequestConfig) {
+  const axiosInstance = axios.create(config)
+
+  return <T>(options: RequestOptions) => {
+    return request<T>(options, axiosInstance)
+  }
+}
+
+export async function request<T>(options: RequestOptions): Promise<T>
+export async function request<T>(
+  options: RequestOptions,
+  createdAxiosInstance?: AxiosInstance
+): Promise<T>
+
+/**
  * It takes a request options object, and returns a promise that resolves to the data
  * returned from the request
  * @param {RequestOptions} options - Request options
+ * @param {AxiosInstance} axiosInstance - Axios instance
  * @returns The data from the request
  */
-export async function request<T>({
-  method = 'GET',
-  url = '',
-  query,
-  ...options
-}: RequestOptions) {
+export async function request<T>(
+  { method = 'GET', url = '', query, ...options }: RequestOptions,
+  createdAxiosInstance?: AxiosInstance
+) {
   if (typeof url === 'object') {
     const paramsKeys = url.value
       .match(URL_PARAMS_REGEX)
@@ -33,7 +51,10 @@ export async function request<T>({
     }, url.value)
   }
 
-  const result = await axios.request<T>({
+  const result = await (createdAxiosInstance
+    ? createdAxiosInstance
+    : axios
+  ).request<T>({
     ...options,
     method,
     url,

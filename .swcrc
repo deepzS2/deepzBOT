@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/swcrc",
   "test": ".*.ts$",
-  "exclude": [".*\\.mp3$"],
+  // "exclude": [".*\\.mp3$"],
   "jsc": {
     "target": "es2016",
     "parser": {

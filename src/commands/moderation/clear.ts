@@ -9,7 +9,7 @@ export default new Command({
   description: 'Clear the message history!',
   category: 'MODERATION',
   slash: 'both',
-  userPermissions: ['Administrator'],
+  userPermissions: ['ManageMessages'],
   options: [
     {
       name: 'amount',
@@ -22,7 +22,10 @@ export default new Command({
   ],
   run: async ({ interaction, args, message }) => {
     try {
-      if (!message?.member.permissions.has(PermissionFlagsBits.Administrator))
+      if (
+        message &&
+        !message?.member.permissions.has(PermissionFlagsBits.ManageMessages)
+      )
         return `You don't have permission to use this command!`
 
       const amount = isInteraction(args)

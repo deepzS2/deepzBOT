@@ -101,6 +101,7 @@ export class ExtendedClient extends Client {
 
       if (!command.name) return
 
+      this.commands.set(command.name, command)
       slashCommands.push(command)
     })
 

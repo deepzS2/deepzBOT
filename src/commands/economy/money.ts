@@ -1,16 +1,15 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'money',
-
   description:
     'Gets your current balance, transfer money or check other persons balance!',
   category: 'ECONOMY',
-
-  examples: ['d.credits', 'd.credits @user', 'd.credits @user amount'],
   options: [
     {
       name: 'user',
@@ -25,7 +24,13 @@ export default new Command({
       required: false,
     },
   ],
-  run: async ({ client, interaction, args }) => {
+})
+export default class MoneyCommand extends BaseCommand {
+  async run({
+    client,
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const user = args.getUser('user')
     const amount = args.getNumber('amount')
 
@@ -80,6 +85,8 @@ export default new Command({
       })
     } catch (error) {
       logger.error(error)
+
+      return `Error trying to get or transfer balance, try again later...`
     }
-  },
-})
+  }
+}

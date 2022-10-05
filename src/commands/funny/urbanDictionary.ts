@@ -1,16 +1,16 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import { request } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 import { IGetTermMeanings } from '@deepz/types/fetchs/urbandictionary'
 
-export default new Command({
+@Command({
   name: 'dictionary',
-
   description: 'Search the meaning of some word!',
   category: 'FUNNY',
-
   options: [
     {
       name: 'searchterm',
@@ -19,8 +19,11 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['d.dictionary hello world'],
-  run: async ({ args }) => {
+})
+export default class UrbanDictionaryCommand extends BaseCommand {
+  async run({
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const searchterm = args.getString('searchterm')
 
     try {
@@ -52,5 +55,5 @@ export default new Command({
 
       return `**:x: Something went wrong! Please try again later...**`
     }
-  },
-})
+  }
+}

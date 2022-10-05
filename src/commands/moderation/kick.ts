@@ -1,19 +1,20 @@
 import {
   ApplicationCommandOptionType,
   GuildMember,
+  MessagePayload,
   PermissionFlagsBits,
 } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'kick',
   description: 'Kick an user from the guild!',
   category: 'MODERATION',
-
   userPermissions: ['KickMembers'],
-  examples: ['d.kick @user get kicked lol'],
   options: [
     {
       name: 'user',
@@ -28,7 +29,12 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction, args }) => {
+})
+export default class KickCommand extends BaseCommand {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const user = args.getMentionable('user') as GuildMember
       const reason = args.getString('reason')
@@ -87,5 +93,5 @@ export default new Command({
 
       return `***I could not kick this user! Try again later...***`
     }
-  },
-})
+  }
+}

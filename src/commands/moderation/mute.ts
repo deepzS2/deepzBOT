@@ -1,17 +1,22 @@
-import { ApplicationCommandOptionType, Guild, GuildMember } from 'discord.js'
+import {
+  ApplicationCommandOptionType,
+  Guild,
+  GuildMember,
+  MessagePayload,
+} from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
 const MUTED_ROLE_NAME = 'Muted'
 
-export default new Command({
+@Command({
   name: 'mute',
   description: 'Mutes an user!',
   category: 'MODERATION',
-
   userPermissions: ['MuteMembers'],
-  examples: ['d.mute @user 10 get muted lol'],
   options: [
     {
       name: 'user',
@@ -32,7 +37,12 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction, args }) => {
+})
+export default class MuteCommand extends BaseCommand {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const user = args.getMentionable('user') as GuildMember
       const time = args.getNumber('time')
@@ -46,7 +56,7 @@ export default new Command({
 
       if (!reason) return 'Please provide an reason for kicking him!'
 
-      const mutedRole = await getOrCreateMutedRole(interaction.guild)
+      const mutedRole = await this.getOrCreateMutedRole(interaction.guild)
 
       await user.roles.add(mutedRole.id)
 
@@ -95,28 +105,28 @@ export default new Command({
 
       return `***Something went wrong muting this user! Try again later...***`
     }
-  },
-})
+  }
 
-const getOrCreateMutedRole = async (guild: Guild) => {
-  const roleExists = guild.roles.cache.find((r) => r.name === MUTED_ROLE_NAME)
+  private async getOrCreateMutedRole(guild: Guild) {
+    const roleExists = guild.roles.cache.find((r) => r.name === MUTED_ROLE_NAME)
 
-  if (roleExists) return roleExists
+    if (roleExists) return roleExists
 
-  const role = await guild.roles.create({
-    name: MUTED_ROLE_NAME,
-    color: '#000000',
-    permissions: [],
-    reason: "Muted role didn't exist",
-  })
-
-  await Promise.all(
-    guild.channels.cache.map(async (channel) => {
-      await channel
-        .permissionsFor(role)
-        .remove('SendMessages', 'AddReactions', 'Speak')
+    const role = await guild.roles.create({
+      name: MUTED_ROLE_NAME,
+      color: '#000000',
+      permissions: [],
+      reason: "Muted role didn't exist",
     })
-  )
 
-  return role
+    await Promise.all(
+      guild.channels.cache.map(async (channel) => {
+        await channel
+          .permissionsFor(role)
+          .remove('SendMessages', 'AddReactions', 'Speak')
+      })
+    )
+
+    return role
+  }
 }

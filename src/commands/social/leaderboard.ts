@@ -1,16 +1,21 @@
 import { stripIndents } from 'common-tags'
+import { MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import { getExperienceInformation } from '@deepz/helpers'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'leaderboard',
-
   description: 'Returns the top 10 guild members',
   category: 'SOCIAL',
-
-  examples: ['d.leaderboard'],
-  run: async ({ client, interaction }) => {
+})
+export default class LeaderboardCommand extends BaseCommand {
+  async run({
+    client,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const users = await client.database.user.findMany()
     const members = users
       .filter((user) => {
@@ -47,5 +52,5 @@ export default new Command({
       `,
       color: '#4360FB',
     })
-  },
-})
+  }
+}

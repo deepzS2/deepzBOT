@@ -1,33 +1,20 @@
 import { stripIndents } from 'common-tags'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
 import { steamToken } from '@deepz/config'
+import { Command } from '@deepz/decorators'
 import { createRequest } from '@deepz/helpers'
 import { getSteamID } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 import {
   IGetPlayerSummariesResponse,
   IPlayerBansResponse,
 } from '@deepz/types/fetchs/steam'
 
-const states = [
-  'Offline',
-  'Online',
-  'Busy',
-  'Away',
-  'Snooze',
-  'Looking to trade',
-  'Looking to play',
-]
-
-const steamApiRequest = createRequest({
-  baseURL: 'http://api.steampowered.com/ISteamUser',
-})
-
-export default new Command({
+@Command({
   name: 'steam',
-
   description: 'Try to get a user steam profile information',
   category: 'INFO',
   options: [
@@ -38,15 +25,31 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['d.steam http://steamcommunity.com/id/deepzqueen'],
+})
+export default class SteamCommand extends BaseCommand {
+  private readonly states = [
+    'Offline',
+    'Online',
+    'Busy',
+    'Away',
+    'Snooze',
+    'Looking to trade',
+    'Looking to play',
+  ]
 
-  run: async ({ args }) => {
+  private readonly steamApi = createRequest({
+    baseURL: 'http://api.steampowered.com/ISteamUser',
+  })
+
+  async run({
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const idToSearch = args.getString('id')
 
     try {
       const steamId = await getSteamID(idToSearch)
 
-      const summariesBody = await steamApiRequest<IGetPlayerSummariesResponse>({
+      const summariesBody = await this.steamApi<IGetPlayerSummariesResponse>({
         url: '/GetPlayerSummaries/v0002/',
         query: {
           key: steamToken,
@@ -54,7 +57,7 @@ export default new Command({
         },
       })
 
-      const bansBody = await steamApiRequest<IPlayerBansResponse>({
+      const bansBody = await this.steamApi<IPlayerBansResponse>({
         url: '/GetPlayerBans/v1/',
         query: {
           key: steamToken,
@@ -77,7 +80,7 @@ export default new Command({
         timestamp: true,
         description: stripIndents`
           **Real Name:** ${playerSummary.realname || 'Unknown'}
-          **Status:** ${states[playerSummary.personastate]}
+          **Status:** ${this.states[playerSummary.personastate]}
           **Country:** :flag_${
             playerSummary.loccountrycode
               ? playerSummary.loccountrycode.toLowerCase()
@@ -98,5 +101,5 @@ export default new Command({
       if (error instanceof Error) return error.message
       else return `**:x: Something went wrong! Please try again later!**`
     }
-  },
-})
+  }
+}

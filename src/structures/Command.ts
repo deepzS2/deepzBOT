@@ -1,10 +1,14 @@
-import { CommandType } from '@deepz/types/command'
+import { MessagePayload } from 'discord.js'
+
+import { ICommand, RunOptions } from '@deepz/types/command'
+
+import { CustomMessageEmbed } from './MessageEmbed'
 
 /**
  * Class for creating a command
  */
-export class Command {
-  constructor(commandOptions: CommandType) {
-    Object.assign(this, commandOptions)
-  }
+export abstract class BaseCommand implements ICommand {
+  abstract run(
+    options: RunOptions
+  ): Promise<CustomMessageEmbed | MessagePayload | string>
 }

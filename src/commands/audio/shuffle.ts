@@ -1,15 +1,21 @@
 import { stripIndent } from 'common-tags'
+import { MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'shuffle',
   description: 'Shuffles the entire song queue!',
   category: 'AUDIO',
-
-  examples: ['d.shuffle'],
-  run: async ({ client, interaction }) => {
+})
+export default class ShuffleCommand extends BaseCommand {
+  async run({
+    client,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const queue = await client.player.getQueue(interaction.guildId)
 
@@ -26,5 +32,5 @@ export default new Command({
 
       return `***Something went wrong trying to shuffle the queue...***`
     }
-  },
-})
+  }
+}

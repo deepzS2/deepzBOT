@@ -3,11 +3,18 @@ import {
   ComponentType,
   SelectMenuBuilder,
   ApplicationCommandOptionType,
+  MessagePayload,
 } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import { request } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { ExtendedClient, Command, CustomMessageEmbed } from '@deepz/structures'
+import {
+  ExtendedClient,
+  CustomMessageEmbed,
+  BaseCommand,
+} from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 import {
   IAnime,
   IAnimeByIdFetchResponse,
@@ -16,12 +23,7 @@ import {
   IGenresByAnimeFetchResponse,
 } from '@deepz/types/fetchs/kitsu'
 
-// https://kitsu.docs.apiary.io/
-const URL = `https://kitsu.io/api/edge`
-const ANIMES_NUMBER = 15268
-const INVALID_PROPS_MESSAGE = `***Anime with invalid properties... Try again!***`
-
-export default new Command({
+@Command({
   name: 'anime',
   description: 'Search for a specific anime or a random one!',
   category: 'INFO',
@@ -33,17 +35,26 @@ export default new Command({
       required: false,
     },
   ],
-  examples: ['d.anime boku no...'],
+})
+export default class AnimeCommand extends BaseCommand {
+  // https://kitsu.docs.apiary.io/
+  private readonly URL = `https://kitsu.io/api/edge`
+  private readonly ANIMES_NUMBER = 15268
+  private readonly INVALID_PROPS_MESSAGE = `***Anime with invalid properties... Try again!***`
 
-  run: async ({ client, interaction, args }) => {
+  async run({
+    args,
+    client,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const searchTerm = args.getString('searchterm')
 
       if (!searchTerm) {
-        const id = Math.floor(Math.random() * ANIMES_NUMBER)
+        const id = Math.floor(Math.random() * this.ANIMES_NUMBER)
 
         const { data: anime } = await request<IAnimeByIdFetchResponse>({
-          baseURL: URL,
+          baseURL: this.URL,
           url: {
             value: '/anime/{id}',
             params: {
@@ -52,19 +63,19 @@ export default new Command({
           },
         })
 
-        if (!anime) return INVALID_PROPS_MESSAGE
+        if (!anime) return this.INVALID_PROPS_MESSAGE
 
         const { data: genres } = await request<IGenresByAnimeFetchResponse>({
           url: anime.relationships.genres.links.related,
         })
 
-        if (!genres) return INVALID_PROPS_MESSAGE
+        if (!genres) return this.INVALID_PROPS_MESSAGE
 
-        return createAnimeEmbed(anime, genres, client)
+        return this.createAnimeEmbed(anime, genres, client)
       }
 
       const { data: animes } = await request<IAnimesFetchResponse>({
-        baseURL: URL,
+        baseURL: this.URL,
         url: '/anime',
         query: {
           'filter[text]': searchTerm,
@@ -86,7 +97,7 @@ export default new Command({
         )
 
       const selectMessage = await interaction.followUp({
-        embeds: [createAnimeSelectList(animes, client)],
+        embeds: [this.createAnimeSelectList(animes, client)],
         components: [
           {
             type: ComponentType.ActionRow,
@@ -116,7 +127,7 @@ export default new Command({
           })
 
           selectMessage.edit({
-            embeds: [createAnimeEmbed(animeSelected, genres, client)],
+            embeds: [this.createAnimeEmbed(animeSelected, genres, client)],
             components: [],
           })
         }
@@ -131,135 +142,135 @@ export default new Command({
       logger.error(error)
       return `***Something went wrong getting the anime data!***`
     }
-  },
-})
+  }
 
-function createAnimeSelectList(animes: IAnime[], client: ExtendedClient) {
-  return new CustomMessageEmbed('Select an anime!', {
-    description: `Type the number present on the list or type \`exit\` if no results are found!`,
-    author: {
-      name: 'List of animes search result!',
-      iconURL: client.user.displayAvatarURL(),
-    },
-  }).addFields(
-    animes.map((anime, index) => {
-      return {
-        name: `${convertToEmoji(index)} ${
-          anime.attributes.titles.en || anime.attributes.titles.en_jp
-        }`,
-        value: anime.attributes.titles.ja_jp,
-      }
-    })
-  )
-}
-
-function createAnimeEmbed(
-  anime: IAnime,
-  genres: IGenre[],
-  client: ExtendedClient
-) {
-  const embed = new CustomMessageEmbed(
-    `**${anime.attributes.titles.en || anime.attributes.titles.en_jp || ''} ${
-      anime.attributes.titles.ja_jp
-    }**`,
-    {
+  private createAnimeSelectList(animes: IAnime[], client: ExtendedClient) {
+    return new CustomMessageEmbed('Select an anime!', {
+      description: `Type the number present on the list or type \`exit\` if no results are found!`,
       author: {
-        name: 'Your anime result!',
+        name: 'List of animes search result!',
         iconURL: client.user.displayAvatarURL(),
       },
-      description: anime.attributes.synopsis,
-      color: '#4360fb',
-      thumbnail: anime.attributes.posterImage.original,
-      footer: {
-        text: `${anime.attributes.averageRating ?? 0}% rating by ${
-          anime.attributes.userCount
-        } users`,
+    }).addFields(
+      animes.map((anime, index) => {
+        return {
+          name: `${this.convertToEmoji(index)} ${
+            anime.attributes.titles.en || anime.attributes.titles.en_jp
+          }`,
+          value: anime.attributes.titles.ja_jp,
+        }
+      })
+    )
+  }
+
+  private createAnimeEmbed(
+    anime: IAnime,
+    genres: IGenre[],
+    client: ExtendedClient
+  ) {
+    const embed = new CustomMessageEmbed(
+      `**${anime.attributes.titles.en || anime.attributes.titles.en_jp || ''} ${
+        anime.attributes.titles.ja_jp
+      }**`,
+      {
+        author: {
+          name: 'Your anime result!',
+          iconURL: client.user.displayAvatarURL(),
+        },
+        description: anime.attributes.synopsis,
+        color: '#4360fb',
+        thumbnail: anime.attributes.posterImage.original,
+        footer: {
+          text: `${anime.attributes.averageRating ?? 0}% rating by ${
+            anime.attributes.userCount
+          } users`,
+        },
+      }
+    ).addFields([
+      {
+        name: 'Type',
+        value: anime.attributes.showType,
+        inline: true,
       },
+      {
+        name: 'Current status',
+        value: anime.attributes.status,
+        inline: true,
+      },
+      {
+        name: 'Aired from',
+        value: `${dayjs(anime.attributes.startDate).format(
+          'MM/DD/YYYY'
+        )} to ${dayjs(anime.attributes.endDate).format('MM/DD/YYYY')}`,
+      },
+      {
+        name: 'Genres',
+        value: genres.map((genre) => genre.attributes.name).join(', '),
+        inline: true,
+      },
+    ])
+
+    if (anime.attributes.showType !== 'movie') {
+      embed.addFields({
+        name: 'Episodes',
+        value: `${anime.attributes.episodeCount} episodes with ${anime.attributes.episodeLength} minutes per episode`,
+        inline: true,
+      })
+    } else {
+      embed.addFields({
+        name: 'Movie length',
+        value: `${anime.attributes.episodeLength} minutes`,
+        inline: true,
+      })
     }
-  ).addFields([
-    {
-      name: 'Type',
-      value: anime.attributes.showType,
-      inline: true,
-    },
-    {
-      name: 'Current status',
-      value: anime.attributes.status,
-      inline: true,
-    },
-    {
-      name: 'Aired from',
-      value: `${dayjs(anime.attributes.startDate).format(
-        'MM/DD/YYYY'
-      )} to ${dayjs(anime.attributes.endDate).format('MM/DD/YYYY')}`,
-    },
-    {
-      name: 'Genres',
-      value: genres.map((genre) => genre.attributes.name).join(', '),
-      inline: true,
-    },
-  ])
 
-  if (anime.attributes.showType !== 'movie') {
-    embed.addFields({
-      name: 'Episodes',
-      value: `${anime.attributes.episodeCount} episodes with ${anime.attributes.episodeLength} minutes per episode`,
-      inline: true,
-    })
-  } else {
-    embed.addFields({
-      name: 'Movie length',
-      value: `${anime.attributes.episodeLength} minutes`,
-      inline: true,
-    })
+    return embed
   }
 
-  return embed
-}
+  private convertToEmoji(index) {
+    let number = ''
+    switch (index) {
+      case 0:
+        number = ':one:'
+        break
 
-function convertToEmoji(index) {
-  let number = ''
-  switch (index) {
-    case 0:
-      number = ':one:'
-      break
+      case 1:
+        number = ':two:'
+        break
 
-    case 1:
-      number = ':two:'
-      break
+      case 2:
+        number = ':three:'
+        break
 
-    case 2:
-      number = ':three:'
-      break
+      case 3:
+        number = ':four:'
+        break
 
-    case 3:
-      number = ':four:'
-      break
+      case 4:
+        number = ':five:'
+        break
 
-    case 4:
-      number = ':five:'
-      break
+      case 5:
+        number = ':six:'
+        break
 
-    case 5:
-      number = ':six:'
-      break
+      case 6:
+        number = ':seven:'
+        break
 
-    case 6:
-      number = ':seven:'
-      break
+      case 7:
+        number = ':eight:'
+        break
 
-    case 7:
-      number = ':eight:'
-      break
+      case 8:
+        number = ':nine:'
+        break
 
-    case 8:
-      number = ':nine:'
-      break
+      case 9:
+        number = ':keycap_ten:'
+        break
+    }
 
-    case 9:
-      number = ':keycap_ten:'
-      break
+    return number
   }
-
-  return number
 }

@@ -1,28 +1,20 @@
 import { stripIndents } from 'common-tags'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import { createRequest } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 import {
   IGetAccountResponse,
   IGetMMRHistoryResponse,
   IGetMMRResponse,
 } from '@deepz/types/fetchs/valorant'
 
-/*
-  First of all, thanks to HenrikDev for this amazing API!
-  Check his profile on github and the API documentation:
-  https://docs.henrikdev.xyz/valorant.html
-  https://github.com/Henrik-3
-*/
-const valorantApiRequest = createRequest({
-  baseURL: 'https://api.henrikdev.xyz/valorant/v1',
-})
-
-export default new Command({
+@Command({
   name: 'valorant',
-
+  category: 'GAMES',
   description:
     'Gets your Valorant account info assigning your discord to your Valorant account!',
   options: [
@@ -51,10 +43,23 @@ export default new Command({
       type: ApplicationCommandOptionType.Subcommand,
     },
   ],
-  examples: ['d.valorant set deepzS2 BR1', 'd.valorant get'],
-  category: 'GAMES',
+})
+export default class ValorantCommand extends BaseCommand {
+  /*
+    First of all, thanks to HenrikDev for this amazing API!
+    Check his profile on github and the API documentation:
+    https://docs.henrikdev.xyz/valorant.html
+    https://github.com/Henrik-3
+  */
+  private readonly valorantApiRequest = createRequest({
+    baseURL: 'https://api.henrikdev.xyz/valorant/v1',
+  })
 
-  run: async ({ interaction, client, args }) => {
+  async run({
+    args,
+    client,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const subcommand = args.getSubcommand()
 
@@ -62,7 +67,7 @@ export default new Command({
         const name = args.getString('username')
         const tag = args.getString('tagline')
 
-        const accountData = await valorantApiRequest<IGetAccountResponse>({
+        const accountData = await this.valorantApiRequest<IGetAccountResponse>({
           url: {
             value: '/account/{name}/{tag}',
             params: {
@@ -99,7 +104,10 @@ export default new Command({
 
       const [name, tag] = valorant.split('#')
 
-      const { accountData, ranked, rankedHistory } = await fetchData(name, tag)
+      const { accountData, ranked, rankedHistory } = await this.fetchData(
+        name,
+        tag
+      )
 
       const prevMatch = rankedHistory.data[0]
 
@@ -133,42 +141,44 @@ export default new Command({
 
       return `***Something went wrong getting your data! Try again later...***`
     }
-  },
-})
-
-async function fetchData(name: string, tag: string) {
-  const accountData = await valorantApiRequest<IGetAccountResponse>({
-    url: {
-      value: '/account/{name}/{tag}',
-      params: {
-        name,
-        tag,
-      },
-    },
-  })
-
-  if (accountData.status === 404) {
-    throw new Error('Not found user!')
   }
 
-  const ranked = await valorantApiRequest<IGetMMRResponse>({
-    url: {
-      value: '/mmr/na/{name}/{tag}',
-      params: {
-        name,
-        tag,
+  private async fetchData(name: string, tag: string) {
+    const accountData = await this.valorantApiRequest<IGetAccountResponse>({
+      url: {
+        value: '/account/{name}/{tag}',
+        params: {
+          name,
+          tag,
+        },
       },
-    },
-  })
-  const rankedHistory = await valorantApiRequest<IGetMMRHistoryResponse>({
-    url: {
-      value: 'mmr-history/na/{name}/{tag}',
-      params: {
-        name,
-        tag,
-      },
-    },
-  })
+    })
 
-  return { accountData, ranked, rankedHistory }
+    if (accountData.status === 404) {
+      throw new Error('Not found user!')
+    }
+
+    const ranked = await this.valorantApiRequest<IGetMMRResponse>({
+      url: {
+        value: '/mmr/na/{name}/{tag}',
+        params: {
+          name,
+          tag,
+        },
+      },
+    })
+    const rankedHistory = await this.valorantApiRequest<IGetMMRHistoryResponse>(
+      {
+        url: {
+          value: 'mmr-history/na/{name}/{tag}',
+          params: {
+            name,
+            tag,
+          },
+        },
+      }
+    )
+
+    return { accountData, ranked, rankedHistory }
+  }
 }

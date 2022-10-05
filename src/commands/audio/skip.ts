@@ -1,12 +1,13 @@
 import { Queue } from 'discord-music-player'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'skip',
-
   description: 'Skips the current song!',
   category: 'AUDIO',
   options: [
@@ -17,9 +18,13 @@ export default new Command({
       required: false,
     },
   ],
-
-  examples: ['d.skip', 'd.skip 3'],
-  run: async ({ client, interaction, args }) => {
+})
+export default class SkipCommand extends BaseCommand {
+  async run({
+    client,
+    args,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const queue: Queue = await client.player.getQueue(interaction.guildId)
 
@@ -50,5 +55,5 @@ export default new Command({
 
       return `***Something went wrong trying to shuffle the queue...***`
     }
-  },
-})
+  }
+}

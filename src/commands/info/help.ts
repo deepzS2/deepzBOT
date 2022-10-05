@@ -1,25 +1,23 @@
 import { stripIndents } from 'common-tags'
 import {
   BaseApplicationCommandOptionsData,
-  Collection,
   SelectMenuBuilder,
   SelectMenuComponentOptionData,
   ApplicationCommandOptionType,
   ComponentType,
+  MessagePayload,
+  Collection,
 } from 'discord.js'
 
 import { botConfig, categoryEmojis } from '@deepz/config'
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
-import { CommandCategory, CommandType } from '@deepz/types/command'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { CommandCategory, ICommandData, RunOptions } from '@deepz/types/command'
 
-function commandsToString(commands: Collection<string, CommandType>) {
-  return commands.map((cmd) => `\`${cmd.name}\``).join(' ')
-}
-
-export default new Command({
+@Command({
   name: 'help',
-
+  description: 'Returns all commands or get the documentation of a command',
   category: 'INFO',
   options: [
     {
@@ -29,10 +27,13 @@ export default new Command({
       required: false,
     },
   ],
-  description: 'Returns all commands or get the documentation of a command',
-  examples: ['d.help play', 'd.help'],
-
-  run: async ({ client, args, interaction }) => {
+})
+export default class HelpCommand extends BaseCommand {
+  async run({
+    client,
+    args,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const owner = await client.users.fetch(botConfig.ownerId)
       const command = args.getString('command')
@@ -47,7 +48,7 @@ export default new Command({
 
       if (command) {
         return client.commands.has(command)
-          ? buildHelpMessageForCommand(embed, client.commands.get(command))
+          ? this.buildHelpMessageForCommand(embed, client.commands.get(command))
           : `**I didn't found any command with that name... Please try \`/help\` to find all commands you can use.**`
       }
 
@@ -58,7 +59,7 @@ export default new Command({
       embed.setDescription(
         stripIndents`
           Hello ${authorUsername}, check my commands here: 
-          ${commandsToString(cmds)}
+          ${this.commandsToString(cmds)}
         `
       )
 
@@ -102,10 +103,16 @@ export default new Command({
 
           const value = collected.values[0] as CommandCategory
 
+          const categoryCommands = client.commands.filter((cmd) => {
+            const { category } = cmd.options
+
+            return category === value
+          })
+
           embed.setDescription(
             stripIndents`
               Hello ${authorUsername}, check my commands of category \`${value.capitalize()}\` here:
-              ${commandsToString(cmds.filter((cmd) => cmd.category === value))}
+              ${this.commandsToString(categoryCommands)}
             `
           )
 
@@ -133,66 +140,56 @@ export default new Command({
       logger.error(error)
       return `**Sorry, something went wrong with sending a message...**`
     }
-  },
-})
-
-function buildHelpMessageForCommand(
-  embed: CustomMessageEmbed,
-  command: CommandType
-): CustomMessageEmbed {
-  const { prefix } = botConfig
-
-  embed.setTitle(`${prefix}${command.name}`).setDescription(command.description)
-
-  if (command.options) {
-    let optionsUsage = ''
-    let options = ''
-
-    command.options.forEach((option, index) => {
-      if (option.type === ApplicationCommandOptionType.Subcommand) {
-        optionsUsage += ` <${option.name}> ${
-          index < command.options.length - 1 ? '|' : ''
-        }`
-      } else {
-        optionsUsage += (option as BaseApplicationCommandOptionsData).required
-          ? ` <${option.name}>`
-          : ` [${option.name}]`
-      }
-
-      options += `\`${option.name}:\` ${option.description}\n`
-    })
-
-    embed.addFields([
-      {
-        name: `***Usage***`,
-        value: `\`${prefix}${command.name}${optionsUsage}\``,
-        inline: true,
-      },
-      {
-        name: `***Options***`,
-        value: options,
-        inline: true,
-      },
-    ])
   }
 
-  if (command.examples) {
-    const examples = command.examples.map((example) => `\`${example}\``)
+  private buildHelpMessageForCommand(
+    embed: CustomMessageEmbed,
+    command: ICommandData
+  ): CustomMessageEmbed {
+    const commandOptions = command.options
 
-    embed.addFields({
-      name: `***Examples***`,
-      value: examples.join('\n'),
-      inline: false,
-    })
-  }
+    embed
+      .setTitle(`/${commandOptions.name}`)
+      .setDescription(commandOptions.description)
 
-  return embed
-    .addFields({
-      name: `***Aliases***`,
-      value: `*__${command.aliases.join(`,\n`)}__*`,
-      inline: false,
-    })
-    .setFooter({
+    if (commandOptions.options) {
+      let optionsUsage = ''
+      let options = ''
+
+      commandOptions.options.forEach((option, index) => {
+        if (option.type === ApplicationCommandOptionType.Subcommand) {
+          optionsUsage += ` <${option.name}> ${
+            index < commandOptions.options.length - 1 ? '|' : ''
+          }`
+        } else {
+          optionsUsage += (option as BaseApplicationCommandOptionsData).required
+            ? ` <${option.name}>`
+            : ` [${option.name}]`
+        }
+
+        options += `\`${option.name}:\` ${option.description}\n`
+      })
+
+      embed.addFields([
+        {
+          name: `***Usage***`,
+          value: `\`/${commandOptions.name}${optionsUsage}\``,
+          inline: true,
+        },
+        {
+          name: `***Options***`,
+          value: options,
+          inline: true,
+        },
+      ])
+    }
+
+    return embed.setFooter({
       text: '[] = optional, <> = obrigatory',
     })
+  }
+
+  private commandsToString(commands: Collection<string, ICommandData>) {
+    return commands.map((cmd) => `\`${cmd.options.name}\``).join(' ')
+  }
 }

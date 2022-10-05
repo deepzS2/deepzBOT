@@ -1,16 +1,21 @@
 import { Queue } from 'discord-music-player'
+import { MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'nowplaying',
-
   description: 'Display the current playing song information!',
   category: 'AUDIO',
-
-  examples: ['d.nowplaying'],
-  run: async ({ client, interaction }) => {
+})
+export default class NowPlayingCommand extends BaseCommand {
+  async run({
+    client,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const queue: Queue = await client.player.getQueue(interaction.guildId)
 
@@ -31,5 +36,5 @@ export default new Command({
 
       return `***Something went wrong trying to stop the queue...***`
     }
-  },
-})
+  }
+}

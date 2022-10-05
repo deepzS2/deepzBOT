@@ -1,5 +1,6 @@
 import './helpers/extensions/string'
 import './helpers/extensions/date'
+import 'reflect-metadata'
 
 import { ExtendedClient } from '@deepz/structures'
 

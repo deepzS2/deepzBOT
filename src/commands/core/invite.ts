@@ -1,15 +1,18 @@
-import { Command } from '@deepz/structures'
+import { MessagePayload } from 'discord.js'
 
-const INVITE_URL =
-  'https://discord.com/oauth2/authorize?client_id=709564503053828137&scope=bot&permissions=334621766'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
 
-export default new Command({
+@Command({
   name: 'invite',
   description: 'Displays the information about the bot!',
   category: 'CORE',
-
-  examples: ['d.invite'],
-  run: async () => {
-    return `**Here's my invite: ${INVITE_URL}**`
-  },
 })
+export default class InviteCommand extends BaseCommand {
+  private readonly INVITE_URL =
+    'https://discord.com/oauth2/authorize?client_id=709564503053828137&scope=bot&permissions=334621766'
+
+  async run(): Promise<string | CustomMessageEmbed | MessagePayload> {
+    return `**Here's my invite: ${this.INVITE_URL}**`
+  }
+}

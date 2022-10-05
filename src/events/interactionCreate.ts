@@ -8,8 +8,6 @@ export default new Event('interactionCreate', async (client, interaction) => {
   if (interaction.isCommand()) {
     const command = client.commands.get(interaction.commandName)
 
-    logger.info(command)
-
     if (!command) return
 
     try {
@@ -34,7 +32,7 @@ export default new Event('interactionCreate', async (client, interaction) => {
         },
       })
 
-      const responseMessage = await command.run({
+      const responseMessage = await command.instance.run({
         args: interaction.options as CommandInteractionOptionResolver,
         client,
         interaction: interaction as ExtendedInteraction,
@@ -52,7 +50,7 @@ export default new Event('interactionCreate', async (client, interaction) => {
       if (typeof responseMessage === 'string')
         return await interaction.editReply(responseMessage)
     } catch (error) {
-      logger.error(error, 'Error with ' + command.name + ' command')
+      logger.error(error, 'Error with ' + interaction.commandName + ' command')
     }
   }
 })

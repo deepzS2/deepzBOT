@@ -1,16 +1,20 @@
 import { stripIndents } from 'common-tags'
+import { MessagePayload } from 'discord.js'
 
 import { botConfig } from '@deepz/config'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'about',
-
   description: 'Displays the information about the bot!',
   category: 'CORE',
-
-  examples: ['d.about'],
-  run: async ({ client }) => {
+})
+export default class AboutCommand extends BaseCommand {
+  async run({
+    client,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const owner = await client.users.fetch(botConfig.ownerId)
 
     const description = stripIndents`
@@ -25,5 +29,5 @@ export default new Command({
       description,
       thumbnail: client.user.displayAvatarURL(),
     })
-  },
-})
+  }
+}

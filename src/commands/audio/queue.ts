@@ -1,15 +1,16 @@
 import { stripIndent } from 'common-tags'
 import { Queue } from 'discord-music-player'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
 const SONGS_PER_PAGE = 10
 
-export default new Command({
+@Command({
   name: 'queue',
-
   description: 'Displays the current playing queue!',
   category: 'AUDIO',
   options: [
@@ -20,9 +21,13 @@ export default new Command({
       minValue: 1,
     },
   ],
-
-  examples: ['d.queue', 'd.queue 1'],
-  run: async ({ client, interaction, args }) => {
+})
+export default class QueueCommand extends BaseCommand {
+  async run({
+    client,
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const queue: Queue = await client.player.getQueue(interaction.guildId)
       if (!queue || !queue.connection)
@@ -69,5 +74,5 @@ export default new Command({
 
       return `***Something went wrong trying to get the queue...***`
     }
-  },
-})
+  }
+}

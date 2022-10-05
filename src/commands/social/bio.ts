@@ -1,14 +1,14 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'bio',
   description: 'Sets your profile biography text',
   category: 'SOCIAL',
-
-  examples: ['d.bio My bio here'],
   options: [
     {
       name: 'text',
@@ -17,7 +17,13 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ client, interaction, args }) => {
+})
+export default class BioCommand extends BaseCommand {
+  async run({
+    args,
+    interaction,
+    client,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const bio = args.getString('text')
 
@@ -38,5 +44,5 @@ export default new Command({
 
       return `***There was an error trying to change your bio... Try again later!***`
     }
-  },
-})
+  }
+}

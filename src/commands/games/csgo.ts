@@ -1,21 +1,22 @@
 import axios from 'axios'
 import { stripIndents } from 'common-tags'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
 import { tracker } from '@deepz/services'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 import {
   ICsUserDataResponse,
   ISearchSteamUserResponse,
 } from '@deepz/types/fetchs/csgo'
 
-export default new Command({
+@Command({
   name: 'csgo',
   description:
     'Gets the Counter-Strike: Global Offensive information by the steam of the user!',
   category: 'GAMES',
-
   options: [
     {
       name: 'steam',
@@ -24,8 +25,11 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['d.steam deepzqueen'],
-  run: async ({ args }) => {
+})
+export default class CsgoCommand extends BaseCommand {
+  async run({
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const steam = args.getString('steam')
 
@@ -90,5 +94,5 @@ export default new Command({
 
       return 'Something went wrong! Please try again later'
     }
-  },
-})
+  }
+}

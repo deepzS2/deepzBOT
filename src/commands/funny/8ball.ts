@@ -1,15 +1,13 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-const replies = ['Yes.', 'No.', "I don't know.", 'Ask again later']
-
-export default new Command({
+@Command({
   name: '8ball',
   description: 'Displays the information about the bot!',
   category: 'FUNNY',
-
-  examples: ['d.8ball should I create my own bot?'],
   options: [
     {
       name: 'question',
@@ -18,12 +16,19 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction, args }) => {
+})
+export default class EightBallCommand extends BaseCommand {
+  private readonly replies = ['Yes.', 'No.', "I don't know.", 'Ask again later']
+
+  async run({
+    args,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const question = args.getString('question')
 
     if (!question) return `**:x: Ask me something...**`
 
-    const answer = replies[Math.floor(Math.random() * replies.length)]
+    const answer = this.replies[Math.floor(Math.random() * this.replies.length)]
 
     return new CustomMessageEmbed('8ball', {
       color: '#4360FB',
@@ -44,5 +49,5 @@ export default new Command({
         },
       ],
     })
-  },
-})
+  }
+}

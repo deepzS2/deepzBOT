@@ -1,13 +1,18 @@
-import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord.js'
+import {
+  ApplicationCommandOptionType,
+  MessagePayload,
+  PermissionFlagsBits,
+} from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'clear',
   description: 'Clear the message history!',
   category: 'MODERATION',
-
   userPermissions: ['ManageMessages'],
   options: [
     {
@@ -19,7 +24,12 @@ export default new Command({
       maxValue: 100,
     },
   ],
-  run: async ({ interaction, args }) => {
+})
+export default class ClearCommand extends BaseCommand {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const amount = args.getInteger('amount')
       const author = interaction.user
@@ -38,5 +48,5 @@ export default new Command({
 
       return `***I could not delete the messages! Try again later...***`
     }
-  },
-})
+  }
+}

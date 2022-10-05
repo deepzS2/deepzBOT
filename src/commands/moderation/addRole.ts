@@ -1,17 +1,19 @@
 import {
   ApplicationCommandOptionType,
   GuildMember,
+  MessagePayload,
   PermissionFlagsBits,
 } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'addrole',
   description: 'Add a role to an user!',
   category: 'MODERATION',
-
   userPermissions: ['ManageRoles'],
   options: [
     {
@@ -27,7 +29,12 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction, args }) => {
+})
+export default class AddRoleCommand extends BaseCommand {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const role = args.getRole('role')
       const user = args.getMentionable('user') as GuildMember
@@ -53,5 +60,5 @@ export default new Command({
 
       return `***I could not add role! Try again later...***`
     }
-  },
-})
+  }
+}

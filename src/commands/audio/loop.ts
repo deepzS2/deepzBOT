@@ -1,14 +1,15 @@
 import { RepeatMode } from 'discord-music-player'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'loop',
   description: 'Loops the current song or queue!',
   category: 'AUDIO',
-
   options: [
     {
       name: 'queue',
@@ -26,8 +27,13 @@ export default new Command({
       type: ApplicationCommandOptionType.Subcommand,
     },
   ],
-  examples: ['d.loop queue', 'd.loop song', 'd.loop disable'],
-  run: async ({ client, args, interaction }) => {
+})
+export default class LoopCommand extends BaseCommand {
+  async run({
+    args,
+    interaction,
+    client,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const subcommand = args.getSubcommand()
 
     try {
@@ -55,6 +61,8 @@ export default new Command({
       }
     } catch (error) {
       logger.error(error)
+
+      return `***Error trying to apply loop, try again later...***`
     }
-  },
-})
+  }
+}

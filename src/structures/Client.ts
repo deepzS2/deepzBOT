@@ -13,10 +13,15 @@ import path from 'path'
 import { promisify } from 'util'
 
 import { botConfig, isDev } from '@deepz/config'
+import { MetadataKeys } from '@deepz/decorators/metadata-keys'
 import logger from '@deepz/logger'
-import { Event } from '@deepz/structures'
+import { Event, BaseCommand } from '@deepz/structures'
 import { RegisterCommandsOptions } from '@deepz/types/client'
-import { CommandType } from '@deepz/types/command'
+import {
+  CommandOptions,
+  ICommandConstructor,
+  ICommandData,
+} from '@deepz/types/command'
 import { BotConfiguration } from '@deepz/types/environment'
 import { PrismaClient } from '@prisma/client'
 
@@ -41,7 +46,7 @@ export class ExtendedClient extends Client {
   ]
 
   public readonly database = new PrismaClient()
-  public readonly commands: Collection<string, CommandType> = new Collection()
+  public readonly commands: Collection<string, ICommandData> = new Collection()
   public readonly player = new Player(this, {
     leaveOnEmpty: true,
     quality: 'high',
@@ -97,12 +102,16 @@ export class ExtendedClient extends Client {
     const commandFiles = await globPromise(commandsPath)
 
     commandFiles.forEach(async (filePath) => {
-      const command: CommandType = await this.importFile(filePath)
+      const Command: ICommandConstructor = await this.importFile(filePath)
+      const commandOptions = this.getCommandOptions(Command)
 
-      if (!command.name) return
+      if (!commandOptions.name) return
 
-      this.commands.set(command.name, command)
-      slashCommands.push(command)
+      this.commands.set(commandOptions.name, {
+        instance: new Command(),
+        options: commandOptions,
+      })
+      slashCommands.push(commandOptions)
     })
 
     // Event
@@ -140,6 +149,10 @@ export class ExtendedClient extends Client {
       this.application?.commands.set(commands)
       logger.info('Registering global commands')
     }
+  }
+
+  private getCommandOptions(target: typeof BaseCommand): CommandOptions {
+    return Reflect.getMetadata(MetadataKeys.Command, target.prototype)
   }
 
   /**

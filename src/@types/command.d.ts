@@ -7,9 +7,11 @@ import {
   MessagePayload,
 } from 'discord.js'
 
-import CustomMessageEmbed from '@deepz/structures/MessageEmbed'
-
-import { ExtendedClient } from '../structures/Client'
+import {
+  ExtendedClient,
+  CustomMessageEmbed,
+  BaseCommand,
+} from '@deepz/structures'
 
 export interface ExtendedInteraction extends CommandInteraction {
   member: GuildMember
@@ -21,9 +23,9 @@ export interface RunOptions {
   args: CommandInteractionOptionResolver
 }
 
-export type RunFunction = (
-  options: RunOptions
-) => Promise<CustomMessageEmbed | MessagePayload | string>
+// export type RunFunction = (
+//   options: RunOptions
+// ) => Promise<CustomMessageEmbed | MessagePayload | string>
 
 export type CommandCategory =
   | 'INFO'
@@ -35,9 +37,30 @@ export type CommandCategory =
   | 'MODERATION'
   | 'GAMES'
 
-export type CommandType = {
+// export type CommandType = {
+//   category: CommandCategory
+//   examples?: string[]
+//   userPermissions?: PermissionResolvable[]
+//   run: RunFunction
+// } & ChatInputApplicationCommandData
+
+export type CommandOptions = {
   category: CommandCategory
   examples?: string[]
   userPermissions?: PermissionResolvable[]
-  run: RunFunction
 } & ChatInputApplicationCommandData
+
+export interface ICommandConstructor extends Function {
+  new (): INewCommand
+}
+
+export interface ICommand {
+  run(
+    options: RunOptions
+  ): Promise<CustomMessageEmbed | MessagePayload | string>
+}
+
+export interface ICommandData {
+  instance: BaseCommand
+  options: CommandOptions
+}

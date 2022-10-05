@@ -1,13 +1,20 @@
-import logger from '@deepz/logger'
-import { Command } from '@deepz/structures'
+import { MessagePayload } from 'discord.js'
 
-export default new Command({
+import { Command } from '@deepz/decorators'
+import logger from '@deepz/logger'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
+
+@Command({
   name: 'daily',
   description: 'Gets your daily money!',
   category: 'ECONOMY',
-
-  examples: ['d.daily'],
-  run: async ({ client, interaction }) => {
+})
+export default class DailyCommand extends BaseCommand {
+  async run({
+    client,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const amount = Math.floor(Math.random() * 1000) + 1
 
     try {
@@ -40,6 +47,8 @@ export default new Command({
       }
     } catch (error) {
       logger.error(error)
+
+      return `***Error trying to get your daily money, try again later...***`
     }
-  },
-})
+  }
+}

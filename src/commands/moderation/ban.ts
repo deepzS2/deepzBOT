@@ -1,19 +1,20 @@
 import {
   ApplicationCommandOptionType,
   GuildMember,
+  MessagePayload,
   PermissionFlagsBits,
 } from 'discord.js'
 
+import { Command } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import { RunOptions } from '@deepz/types/command'
 
-export default new Command({
+@Command({
   name: 'ban',
   description: 'Bans a user from the guild!',
   category: 'MODERATION',
-
   userPermissions: ['BanMembers'],
-  examples: ['d.ban @user get banned lol'],
   options: [
     {
       name: 'user',
@@ -28,7 +29,12 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction, args }) => {
+})
+export default class BanCommand extends BaseCommand {
+  async run({
+    args,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const user = args.getMentionable('user') as GuildMember
       const reason = args.getString('reason')
@@ -89,5 +95,5 @@ export default new Command({
 
       return `***I could not ban this user! Try again later...***`
     }
-  },
-})
+  }
+}

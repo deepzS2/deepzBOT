@@ -6,7 +6,6 @@ export const isDev = process.env.NODE_ENV !== 'prod'
 
 export const botConfig: BotConfiguration = {
   token: process.env.TOKEN,
-  prefix: process.env.PREFIX,
   botOwnerRoleName: process.env.BOT_OWNER_ROLE_NAME,
   enableReactions: true,
   guildId: process.env.GUILD.toString(),

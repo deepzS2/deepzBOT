@@ -25,7 +25,6 @@ declare global {
 
 export interface BotConfiguration {
   token: string
-  prefix: string
   botOwnerRoleName: string
   enableReactions: boolean
   guildId: string

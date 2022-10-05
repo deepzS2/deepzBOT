@@ -42,7 +42,6 @@ export class ExtendedClient extends Client {
 
   public readonly database = new PrismaClient()
   public readonly commands: Collection<string, CommandType> = new Collection()
-  public readonly aliases: Collection<string, string> = new Collection()
   public readonly player = new Player(this, {
     leaveOnEmpty: true,
     quality: 'high',
@@ -102,20 +101,7 @@ export class ExtendedClient extends Client {
 
       if (!command.name) return
 
-      if (command.slash === 'both') {
-        this.commands.set(command.name, command)
-        command.aliases?.forEach((alias) =>
-          this.aliases.set(alias, command.name)
-        )
-        slashCommands.push(command)
-      } else if (!command.slash) {
-        this.commands.set(command.name, command)
-        command.aliases.forEach((alias) =>
-          this.aliases.set(alias, command.name)
-        )
-      } else {
-        slashCommands.push(command)
-      }
+      slashCommands.push(command)
     })
 
     // Event

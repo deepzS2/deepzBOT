@@ -9,7 +9,7 @@ import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'whois',
-  aliases: ['who', 'whis'],
+
   description: 'Returns a mentioned user information',
   category: 'INFO',
   options: [

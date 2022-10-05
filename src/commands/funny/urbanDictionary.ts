@@ -7,7 +7,7 @@ import { IGetTermMeanings } from '@deepz/types/fetchs/urbandictionary'
 
 export default new Command({
   name: 'dictionary',
-  aliases: ['urban', 'urbandictionary', 'dict', 'urbandict'],
+
   description: 'Search the meaning of some word!',
   category: 'FUNNY',
 

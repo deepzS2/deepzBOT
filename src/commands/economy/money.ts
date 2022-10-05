@@ -5,7 +5,7 @@ import { Command } from '@deepz/structures'
 
 export default new Command({
   name: 'money',
-  aliases: ['credits', 'balance', 'credit'],
+
   description:
     'Gets your current balance, transfer money or check other persons balance!',
   category: 'ECONOMY',

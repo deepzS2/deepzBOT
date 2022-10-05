@@ -9,7 +9,7 @@ const SONGS_PER_PAGE = 10
 
 export default new Command({
   name: 'queue',
-  aliases: ['q'],
+
   description: 'Displays the current playing queue!',
   category: 'AUDIO',
   options: [

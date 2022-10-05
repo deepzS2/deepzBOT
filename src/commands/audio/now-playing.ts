@@ -5,7 +5,7 @@ import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'nowplaying',
-  aliases: ['np', 'playing'],
+
   description: 'Display the current playing song information!',
   category: 'AUDIO',
 

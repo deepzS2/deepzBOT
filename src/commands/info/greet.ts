@@ -3,7 +3,7 @@ import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'greet',
-  aliases: ['greetings', 'gret'],
+
   description: 'Sends you a hello world!',
   category: 'INFO',
 

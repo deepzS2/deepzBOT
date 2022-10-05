@@ -36,7 +36,6 @@ export type CommandCategory =
   | 'GAMES'
 
 export type CommandType = {
-  aliases?: string[]
   category: CommandCategory
   examples?: string[]
   userPermissions?: PermissionResolvable[]

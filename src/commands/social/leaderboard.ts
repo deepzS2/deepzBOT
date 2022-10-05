@@ -5,7 +5,7 @@ import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'leaderboard',
-  aliases: ['guildrank'],
+
   description: 'Returns the top 10 guild members',
   category: 'SOCIAL',
 

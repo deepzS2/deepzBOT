@@ -9,7 +9,7 @@ import { createAudioResource } from '@discordjs/voice'
 
 export default new Command({
   name: 'play',
-  aliases: ['p'],
+
   description: 'Loads a song from youtube!',
   category: 'AUDIO',
   options: [

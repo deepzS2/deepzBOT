@@ -5,7 +5,7 @@ import { Command } from '@deepz/structures'
 
 export default new Command({
   name: 'stop',
-  aliases: ['quit', 'exit'],
+
   description: 'Stops the bot and clears the queue!',
   category: 'AUDIO',
 

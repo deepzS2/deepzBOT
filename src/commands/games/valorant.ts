@@ -22,7 +22,7 @@ const valorantApiRequest = createRequest({
 
 export default new Command({
   name: 'valorant',
-  aliases: ['vava', 'valo', 'va'],
+
   description:
     'Gets your Valorant account info assigning your discord to your Valorant account!',
   options: [

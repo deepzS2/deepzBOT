@@ -6,7 +6,7 @@ import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'skip',
-  aliases: ['next'],
+
   description: 'Skips the current song!',
   category: 'AUDIO',
   options: [

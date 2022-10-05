@@ -27,7 +27,7 @@ const steamApiRequest = createRequest({
 
 export default new Command({
   name: 'steam',
-  aliases: ['stm', 'stem'],
+
   description: 'Try to get a user steam profile information',
   category: 'INFO',
   options: [

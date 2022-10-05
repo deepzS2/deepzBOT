@@ -4,7 +4,7 @@ import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'server',
-  aliases: ['sv'],
+
   description: 'Returns the server information',
   category: 'INFO',
 

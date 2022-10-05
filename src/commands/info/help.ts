@@ -19,7 +19,7 @@ function commandsToString(commands: Collection<string, CommandType>) {
 
 export default new Command({
   name: 'help',
-  aliases: ['h'],
+
   category: 'INFO',
   options: [
     {

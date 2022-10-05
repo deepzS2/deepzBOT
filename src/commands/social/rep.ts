@@ -5,7 +5,7 @@ import { Command } from '@deepz/structures'
 
 export default new Command({
   name: 'rep',
-  aliases: ['reputation'],
+
   description: 'Gives a reputation point to someone!',
   category: 'SOCIAL',
 

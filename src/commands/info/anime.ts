@@ -5,7 +5,7 @@ import {
   ApplicationCommandOptionType,
 } from 'discord.js'
 
-import { sendMessage, request, isInteraction } from '@deepz/helpers'
+import { request } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { ExtendedClient, Command, CustomMessageEmbed } from '@deepz/structures'
 import {
@@ -37,9 +37,7 @@ export default new Command({
 
   run: async ({ client, interaction, args }) => {
     try {
-      const searchTerm = isInteraction(args)
-        ? args.getString('searchterm')
-        : args.join(' ')
+      const searchTerm = args.getString('searchterm')
 
       if (!searchTerm) {
         const id = Math.floor(Math.random() * ANIMES_NUMBER)
@@ -87,17 +85,14 @@ export default new Command({
           }))
         )
 
-      const selectMessage = await sendMessage({
-        message: interaction,
-        content: {
-          embeds: [createAnimeSelectList(animes, client)],
-          components: [
-            {
-              type: ComponentType.ActionRow,
-              components: [selectAnimeMenu],
-            },
-          ],
-        },
+      const selectMessage = await interaction.followUp({
+        embeds: [createAnimeSelectList(animes, client)],
+        components: [
+          {
+            type: ComponentType.ActionRow,
+            components: [selectAnimeMenu],
+          },
+        ],
       })
 
       // TODO: Search anime by title and display the choices

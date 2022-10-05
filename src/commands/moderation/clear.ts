@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command } from '@deepz/structures'
 
@@ -20,33 +19,24 @@ export default new Command({
       maxValue: 100,
     },
   ],
-  run: async ({ interaction, args, message }) => {
+  run: async ({ interaction, args }) => {
     try {
-      if (
-        message &&
-        !message?.member.permissions.has(PermissionFlagsBits.ManageMessages)
-      )
-        return `You don't have permission to use this command!`
+      const amount = args.getInteger('amount')
+      const author = interaction.user
+      const bot = interaction.guild.members.me
 
-      const amount = isInteraction(args)
-        ? args.getInteger('amount')
-        : parseInt(args[0])
+      if (!bot.permissions.has(PermissionFlagsBits.ManageMessages))
+        return `I don't have permission to manage messages on this server...`
 
       if (isNaN(amount)) return `***Please provide a valid number...***`
 
       const { size } = await interaction.channel.bulkDelete(amount)
 
-      await (interaction || message).channel.send({
-        content: `***Deleted ${size} message(s) requested by ${
-          interaction?.user.tag || message?.author.tag
-        }.***`,
-      })
+      return `***Deleted ${size} message(s) requested by <@${author.id}>.***`
     } catch (error) {
       logger.error(error)
 
-      await (interaction ?? message).channel.send({
-        content: `***I could not delete the messages! Try again later...***`,
-      })
+      return `***I could not delete the messages! Try again later...***`
     }
   },
 })

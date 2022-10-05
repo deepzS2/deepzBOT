@@ -1,7 +1,6 @@
 import { RepeatMode } from 'discord-music-player'
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command } from '@deepz/structures'
 
@@ -28,13 +27,11 @@ export default new Command({
     },
   ],
   examples: ['d.loop queue', 'd.loop song', 'd.loop disable'],
-  run: async ({ client, args, interaction, message }) => {
-    const subcommand = isInteraction(args) ? args.getSubcommand() : args[0]
+  run: async ({ client, args, interaction }) => {
+    const subcommand = args.getSubcommand()
 
     try {
-      const queue = await client.player.getQueue(
-        (interaction || message).guildId
-      )
+      const queue = await client.player.getQueue(interaction.guildId)
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`

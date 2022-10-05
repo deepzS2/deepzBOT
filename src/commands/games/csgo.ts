@@ -2,7 +2,6 @@ import axios from 'axios'
 import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { tracker } from '@deepz/services'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
@@ -28,7 +27,7 @@ export default new Command({
   examples: ['d.steam deepzqueen'],
   run: async ({ args }) => {
     try {
-      const steam = isInteraction(args) ? args.getString('steam') : args[0]
+      const steam = args.getString('steam')
 
       if (!steam)
         return `Please provide me a Steam ID, Steam community URL, or a Steam vanity username.`

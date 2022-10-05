@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command } from '@deepz/structures'
 
@@ -26,18 +25,14 @@ export default new Command({
       required: false,
     },
   ],
-  run: async ({ client, interaction, message, args }) => {
-    const user = isInteraction(args)
-      ? args.getUser('user')
-      : message.mentions.users.first()
-    const amount = isInteraction(args)
-      ? args.getNumber('amount')
-      : parseFloat(args[1])
+  run: async ({ client, interaction, args }) => {
+    const user = args.getUser('user')
+    const amount = args.getNumber('amount')
 
     try {
       const author = await client.database.user.findUniqueOrThrow({
         where: {
-          discordId: interaction?.user.id ?? message?.author.id,
+          discordId: interaction.user.id,
         },
       })
 

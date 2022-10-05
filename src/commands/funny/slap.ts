@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { getMentions, isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { tenor } from '@deepz/services'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
@@ -19,10 +18,8 @@ export default new Command({
     },
   ],
   examples: ['d.slap @user'],
-  run: async ({ interaction, args, message }) => {
-    const user = isInteraction(args)
-      ? args.getUser('user')
-      : getMentions(message).first()
+  run: async ({ interaction, args }) => {
+    const user = args.getUser('user')
 
     try {
       const result = await tenor.search({
@@ -36,9 +33,7 @@ export default new Command({
       return new CustomMessageEmbed(' ', {
         image: gifs[toSend].media[0].gif.url,
         color: '#4360FB',
-        description: `***${
-          interaction?.user.username || message?.author.id
-        }, you slapped ${user.username} :angry:***`,
+        description: `***${interaction.user.username}, you slapped ${user.username} :angry:***`,
       })
     } catch (error) {
       logger.error(error)

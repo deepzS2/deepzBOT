@@ -9,8 +9,8 @@ export default new Command({
   category: 'INFO',
 
   examples: ['d.server'],
-  run: async ({ interaction, message }) => {
-    const { guild, member } = interaction || message
+  run: async ({ interaction }) => {
+    const { guild, member } = interaction
 
     const imageURL = guild.iconURL({
       extension: 'png',

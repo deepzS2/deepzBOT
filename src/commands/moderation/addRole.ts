@@ -4,7 +4,6 @@ import {
   PermissionFlagsBits,
 } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command } from '@deepz/structures'
 
@@ -28,39 +27,31 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction, args, message }) => {
+  run: async ({ interaction, args }) => {
     try {
-      if (
-        message &&
-        !message.member.permissions.has(PermissionFlagsBits.ManageRoles)
-      )
-        return `You don't have permission to use this command!`
+      const role = args.getRole('role')
+      const user = args.getMentionable('user') as GuildMember
+      const author = interaction.user
+      const bot = interaction.guild.members.me
 
-      const role = isInteraction(args)
-        ? args.getRole('role')
-        : message?.mentions.roles.first()
-      const user = isInteraction(args)
-        ? (args.getMentionable('user') as GuildMember)
-        : message?.mentions.members.first()
-      const author = interaction?.user ?? message.author
+      if (!bot.permissions.has(PermissionFlagsBits.ManageRoles))
+        return `I don't have permission to manage roles on this server...`
 
       if (!role) {
-        return `Please provide an role to be added!`
+        return `Please provide an role to be added...`
       }
 
       if (!user || user.id === author.id) {
-        return `Please provide an valid user to add the role`
+        return `Please provide an valid user to add the role...`
       }
 
       await user.roles.add(role.id)
 
-      return `**<@${user.id}> now have ${role.name} role!**`
+      return `***<@${user.id}> now have ${role.name} role!***`
     } catch (error) {
       logger.error(error)
 
-      await (interaction ?? message).channel.send({
-        content: `***I could not delete the messages! Try again later...***`,
-      })
+      return `***I could not add role! Try again later...***`
     }
   },
 })

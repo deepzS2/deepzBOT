@@ -1,7 +1,6 @@
 import { Queue } from 'discord-music-player'
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
@@ -20,18 +19,14 @@ export default new Command({
   ],
 
   examples: ['d.skip', 'd.skip 3'],
-  run: async ({ client, interaction, args, message }) => {
+  run: async ({ client, interaction, args }) => {
     try {
-      const queue: Queue = await client.player.getQueue(
-        (interaction || message).guildId
-      )
+      const queue: Queue = await client.player.getQueue(interaction.guildId)
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
-      const skipDestination = isInteraction(args)
-        ? args.getNumber('to')
-        : parseInt(args[0])
+      const skipDestination = args.getNumber('to')
 
       if (!skipDestination || isNaN(skipDestination)) {
         const currentSong = queue.nowPlaying

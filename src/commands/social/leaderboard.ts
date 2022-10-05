@@ -10,12 +10,12 @@ export default new Command({
   category: 'SOCIAL',
 
   examples: ['d.leaderboard'],
-  run: async ({ message, client, interaction }) => {
+  run: async ({ client, interaction }) => {
     const users = await client.database.user.findMany()
     const members = users
       .filter((user) => {
         // Filters by guild members
-        return (interaction ?? message).guild.members.cache.find(
+        return interaction.guild.members.cache.find(
           (member) => user.discordId === member.id
         )
       })

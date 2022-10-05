@@ -5,7 +5,6 @@ import {
   GuildMember,
 } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
@@ -23,12 +22,10 @@ export default new Command({
   ],
   examples: ['d.whois @user'],
 
-  run: async ({ message, args, interaction }) => {
-    const member = isInteraction(args)
-      ? args.getMentionable('user')
-      : message.mentions.members.first()
+  run: async ({ args, interaction }) => {
+    const member = args.getMentionable('user')
 
-    const guild = message?.guild || interaction?.guild
+    const { guild } = interaction
 
     if (!member || !(member instanceof GuildMember) || !guild) return
 

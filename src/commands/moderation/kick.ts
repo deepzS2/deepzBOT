@@ -1,11 +1,9 @@
 import {
   ApplicationCommandOptionType,
   GuildMember,
-  GuildTextBasedChannel,
   PermissionFlagsBits,
 } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
@@ -30,21 +28,15 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction, args, message }) => {
+  run: async ({ interaction, args }) => {
     try {
-      if (
-        message &&
-        !message.member.permissions.has(PermissionFlagsBits.KickMembers)
-      )
-        return `You don't have permission to use this command!`
+      const user = args.getMentionable('user') as GuildMember
+      const reason = args.getString('reason')
+      const author = interaction.user
+      const bot = interaction.guild.members.me
 
-      const user = isInteraction(args)
-        ? (args.getMentionable('user') as GuildMember)
-        : message.mentions.members.first()
-      const reason = isInteraction(args)
-        ? args.getString('reason')
-        : args.splice(1).join('')
-      const author = interaction?.user ?? message?.author
+      if (!bot.permissions.has(PermissionFlagsBits.KickMembers))
+        return `I don't have permission to kick members on this server...`
 
       if (!reason) {
         return `**Please provide a reason to kick this user!**`
@@ -54,11 +46,10 @@ export default new Command({
         return `**Please provide a valid user to kick and it can't be yourself!**`
       }
 
-      const channel =
-        interaction?.channel ?? (message?.channel as GuildTextBasedChannel)
-      const createdAt = interaction?.createdAt ?? message?.createdAt
+      const channel = interaction.channel
+      const createdAt = interaction.createdAt
 
-      await (interaction?.guild ?? message.guild).members.kick(user, reason)
+      await interaction.guild.members.kick(user, reason)
 
       return new CustomMessageEmbed(' ', {
         description: '**Kick**',
@@ -94,9 +85,7 @@ export default new Command({
     } catch (error) {
       logger.error(error)
 
-      await (interaction ?? message).channel.send({
-        content: `***I could not kick this user! Try again later...***`,
-      })
+      return `***I could not kick this user! Try again later...***`
     }
   },
 })

@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType, User } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
@@ -17,11 +16,9 @@ export default new Command({
       required: false,
     },
   ],
-  run: async ({ message, interaction, args }) => {
-    const user: User = isInteraction(args)
-      ? args.getUser('user')
-      : message?.mentions.users.first()
-    const author = interaction?.user ?? message?.author
+  run: async ({ interaction, args }) => {
+    const user: User = args.getUser('user')
+    const author = interaction.user
 
     const avatar = (user ?? author).displayAvatarURL({
       size: 2048,

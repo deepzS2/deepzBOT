@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command } from '@deepz/structures'
 
@@ -18,15 +17,15 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ client, interaction, message, args }) => {
+  run: async ({ client, interaction, args }) => {
     try {
-      const bio = isInteraction(args) ? args.getString('text') : args.join(' ')
+      const bio = args.getString('text')
 
       if (!bio) return `***Please provide a text...***`
 
       await client.database.user.update({
         where: {
-          discordId: interaction?.user.id ?? message?.author.id,
+          discordId: interaction.user.id,
         },
         data: {
           bio,

@@ -1,6 +1,5 @@
 import { User, ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command } from '@deepz/structures'
 
@@ -19,10 +18,8 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ client, interaction, message, args }) => {
-    const user: User = isInteraction(args)
-      ? args.getUser('user')
-      : message.mentions.users.first()
+  run: async ({ client, interaction, args }) => {
+    const user: User = args.getUser('user')
 
     try {
       if (!user) {
@@ -40,9 +37,7 @@ export default new Command({
         },
       })
 
-      return `***<@${
-        interaction?.user.id ?? message?.author.id
-      }> just gave a reputation point to <@${user.id}>`
+      return `***<@${interaction.user.id}> just gave a reputation point to <@${user.id}>`
     } catch (error) {
       logger.error(error)
     }

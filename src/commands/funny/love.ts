@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { getMentions, isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
@@ -8,7 +7,7 @@ export default new Command({
   name: 'love',
   description: 'Calculate the love affinity you have for another person!',
   category: 'FUNNY',
-  slash: 'both',
+
   options: [
     {
       name: 'user',
@@ -18,10 +17,8 @@ export default new Command({
     },
   ],
   examples: ['d.love @user'],
-  run: async ({ interaction, args, message }) => {
-    const user = isInteraction(args)
-      ? args.getUser('user')
-      : getMentions(message).first()
+  run: async ({ interaction, args }) => {
+    const user = args.getUser('user')
 
     try {
       const love = Math.random() * 100
@@ -34,9 +31,7 @@ export default new Command({
         thumbnail: user.displayAvatarURL(),
         fields: [
           {
-            name: `☁ **<@${user.id}>** loves **<@${
-              (interaction?.user ?? message.author).id
-            }>** this much:`,
+            name: `☁ **<@${user.id}>** loves **<@${interaction.user.id}>** this much:`,
             value: `💟 ${Math.floor(love)}%\n\n${loveLevel}`,
             inline: false,
           },

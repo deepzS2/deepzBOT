@@ -5,15 +5,15 @@ export default new Command({
   name: 'daily',
   description: 'Gets your daily money!',
   category: 'ECONOMY',
-  slash: 'both',
+
   examples: ['d.daily'],
-  run: async ({ client, message, interaction }) => {
+  run: async ({ client, interaction }) => {
     const amount = Math.floor(Math.random() * 1000) + 1
 
     try {
       const author = await client.database.user.findUniqueOrThrow({
         where: {
-          discordId: interaction?.user.id ?? message?.author.id,
+          discordId: interaction.user.id,
         },
       })
 

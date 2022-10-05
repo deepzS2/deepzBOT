@@ -9,7 +9,6 @@ import {
 } from 'discord.js'
 
 import { botConfig, categoryEmojis } from '@deepz/config'
-import { isInteraction, sendMessage } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 import { CommandCategory, CommandType } from '@deepz/types/command'
@@ -20,7 +19,7 @@ function commandsToString(commands: Collection<string, CommandType>) {
 
 export default new Command({
   name: 'help',
-  aliases: ['h'],
+
   category: 'INFO',
   options: [
     {
@@ -32,11 +31,11 @@ export default new Command({
   ],
   description: 'Returns all commands or get the documentation of a command',
   examples: ['d.help play', 'd.help'],
-  slash: 'both',
-  run: async ({ client, args, message, interaction }) => {
+
+  run: async ({ client, args, interaction }) => {
     try {
       const owner = await client.users.fetch(botConfig.ownerId)
-      const command = isInteraction(args) ? args.getString('command') : args[0]
+      const command = args.getString('command')
 
       const embed = new CustomMessageEmbed(' ', {
         author: { name: 'Help Menu', iconURL: client.user.displayAvatarURL() },
@@ -52,8 +51,7 @@ export default new Command({
           : `**I didn't found any command with that name... Please try \`/help\` to find all commands you can use.**`
       }
 
-      const authorUsername =
-        message?.author.username || interaction?.user.username
+      const authorUsername = interaction.user.username
 
       const cmds = client.commands
 
@@ -79,18 +77,15 @@ export default new Command({
         .setPlaceholder('Choose a category for commands')
         .addOptions(panelOptions)
 
-      const dropdown = await sendMessage({
-        message: interaction ?? message,
-        content: {
-          embeds: [embed],
-          components: [
-            {
-              type: ComponentType.ActionRow,
-              components: [selectPanel],
-            },
-          ],
-          ephemeral: true,
-        },
+      const dropdown = await interaction.followUp({
+        embeds: [embed],
+        components: [
+          {
+            type: ComponentType.ActionRow,
+            components: [selectPanel],
+          },
+        ],
+        ephemeral: true,
       })
 
       const collector = dropdown.createMessageComponentCollector({

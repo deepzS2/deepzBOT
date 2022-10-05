@@ -1,11 +1,9 @@
 import {
   ApplicationCommandOptionType,
   GuildMember,
-  GuildTextBasedChannel,
   PermissionFlagsBits,
 } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
@@ -13,7 +11,7 @@ export default new Command({
   name: 'ban',
   description: 'Bans a user from the guild!',
   category: 'MODERATION',
-  slash: 'both',
+
   userPermissions: ['BanMembers'],
   examples: ['d.ban @user get banned lol'],
   options: [
@@ -30,21 +28,15 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction, args, message }) => {
+  run: async ({ interaction, args }) => {
     try {
-      if (
-        message &&
-        !message.member.permissions.has(PermissionFlagsBits.KickMembers)
-      )
-        return `You don't have permission to use this command!`
+      const user = args.getMentionable('user') as GuildMember
+      const reason = args.getString('reason')
+      const author = interaction.user
+      const bot = interaction.guild.members.me
 
-      const user = isInteraction(args)
-        ? (args.getMentionable('user') as GuildMember)
-        : message.mentions.members.first()
-      const reason = isInteraction(args)
-        ? args.getString('reason')
-        : args.splice(1).join('')
-      const author = interaction?.user ?? message?.author
+      if (!bot.permissions.has(PermissionFlagsBits.BanMembers))
+        return `I don't have permission to ban members on this server...`
 
       if (!reason) {
         return `**Please provide a reason to ban this user!**`
@@ -54,11 +46,10 @@ export default new Command({
         return `**Please provide a valid user to ban and it can't be yourself!**`
       }
 
-      const channel =
-        interaction?.channel ?? (message?.channel as GuildTextBasedChannel)
-      const createdAt = interaction?.createdAt ?? message?.createdAt
+      const channel = interaction.channel
+      const createdAt = interaction.createdAt
 
-      await (interaction?.guild ?? message.guild).members.ban(user, {
+      await interaction.guild.members.ban(user, {
         reason,
       })
 
@@ -96,9 +87,7 @@ export default new Command({
     } catch (error) {
       logger.error(error)
 
-      await (interaction ?? message).channel.send({
-        content: `***I could not kick this user! Try again later...***`,
-      })
+      return `***I could not ban this user! Try again later...***`
     }
   },
 })

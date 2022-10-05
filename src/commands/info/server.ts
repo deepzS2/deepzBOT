@@ -4,13 +4,13 @@ import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'server',
-  aliases: ['sv'],
+
   description: 'Returns the server information',
   category: 'INFO',
-  slash: 'both',
+
   examples: ['d.server'],
-  run: async ({ interaction, message }) => {
-    const { guild, member } = interaction || message
+  run: async ({ interaction }) => {
+    const { guild, member } = interaction
 
     const imageURL = guild.iconURL({
       extension: 'png',

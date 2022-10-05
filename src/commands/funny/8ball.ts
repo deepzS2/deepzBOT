@@ -1,6 +1,5 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 const replies = ['Yes.', 'No.', "I don't know.", 'Ask again later']
@@ -9,7 +8,7 @@ export default new Command({
   name: '8ball',
   description: 'Displays the information about the bot!',
   category: 'FUNNY',
-  slash: 'both',
+
   examples: ['d.8ball should I create my own bot?'],
   options: [
     {
@@ -19,10 +18,8 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ message, interaction, args }) => {
-    const question = isInteraction(args)
-      ? args.getString('question')
-      : args.join(' ')
+  run: async ({ interaction, args }) => {
+    const question = args.getString('question')
 
     if (!question) return `**:x: Ask me something...**`
 
@@ -31,10 +28,8 @@ export default new Command({
     return new CustomMessageEmbed('8ball', {
       color: '#4360FB',
       author: {
-        name: interaction?.user.tag ?? message?.author.tag,
-        iconURL:
-          interaction?.user.displayAvatarURL() ??
-          message?.author.displayAvatarURL(),
+        name: interaction.user.tag,
+        iconURL: interaction.user.displayAvatarURL(),
       },
       fields: [
         {

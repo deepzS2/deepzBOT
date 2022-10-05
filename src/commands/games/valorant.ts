@@ -1,7 +1,7 @@
 import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { createRequest, isInteraction } from '@deepz/helpers'
+import { createRequest } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 import {
@@ -22,7 +22,7 @@ const valorantApiRequest = createRequest({
 
 export default new Command({
   name: 'valorant',
-  aliases: ['vava', 'valo', 'va'],
+
   description:
     'Gets your Valorant account info assigning your discord to your Valorant account!',
   options: [
@@ -53,14 +53,14 @@ export default new Command({
   ],
   examples: ['d.valorant set deepzS2 BR1', 'd.valorant get'],
   category: 'GAMES',
-  slash: 'both',
-  run: async ({ interaction, client, args, message }) => {
+
+  run: async ({ interaction, client, args }) => {
     try {
-      const subcommand = isInteraction(args) ? args.getSubcommand() : args[0]
+      const subcommand = args.getSubcommand()
 
       if (subcommand === 'set') {
-        const name = isInteraction(args) ? args.getString('username') : args[1]
-        const tag = isInteraction(args) ? args.getString('tagline') : args[2]
+        const name = args.getString('username')
+        const tag = args.getString('tagline')
 
         const accountData = await valorantApiRequest<IGetAccountResponse>({
           url: {
@@ -81,7 +81,7 @@ export default new Command({
             valorant: `${name}#${tag}`,
           },
           where: {
-            discordId: interaction?.user.id || message?.author.id,
+            discordId: interaction.user.id,
           },
         })
 
@@ -90,7 +90,7 @@ export default new Command({
 
       const { valorant } = await client.database.user.findUniqueOrThrow({
         where: {
-          discordId: interaction?.user.id || message?.author.id,
+          discordId: interaction.user.id,
         },
       })
 

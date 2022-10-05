@@ -3,7 +3,7 @@ import { ApplicationCommandOptionType } from 'discord.js'
 
 import { steamToken } from '@deepz/config'
 import { createRequest } from '@deepz/helpers'
-import { getSteamID, isInteraction } from '@deepz/helpers'
+import { getSteamID } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 import {
@@ -27,7 +27,7 @@ const steamApiRequest = createRequest({
 
 export default new Command({
   name: 'steam',
-  aliases: ['stm', 'stem'],
+
   description: 'Try to get a user steam profile information',
   category: 'INFO',
   options: [
@@ -39,9 +39,9 @@ export default new Command({
     },
   ],
   examples: ['d.steam http://steamcommunity.com/id/deepzqueen'],
-  slash: 'both',
+
   run: async ({ args }) => {
-    const idToSearch = isInteraction(args) ? args.getString('id') : args[0]
+    const idToSearch = args.getString('id')
 
     try {
       const steamId = await getSteamID(idToSearch)

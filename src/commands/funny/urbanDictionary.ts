@@ -1,16 +1,16 @@
 import { ApplicationCommandOptionType } from 'discord.js'
 
-import { isInteraction, request } from '@deepz/helpers'
+import { request } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 import { IGetTermMeanings } from '@deepz/types/fetchs/urbandictionary'
 
 export default new Command({
   name: 'dictionary',
-  aliases: ['urban', 'urbandictionary', 'dict', 'urbandict'],
+
   description: 'Search the meaning of some word!',
   category: 'FUNNY',
-  slash: 'both',
+
   options: [
     {
       name: 'searchterm',
@@ -21,9 +21,7 @@ export default new Command({
   ],
   examples: ['d.dictionary hello world'],
   run: async ({ args }) => {
-    const searchterm = isInteraction(args)
-      ? args.getString('searchterm')
-      : args.join(' ')
+    const searchterm = args.getString('searchterm')
 
     try {
       if (!searchterm) return `**:x: I need a term to search...**`

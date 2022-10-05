@@ -1,5 +1,6 @@
 import { stripIndents } from 'common-tags'
 
+import logger from '@deepz/logger'
 import { Event } from '@deepz/structures'
 
 export default new Event('guildCreate', async (client, guild) => {
@@ -17,10 +18,14 @@ export default new Event('guildCreate', async (client, guild) => {
       For help with commands try \`/help\` or \`/help <command>\`.
     `)
 
-  await client.database.guild.create({
-    data: {
-      discordId: guild.id,
-      name: guild.name,
-    },
-  })
+  try {
+    await client.database.guild.create({
+      data: {
+        discordId: guild.id,
+        name: guild.name,
+      },
+    })
+  } catch (error) {
+    logger.error(error, 'Error inserting guild into database')
+  }
 })

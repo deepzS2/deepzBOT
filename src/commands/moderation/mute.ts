@@ -1,12 +1,5 @@
-import {
-  ApplicationCommandOptionType,
-  Guild,
-  GuildMember,
-  GuildTextBasedChannel,
-  PermissionFlagsBits,
-} from 'discord.js'
+import { ApplicationCommandOptionType, Guild, GuildMember } from 'discord.js'
 
-import { isInteraction, sendMessage } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
@@ -16,7 +9,7 @@ export default new Command({
   name: 'mute',
   description: 'Mutes an user!',
   category: 'MODERATION',
-  slash: 'both',
+
   userPermissions: ['MuteMembers'],
   examples: ['d.mute @user 10 get muted lol'],
   options: [
@@ -39,25 +32,13 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ interaction, args, message }) => {
+  run: async ({ interaction, args }) => {
     try {
-      if (
-        message &&
-        !message.member.permissions.has(PermissionFlagsBits.MuteMembers)
-      )
-        return `You don't have permission to use this command!`
+      const user = args.getMentionable('user') as GuildMember
+      const time = args.getNumber('time')
+      const reason = args.getString('reason')
 
-      const user = isInteraction(args)
-        ? (args.getMentionable('user') as GuildMember)
-        : message.mentions.members.first()
-      const time = isInteraction(args)
-        ? args.getNumber('time')
-        : Number(args[1])
-      const reason = isInteraction(args)
-        ? args.getString('reason')
-        : args.slice(2).join(' ')
-
-      if (!user || user.id === (interaction?.user.id ?? message?.author.id))
+      if (!user || user.id === interaction.user.id)
         return 'Please provide an user to be muted!'
 
       if (!time || isNaN(time))
@@ -65,25 +46,19 @@ export default new Command({
 
       if (!reason) return 'Please provide an reason for kicking him!'
 
-      const mutedRole = await getOrCreateMutedRole(
-        interaction?.guild ?? message.guild
-      )
+      const mutedRole = await getOrCreateMutedRole(interaction.guild)
 
       await user.roles.add(mutedRole.id)
 
       setTimeout(async () => {
         await user.roles.remove(mutedRole.id)
 
-        await sendMessage({
-          content: `<@${user.id}> has been unmuted!`,
-          message: interaction ?? message,
-        })
+        await interaction.followUp(`<@${user.id}> has been unmuted!`)
       }, time * 60 * 1000)
 
-      const author = interaction?.user ?? message?.author
-      const channel =
-        interaction?.channel ?? (message?.channel as GuildTextBasedChannel)
-      const createdAt = interaction?.createdAt ?? message?.createdAt
+      const author = interaction.user
+      const channel = interaction.channel
+      const createdAt = interaction.createdAt
 
       return new CustomMessageEmbed('Mutes', {
         color: '#4360FB',
@@ -118,9 +93,7 @@ export default new Command({
     } catch (error) {
       logger.error(error)
 
-      await (interaction ?? message).channel.send({
-        content: `***Something went wrong muting this user! Try again later...***`,
-      })
+      return `***Something went wrong muting this user! Try again later...***`
     }
   },
 })

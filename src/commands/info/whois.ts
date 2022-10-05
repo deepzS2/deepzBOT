@@ -5,12 +5,11 @@ import {
   GuildMember,
 } from 'discord.js'
 
-import { isInteraction } from '@deepz/helpers'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'whois',
-  aliases: ['who', 'whis'],
+
   description: 'Returns a mentioned user information',
   category: 'INFO',
   options: [
@@ -22,13 +21,11 @@ export default new Command({
     },
   ],
   examples: ['d.whois @user'],
-  slash: 'both',
-  run: async ({ message, args, interaction }) => {
-    const member = isInteraction(args)
-      ? args.getMentionable('user')
-      : message.mentions.members.first()
 
-    const guild = message?.guild || interaction?.guild
+  run: async ({ args, interaction }) => {
+    const member = args.getMentionable('user')
+
+    const { guild } = interaction
 
     if (!member || !(member instanceof GuildMember) || !guild) return
 

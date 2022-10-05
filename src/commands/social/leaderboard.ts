@@ -5,17 +5,17 @@ import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
   name: 'leaderboard',
-  aliases: ['guildrank'],
+
   description: 'Returns the top 10 guild members',
   category: 'SOCIAL',
-  slash: 'both',
+
   examples: ['d.leaderboard'],
-  run: async ({ message, client, interaction }) => {
+  run: async ({ client, interaction }) => {
     const users = await client.database.user.findMany()
     const members = users
       .filter((user) => {
         // Filters by guild members
-        return (interaction ?? message).guild.members.cache.find(
+        return interaction.guild.members.cache.find(
           (member) => user.discordId === member.id
         )
       })

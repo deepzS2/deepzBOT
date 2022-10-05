@@ -7,13 +7,11 @@ export default new Command({
   name: 'pause',
   description: 'Pauses the current song and queue!',
   category: 'AUDIO',
-  slash: 'both',
+
   examples: ['d.pause'],
-  run: async ({ client, interaction, message }) => {
+  run: async ({ client, interaction }) => {
     try {
-      const queue = await client.player.getQueue(
-        (interaction || message).guildId
-      )
+      const queue = await client.player.getQueue(interaction.guildId)
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`

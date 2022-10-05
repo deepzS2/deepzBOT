@@ -4,7 +4,6 @@ import {
   ChatInputApplicationCommandData,
   GuildMember,
   PermissionResolvable,
-  Message,
   MessagePayload,
 } from 'discord.js'
 
@@ -18,9 +17,8 @@ export interface ExtendedInteraction extends CommandInteraction {
 
 export interface RunOptions {
   client: ExtendedClient
-  interaction?: ExtendedInteraction
-  message?: Message
-  args: CommandInteractionOptionResolver | string[]
+  interaction: ExtendedInteraction
+  args: CommandInteractionOptionResolver
 }
 
 export type RunFunction = (
@@ -38,8 +36,6 @@ export type CommandCategory =
   | 'GAMES'
 
 export type CommandType = {
-  aliases?: string[]
-  slash?: boolean | 'both'
   category: CommandCategory
   examples?: string[]
   userPermissions?: PermissionResolvable[]

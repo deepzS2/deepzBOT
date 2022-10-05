@@ -1,12 +1,7 @@
 import { Queue } from 'discord-music-player'
-import {
-  ApplicationCommandOptionType,
-  Message,
-  PermissionFlagsBits,
-} from 'discord.js'
+import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord.js'
 import path from 'path'
 
-import { isInteraction } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 import { ExtendedInteraction } from '@deepz/types/command'
@@ -14,7 +9,7 @@ import { createAudioResource } from '@discordjs/voice'
 
 export default new Command({
   name: 'play',
-  aliases: ['p'],
+
   description: 'Loads a song from youtube!',
   category: 'AUDIO',
   options: [
@@ -63,24 +58,22 @@ export default new Command({
     'd.play playlist https://www.youtube.com/watch?v=Cl5Vkd4N03Q&list=RDik2YF05iX2w&index=3',
     'd.play search after dark',
   ],
-  slash: 'both',
-  run: async ({ client, interaction, args, message }) => {
-    if (!(interaction || message).member.voice.channel)
+
+  run: async ({ client, interaction, args }) => {
+    if (!interaction.member.voice.channel)
       return `***You need to be in a voice channel to use this command!***`
 
-    const queue = await client.player.createQueue(
-      (interaction || message).guild.id
-    )
+    const queue = await client.player.createQueue(interaction.guild.id)
 
     if (!queue.connection) {
-      const voiceChannel = (interaction || message).member.voice.channel
+      const voiceChannel = interaction.member.voice.channel
 
       if (!voiceChannel.joinable)
         return `***I don't have permission to join this channel...***`
 
       if (
         voiceChannel
-          .permissionsFor(message.guild.members.me)
+          .permissionsFor(interaction.guild.members.me)
           .has(PermissionFlagsBits.Speak)
       )
         return `***I don't have permission to speak...***`
@@ -88,18 +81,18 @@ export default new Command({
       await queue.join(voiceChannel)
     }
 
-    await shouldSayGoodNight(interaction, message, queue)
+    await shouldSayGoodNight(interaction, queue)
 
     const embed = new CustomMessageEmbed(' ')
 
     try {
-      const subcommand = isInteraction(args) ? args.getSubcommand() : args[0]
+      const subcommand = args.getSubcommand()
 
       if (subcommand === 'song') {
-        const url = isInteraction(args) ? args.getString('url', true) : args[1]
+        const url = args.getString('url', true)
 
         const song = await queue.play(url, {
-          requestedBy: interaction?.user || message?.author,
+          requestedBy: interaction?.user,
         })
 
         if (!song) {
@@ -115,10 +108,10 @@ export default new Command({
       }
 
       if (subcommand === 'playlist') {
-        const url = isInteraction(args) ? args.getString('url', true) : args[1]
+        const url = args.getString('url', true)
 
         const playlist = await queue.playlist(url, {
-          requestedBy: interaction?.user || message?.author,
+          requestedBy: interaction?.user,
         })
 
         if (!playlist.songs.length) {
@@ -142,12 +135,10 @@ export default new Command({
       }
 
       if (subcommand === 'search') {
-        const searchterms = isInteraction(args)
-          ? args.getString('searchterms', true)
-          : args.join(' ')
+        const searchterms = args.getString('searchterms', true)
 
         const song = await queue.play(searchterms, {
-          requestedBy: interaction?.user || message?.author,
+          requestedBy: interaction?.user,
         })
 
         if (!song) {
@@ -174,13 +165,9 @@ export default new Command({
 // Just a joke between friends (when joining play a audio of me saying good night on our guild...)
 async function shouldSayGoodNight(
   interaction: ExtendedInteraction,
-  message: Message,
   queue: Queue
 ) {
-  if (
-    (interaction || message).guild.id === '750149237357936741' &&
-    !queue.isPlaying
-  ) {
+  if (interaction.guild.id === '750149237357936741' && !queue.isPlaying) {
     const audio = createAudioResource(
       path.join(__dirname, '..', '..', 'assets', 'boa noite.mp3')
     )

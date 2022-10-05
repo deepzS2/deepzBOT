@@ -5,16 +5,14 @@ import { Command } from '@deepz/structures'
 
 export default new Command({
   name: 'stop',
-  aliases: ['quit', 'exit'],
+
   description: 'Stops the bot and clears the queue!',
   category: 'AUDIO',
-  slash: 'both',
+
   examples: ['d.stop'],
-  run: async ({ client, interaction, message }) => {
+  run: async ({ client, interaction }) => {
     try {
-      const queue = await client.player.getQueue(
-        (interaction || message).guildId
-      )
+      const queue = await client.player.getQueue(interaction.guildId)
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`

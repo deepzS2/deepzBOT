@@ -2,7 +2,6 @@ import beautify from 'beautify'
 import { ApplicationCommandOptionType } from 'discord.js'
 
 import { botConfig } from '@deepz/config'
-import { isInteraction } from '@deepz/helpers'
 import { Command, CustomMessageEmbed } from '@deepz/structures'
 
 export default new Command({
@@ -17,15 +16,12 @@ export default new Command({
     },
   ],
   category: 'CORE',
-  slash: 'both',
-  run: async ({ client, interaction, args, message }) => {
-    if (
-      interaction?.user.id !== botConfig.ownerId ||
-      message?.author.id !== botConfig.ownerId
-    )
+
+  run: async ({ client, interaction, args }) => {
+    if (interaction?.user.id !== botConfig.ownerId)
       return `***Sorry... You can't use that***`
 
-    const toEval = isInteraction(args) ? args.getString('code') : args[0]
+    const toEval = args.getString('code')
 
     try {
       const evaluated = eval(toEval)

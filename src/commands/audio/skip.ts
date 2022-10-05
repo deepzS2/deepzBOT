@@ -18,7 +18,7 @@ export default new Command({
       required: false,
     },
   ],
-  slash: 'both',
+
   examples: ['d.skip', 'd.skip 3'],
   run: async ({ client, interaction, args, message }) => {
     try {

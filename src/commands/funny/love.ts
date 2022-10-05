@@ -8,7 +8,7 @@ export default new Command({
   name: 'love',
   description: 'Calculate the love affinity you have for another person!',
   category: 'FUNNY',
-  slash: 'both',
+
   options: [
     {
       name: 'user',

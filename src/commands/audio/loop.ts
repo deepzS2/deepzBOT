@@ -9,7 +9,7 @@ export default new Command({
   name: 'loop',
   description: 'Loops the current song or queue!',
   category: 'AUDIO',
-  slash: 'both',
+
   options: [
     {
       name: 'queue',

@@ -16,7 +16,7 @@ export default new Command({
   description:
     'Gets the Counter-Strike: Global Offensive information by the steam of the user!',
   category: 'GAMES',
-  slash: 'both',
+
   options: [
     {
       name: 'steam',

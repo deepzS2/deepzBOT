@@ -32,7 +32,7 @@ export default new Command({
   ],
   description: 'Returns all commands or get the documentation of a command',
   examples: ['d.help play', 'd.help'],
-  slash: 'both',
+
   run: async ({ client, args, message, interaction }) => {
     try {
       const owner = await client.users.fetch(botConfig.ownerId)

@@ -16,7 +16,7 @@ export default new Command({
   name: 'mute',
   description: 'Mutes an user!',
   category: 'MODERATION',
-  slash: 'both',
+
   userPermissions: ['MuteMembers'],
   examples: ['d.mute @user 10 get muted lol'],
   options: [

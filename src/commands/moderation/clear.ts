@@ -8,7 +8,7 @@ export default new Command({
   name: 'clear',
   description: 'Clear the message history!',
   category: 'MODERATION',
-  slash: 'both',
+
   userPermissions: ['ManageMessages'],
   options: [
     {

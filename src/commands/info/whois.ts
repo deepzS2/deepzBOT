@@ -22,7 +22,7 @@ export default new Command({
     },
   ],
   examples: ['d.whois @user'],
-  slash: 'both',
+
   run: async ({ message, args, interaction }) => {
     const member = isInteraction(args)
       ? args.getMentionable('user')

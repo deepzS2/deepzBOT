@@ -9,7 +9,7 @@ export default new Command({
   name: '8ball',
   description: 'Displays the information about the bot!',
   category: 'FUNNY',
-  slash: 'both',
+
   examples: ['d.8ball should I create my own bot?'],
   options: [
     {

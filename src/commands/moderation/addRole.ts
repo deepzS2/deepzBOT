@@ -12,7 +12,7 @@ export default new Command({
   name: 'addrole',
   description: 'Add a role to an user!',
   category: 'MODERATION',
-  slash: 'both',
+
   userPermissions: ['ManageRoles'],
   options: [
     {

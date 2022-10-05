@@ -8,7 +8,7 @@ export default new Command({
   aliases: ['np', 'playing'],
   description: 'Display the current playing song information!',
   category: 'AUDIO',
-  slash: 'both',
+
   examples: ['d.nowplaying'],
   run: async ({ client, interaction, message }) => {
     try {

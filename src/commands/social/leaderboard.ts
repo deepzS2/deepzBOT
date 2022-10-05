@@ -8,7 +8,7 @@ export default new Command({
   aliases: ['guildrank'],
   description: 'Returns the top 10 guild members',
   category: 'SOCIAL',
-  slash: 'both',
+
   examples: ['d.leaderboard'],
   run: async ({ message, client, interaction }) => {
     const users = await client.database.user.findMany()

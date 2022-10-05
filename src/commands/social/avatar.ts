@@ -7,7 +7,7 @@ export default new Command({
   name: 'avatar',
   description: 'Returns the your current avatar or someone else',
   category: 'SOCIAL',
-  slash: 'both',
+
   examples: ['d.avatar', 'd.avatar @user'],
   options: [
     {

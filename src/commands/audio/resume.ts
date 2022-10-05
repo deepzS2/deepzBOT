@@ -7,7 +7,7 @@ export default new Command({
   name: 'resume',
   description: 'Resumes the current song and queue!',
   category: 'AUDIO',
-  slash: 'both',
+
   examples: ['d.resume'],
   run: async ({ client, interaction, message }) => {
     try {

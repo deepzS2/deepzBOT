@@ -13,7 +13,7 @@ export default new Command({
   name: 'ban',
   description: 'Bans a user from the guild!',
   category: 'MODERATION',
-  slash: 'both',
+
   userPermissions: ['BanMembers'],
   examples: ['d.ban @user get banned lol'],
   options: [

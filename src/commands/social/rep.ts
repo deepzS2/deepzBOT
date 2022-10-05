@@ -9,7 +9,7 @@ export default new Command({
   aliases: ['reputation'],
   description: 'Gives a reputation point to someone!',
   category: 'SOCIAL',
-  slash: 'both',
+
   examples: ['d.rep @user'],
   options: [
     {

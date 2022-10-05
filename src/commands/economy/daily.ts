@@ -5,7 +5,7 @@ export default new Command({
   name: 'daily',
   description: 'Gets your daily money!',
   category: 'ECONOMY',
-  slash: 'both',
+
   examples: ['d.daily'],
   run: async ({ client, message, interaction }) => {
     const amount = Math.floor(Math.random() * 1000) + 1

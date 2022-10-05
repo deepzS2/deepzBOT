@@ -9,7 +9,7 @@ export default new Command({
   name: 'hug',
   description: 'Hug a user!',
   category: 'FUNNY',
-  slash: 'both',
+
   options: [
     {
       name: 'user',

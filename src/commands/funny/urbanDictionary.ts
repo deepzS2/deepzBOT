@@ -10,7 +10,7 @@ export default new Command({
   aliases: ['urban', 'urbandictionary', 'dict', 'urbandict'],
   description: 'Search the meaning of some word!',
   category: 'FUNNY',
-  slash: 'both',
+
   options: [
     {
       name: 'searchterm',

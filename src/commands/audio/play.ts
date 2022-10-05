@@ -63,7 +63,7 @@ export default new Command({
     'd.play playlist https://www.youtube.com/watch?v=Cl5Vkd4N03Q&list=RDik2YF05iX2w&index=3',
     'd.play search after dark',
   ],
-  slash: 'both',
+
   run: async ({ client, interaction, args, message }) => {
     if (!(interaction || message).member.voice.channel)
       return `***You need to be in a voice channel to use this command!***`

@@ -8,7 +8,7 @@ export default new Command({
   name: 'bio',
   description: 'Sets your profile biography text',
   category: 'SOCIAL',
-  slash: 'both',
+
   examples: ['d.bio My bio here'],
   options: [
     {

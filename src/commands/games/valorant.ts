@@ -53,7 +53,7 @@ export default new Command({
   ],
   examples: ['d.valorant set deepzS2 BR1', 'd.valorant get'],
   category: 'GAMES',
-  slash: 'both',
+
   run: async ({ interaction, client, args, message }) => {
     try {
       const subcommand = isInteraction(args) ? args.getSubcommand() : args[0]

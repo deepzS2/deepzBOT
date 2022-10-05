@@ -17,7 +17,7 @@ export default new Command({
     },
   ],
   category: 'CORE',
-  slash: 'both',
+
   run: async ({ client, interaction, args, message }) => {
     if (
       interaction?.user.id !== botConfig.ownerId ||

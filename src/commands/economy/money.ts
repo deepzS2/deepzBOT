@@ -10,7 +10,7 @@ export default new Command({
   description:
     'Gets your current balance, transfer money or check other persons balance!',
   category: 'ECONOMY',
-  slash: 'both',
+
   examples: ['d.credits', 'd.credits @user', 'd.credits @user amount'],
   options: [
     {

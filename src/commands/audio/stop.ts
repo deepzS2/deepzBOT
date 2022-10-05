@@ -8,7 +8,7 @@ export default new Command({
   aliases: ['quit', 'exit'],
   description: 'Stops the bot and clears the queue!',
   category: 'AUDIO',
-  slash: 'both',
+
   examples: ['d.stop'],
   run: async ({ client, interaction, message }) => {
     try {

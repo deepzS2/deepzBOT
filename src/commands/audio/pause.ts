@@ -7,7 +7,7 @@ export default new Command({
   name: 'pause',
   description: 'Pauses the current song and queue!',
   category: 'AUDIO',
-  slash: 'both',
+
   examples: ['d.pause'],
   run: async ({ client, interaction, message }) => {
     try {

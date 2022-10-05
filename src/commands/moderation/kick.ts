@@ -13,7 +13,7 @@ export default new Command({
   name: 'kick',
   description: 'Kick an user from the guild!',
   category: 'MODERATION',
-  slash: 'both',
+
   userPermissions: ['KickMembers'],
   examples: ['d.kick @user get kicked lol'],
   options: [

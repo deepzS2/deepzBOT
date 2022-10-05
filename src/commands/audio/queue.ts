@@ -21,7 +21,7 @@ export default new Command({
       minValue: 1,
     },
   ],
-  slash: 'both',
+
   examples: ['d.queue', 'd.queue 1'],
   run: async ({ client, interaction, args, message }) => {
     try {

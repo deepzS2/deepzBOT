@@ -34,7 +34,7 @@ export default new Command({
     },
   ],
   examples: ['d.anime boku no...'],
-  slash: 'both',
+
   run: async ({ client, interaction, args }) => {
     try {
       const searchTerm = isInteraction(args)

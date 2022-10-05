@@ -39,7 +39,6 @@ export type CommandCategory =
 
 export type CommandType = {
   aliases?: string[]
-  slash?: boolean | 'both'
   category: CommandCategory
   examples?: string[]
   userPermissions?: PermissionResolvable[]

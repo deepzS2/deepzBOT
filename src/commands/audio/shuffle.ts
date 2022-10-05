@@ -7,7 +7,7 @@ export default new Command({
   name: 'shuffle',
   description: 'Shuffles the entire song queue!',
   category: 'AUDIO',
-  slash: 'both',
+
   examples: ['d.shuffle'],
   run: async ({ client, interaction, message }) => {
     try {

@@ -62,6 +62,6 @@ export interface ICommand {
 }
 
 export interface ICommandData {
-  instance: BaseCommand
+  instance: ICommand
   options: CommandOptions
 }

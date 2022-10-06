@@ -2,7 +2,6 @@ import { Player } from 'discord-music-player'
 import {
   ActivitiesOptions,
   Client,
-  ClientEvents,
   Collection,
   ActivityType,
   GatewayIntentBits,
@@ -13,10 +12,11 @@ import path from 'path'
 import { botConfig, isDev } from '@deepz/config'
 import { importFiles } from '@deepz/helpers'
 import logger from '@deepz/logger'
-import { Event, BaseCommand } from '@deepz/structures'
+import { BaseEvent, BaseCommand } from '@deepz/structures'
 import { RegisterCommandsOptions } from '@deepz/types/client'
 import { ICommandConstructor, ICommandData } from '@deepz/types/command'
 import { BotConfiguration } from '@deepz/types/environment'
+import { IEventConstructor } from '@deepz/types/event'
 import { PrismaClient } from '@prisma/client'
 
 const commandsPath = path.join(__dirname, '..', 'commands', '*', '*{.ts,.js}')
@@ -114,29 +114,31 @@ export class ExtendedClient extends Client {
     }
 
     // Events
-    const eventFilesGenerator = importFiles<Event<keyof ClientEvents>, string>(
+    const eventFilesGenerator = importFiles<IEventConstructor, string>(
       eventsPath
     )
     let nextEventFilesResult = await eventFilesGenerator.next()
 
     while (!nextEventFilesResult.done) {
-      const event = nextEventFilesResult.value as Event<keyof ClientEvents>
-      events.push(event.event)
+      const Event = nextEventFilesResult.value as IEventConstructor
+      const eventInstance = new Event()
+      const eventName = BaseEvent.getName(Event)
+      events.push(eventName)
 
-      if (event.event === 'ready') {
+      if (eventName === 'ready') {
         // When ready register commands!
-        this.on(event.event, (args) => {
-          event.run(this, args)
+        this.on(eventName, (args) => {
+          eventInstance.run(this, args)
           this.registerCommands({
             commands: slashCommands,
             guildId: isDev && botConfig.guildId,
           })
         })
       } else {
-        this.on(event.event as string, (args) => event.run(this, args))
+        this.on(eventName, (args) => eventInstance.run(this, args))
       }
 
-      nextEventFilesResult = await eventFilesGenerator.next(event.event)
+      nextEventFilesResult = await eventFilesGenerator.next(eventName)
     }
 
     logger.info(

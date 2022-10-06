@@ -1,31 +1,24 @@
 import { Player } from 'discord-music-player'
 import {
   ActivitiesOptions,
-  ApplicationCommandDataResolvable,
   Client,
   ClientEvents,
   Collection,
   ActivityType,
   GatewayIntentBits,
+  ApplicationCommandData,
 } from 'discord.js'
-import glob from 'glob'
 import path from 'path'
-import { promisify } from 'util'
 
 import { botConfig, isDev } from '@deepz/config'
-import { MetadataKeys } from '@deepz/decorators/metadata-keys'
+import { importFiles } from '@deepz/helpers'
 import logger from '@deepz/logger'
 import { Event, BaseCommand } from '@deepz/structures'
 import { RegisterCommandsOptions } from '@deepz/types/client'
-import {
-  CommandOptions,
-  ICommandConstructor,
-  ICommandData,
-} from '@deepz/types/command'
+import { ICommandConstructor, ICommandData } from '@deepz/types/command'
 import { BotConfiguration } from '@deepz/types/environment'
 import { PrismaClient } from '@prisma/client'
 
-const globPromise = promisify(glob)
 const commandsPath = path.join(__dirname, '..', 'commands', '*', '*{.ts,.js}')
 const eventsPath = path.join(__dirname, '..', 'events', '*{.ts,.js}')
 
@@ -98,26 +91,37 @@ export class ExtendedClient extends Client {
    * Load all commands and events
    */
   private async registerModules(): Promise<void> {
-    const slashCommands: ApplicationCommandDataResolvable[] = []
-    const commandFiles = await globPromise(commandsPath)
+    const events: string[] = []
+    const slashCommands: ApplicationCommandData[] = []
 
-    commandFiles.forEach(async (filePath) => {
-      const Command: ICommandConstructor = await this.importFile(filePath)
-      const commandOptions = this.getCommandOptions(Command)
+    // Commands
+    const commandFilesGenerator = importFiles<
+      ICommandConstructor,
+      ICommandData
+    >(commandsPath)
+    let nextCommandFilesResult = await commandFilesGenerator.next()
 
-      if (!commandOptions.name) return
-
-      this.commands.set(commandOptions.name, {
+    while (!nextCommandFilesResult.done) {
+      const Command = nextCommandFilesResult.value as ICommandConstructor
+      const commandData = {
         instance: new Command(),
-        options: commandOptions,
-      })
-      slashCommands.push(commandOptions)
-    })
+        options: BaseCommand.getOptions(Command),
+      }
 
-    // Event
-    const eventFiles = await globPromise(eventsPath)
-    eventFiles.forEach(async (filePath) => {
-      const event: Event<keyof ClientEvents> = await this.importFile(filePath)
+      this.commands.set(commandData.options.name, commandData)
+      slashCommands.push(commandData.options)
+      nextCommandFilesResult = await commandFilesGenerator.next(commandData)
+    }
+
+    // Events
+    const eventFilesGenerator = importFiles<Event<keyof ClientEvents>, string>(
+      eventsPath
+    )
+    let nextEventFilesResult = await eventFilesGenerator.next()
+
+    while (!nextEventFilesResult.done) {
+      const event = nextEventFilesResult.value as Event<keyof ClientEvents>
+      events.push(event.event)
 
       if (event.event === 'ready') {
         // When ready register commands!
@@ -131,7 +135,15 @@ export class ExtendedClient extends Client {
       } else {
         this.on(event.event as string, (args) => event.run(this, args))
       }
-    })
+
+      nextEventFilesResult = await eventFilesGenerator.next(event.event)
+    }
+
+    logger.info(
+      'Commands registered: %O\nEvents registered: %O',
+      slashCommands.map((cmd) => cmd.name),
+      events
+    )
   }
 
   /**
@@ -149,19 +161,6 @@ export class ExtendedClient extends Client {
       this.application?.commands.set(commands)
       logger.info('Registering global commands')
     }
-  }
-
-  private getCommandOptions(target: typeof BaseCommand): CommandOptions {
-    return Reflect.getMetadata(MetadataKeys.Command, target.prototype)
-  }
-
-  /**
-   * Import file with import()
-   */
-  private async importFile(filePath: string): Promise<any> {
-    const imported = await import(filePath)
-
-    return imported?.default
   }
 
   /**

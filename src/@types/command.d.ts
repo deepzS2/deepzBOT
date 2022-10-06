@@ -51,7 +51,8 @@ export type CommandOptions = {
 } & ChatInputApplicationCommandData
 
 export interface ICommandConstructor extends Function {
-  new (): INewCommand
+  new (): ICommand
+  getOptions(target: typeof BaseCommand): CommandOptions
 }
 
 export interface ICommand {

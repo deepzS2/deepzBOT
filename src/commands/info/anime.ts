@@ -205,7 +205,9 @@ export default class AnimeCommand extends BaseCommand {
       },
       {
         name: 'Genres',
-        value: genres.map((genre) => genre.attributes.name).join(', '),
+        value: genres.length
+          ? genres.map((genre) => genre.attributes.name).join(', ')
+          : 'None',
         inline: true,
       },
     ])

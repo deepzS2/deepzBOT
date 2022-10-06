@@ -1,24 +1,17 @@
 import { ClientEvents } from 'discord.js'
 
-import { ExtendedClient } from './Client'
+import { IEvent } from '@deepz/types/event'
 
-/**
- * Event callback
- */
-type RunFunction<Key extends keyof ClientEvents> = (
-  client: ExtendedClient,
-  ...args: ClientEvents[Key]
-) => any
+import { ExtendedClient } from './Client'
 
 /**
  * Class for creating a event
  */
-export class Event<Key extends keyof ClientEvents> {
-  public readonly event: Key
-  public readonly run: RunFunction<Key>
-
-  constructor(event: Key, run: RunFunction<Key>) {
-    this.event = event
-    this.run = run
-  }
+export abstract class BaseEvent<Key extends keyof ClientEvents>
+  implements IEvent<Key>
+{
+  abstract run(
+    client: ExtendedClient,
+    ...args: ClientEvents[Key]
+  ): any | Promise<any>
 }

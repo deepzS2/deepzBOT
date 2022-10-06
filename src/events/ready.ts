@@ -1,6 +1,10 @@
+import { Event } from '@deepz/decorators'
 import logger from '@deepz/logger'
-import { Event } from '@deepz/structures'
+import { BaseEvent } from '@deepz/structures'
 
-export default new Event('ready', async () => {
-  logger.info('Bot is online!')
-})
+@Event('ready')
+export default class ReadyEvent extends BaseEvent<'ready'> {
+  run() {
+    logger.info('Bot is online!')
+  }
+}

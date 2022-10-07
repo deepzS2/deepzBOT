@@ -1,14 +1,19 @@
+import { MessagePayload } from 'discord.js'
+
 import { botConfig } from '@deepz/config'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'greet',
-
   description: 'Sends you a hello world!',
   category: 'INFO',
-
-  examples: ['d.greet'],
-  run: async ({ client }) => {
+})
+export default class GreetCommand extends BaseCommand {
+  async run({
+    client,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const owner = await client.users.fetch(botConfig.ownerId)
 
     return new CustomMessageEmbed('**Hello World!**', {
@@ -18,5 +23,5 @@ export default new Command({
       },
       thumbnail: client.user.displayAvatarURL(),
     })
-  },
-})
+  }
+}

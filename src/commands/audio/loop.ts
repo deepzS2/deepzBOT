@@ -1,14 +1,15 @@
-import { RepeatMode } from 'discord-music-player'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { Player, RepeatMode } from 'discord-music-player'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
+import { inject } from 'inversify'
 
-import logger from '@deepz/logger'
-import { Command } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'loop',
   description: 'Loops the current song or queue!',
   category: 'AUDIO',
-
   options: [
     {
       name: 'queue',
@@ -26,12 +27,22 @@ export default new Command({
       type: ApplicationCommandOptionType.Subcommand,
     },
   ],
-  examples: ['d.loop queue', 'd.loop song', 'd.loop disable'],
-  run: async ({ client, args, interaction }) => {
+})
+export default class LoopCommand extends BaseCommand {
+  @inject(Player) private readonly _player: Player
+
+  constructor() {
+    super()
+  }
+
+  async run({
+    args,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const subcommand = args.getSubcommand()
 
     try {
-      const queue = await client.player.getQueue(interaction.guildId)
+      const queue = await this._player.getQueue(interaction.guildId)
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
@@ -54,7 +65,9 @@ export default new Command({
         return `***Loop disabled!***`
       }
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
+
+      return `***Error trying to apply loop, try again later...***`
     }
-  },
-})
+  }
+}

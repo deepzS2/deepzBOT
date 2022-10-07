@@ -1,15 +1,19 @@
-import { Queue } from 'discord-music-player'
-import { ApplicationCommandOptionType, PermissionFlagsBits } from 'discord.js'
+import { Player, Queue } from 'discord-music-player'
+import {
+  ApplicationCommandOptionType,
+  MessagePayload,
+  PermissionFlagsBits,
+} from 'discord.js'
+import { inject } from 'inversify'
 import path from 'path'
 
-import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
-import { ExtendedInteraction } from '@deepz/types/command'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { ExtendedInteraction, RunOptions } from '@deepz/types/index'
 import { createAudioResource } from '@discordjs/voice'
 
-export default new Command({
+@Command({
   name: 'play',
-
   description: 'Loads a song from youtube!',
   category: 'AUDIO',
   options: [
@@ -53,17 +57,18 @@ export default new Command({
       ],
     },
   ],
-  examples: [
-    'd.play song https://youtu.be/Cl5Vkd4N03Q?list=RDik2YF05iX2w',
-    'd.play playlist https://www.youtube.com/watch?v=Cl5Vkd4N03Q&list=RDik2YF05iX2w&index=3',
-    'd.play search after dark',
-  ],
+})
+export default class PlayCommand extends BaseCommand {
+  @inject(Player) private readonly _player: Player
 
-  run: async ({ client, interaction, args }) => {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     if (!interaction.member.voice.channel)
       return `***You need to be in a voice channel to use this command!***`
 
-    const queue = await client.player.createQueue(interaction.guild.id)
+    const queue = await this._player.createQueue(interaction.guild.id)
 
     if (!queue.connection) {
       const voiceChannel = interaction.member.voice.channel
@@ -72,7 +77,7 @@ export default new Command({
         return `***I don't have permission to join this channel...***`
 
       if (
-        voiceChannel
+        !voiceChannel
           .permissionsFor(interaction.guild.members.me)
           .has(PermissionFlagsBits.Speak)
       )
@@ -81,7 +86,7 @@ export default new Command({
       await queue.join(voiceChannel)
     }
 
-    await shouldSayGoodNight(interaction, queue)
+    await this.shouldSayGoodNight(interaction, queue)
 
     const embed = new CustomMessageEmbed(' ')
 
@@ -155,23 +160,23 @@ export default new Command({
 
       return embed
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***Something went wrong trying to play your music...***`
     }
-  },
-})
+  }
 
-// Just a joke between friends (when joining play a audio of me saying good night on our guild...)
-async function shouldSayGoodNight(
-  interaction: ExtendedInteraction,
-  queue: Queue
-) {
-  if (interaction.guild.id === '750149237357936741' && !queue.isPlaying) {
-    const audio = createAudioResource(
-      path.join(__dirname, '..', '..', 'assets', 'boa noite.mp3')
-    )
+  // Just a joke between friends (when joining play a audio of me saying good night on our guild...)
+  private async shouldSayGoodNight(
+    interaction: ExtendedInteraction,
+    queue: Queue
+  ) {
+    if (interaction.guild.id === '750149237357936741' && !queue.isPlaying) {
+      const audio = createAudioResource(
+        path.join(__dirname, '..', '..', 'assets', 'boa noite.mp3')
+      )
 
-    await queue.connection.playAudioStream(audio)
+      await queue.connection.playAudioStream(audio)
+    }
   }
 }

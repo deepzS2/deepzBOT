@@ -1,15 +1,18 @@
-import { EmbedField } from 'discord.js'
+import { EmbedField, MessagePayload } from 'discord.js'
 
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'server',
-
   description: 'Returns the server information',
   category: 'INFO',
-
-  examples: ['d.server'],
-  run: async ({ interaction }) => {
+})
+export default class ServerCommand extends BaseCommand {
+  async run({
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const { guild, member } = interaction
 
     const imageURL = guild.iconURL({
@@ -39,5 +42,5 @@ export default new Command({
       thumbnail: imageURL,
       fields,
     })
-  },
-})
+  }
+}

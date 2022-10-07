@@ -1,14 +1,15 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
+import { inject } from 'inversify'
 
-import logger from '@deepz/logger'
-import { Command } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
+import { PrismaClient } from '@prisma/client'
 
-export default new Command({
+@Command({
   name: 'bio',
   description: 'Sets your profile biography text',
   category: 'SOCIAL',
-
-  examples: ['d.bio My bio here'],
   options: [
     {
       name: 'text',
@@ -17,13 +18,20 @@ export default new Command({
       required: true,
     },
   ],
-  run: async ({ client, interaction, args }) => {
+})
+export default class BioCommand extends BaseCommand {
+  @inject(PrismaClient) private readonly _database: PrismaClient
+
+  async run({
+    args,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const bio = args.getString('text')
 
       if (!bio) return `***Please provide a text...***`
 
-      await client.database.user.update({
+      await this._database.user.update({
         where: {
           discordId: interaction.user.id,
         },
@@ -34,9 +42,9 @@ export default new Command({
 
       return `***Bio changed successfully!***`
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***There was an error trying to change your bio... Try again later!***`
     }
-  },
-})
+  }
+}

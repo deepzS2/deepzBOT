@@ -1,24 +1,23 @@
 import { ClientEvents } from 'discord.js'
+import { inject, injectable } from 'inversify'
 
-import { ExtendedClient } from './Client'
+import { MetadataKeys } from '@deepz/decorators/metadata-keys'
+import type { IEvent, IEventConstructor, Logger } from '@deepz/types/index'
 
-/**
- * Event callback
- */
-type RunFunction<Key extends keyof ClientEvents> = (
-  client: ExtendedClient,
-  ...args: ClientEvents[Key]
-) => any
+import { Client } from './Client'
 
 /**
  * Class for creating a event
  */
-export class Event<Key extends keyof ClientEvents> {
-  public readonly event: Key
-  public readonly run: RunFunction<Key>
+@injectable()
+export abstract class BaseEvent<Key extends keyof ClientEvents>
+  implements IEvent<Key>
+{
+  @inject('Logger') protected readonly _logger: Logger
 
-  constructor(event: Key, run: RunFunction<Key>) {
-    this.event = event
-    this.run = run
+  abstract run(client: Client, ...args: ClientEvents[Key]): any | Promise<any>
+
+  public static getName(target: IEventConstructor): string {
+    return Reflect.getMetadata(MetadataKeys.Event, target.prototype)
   }
 }

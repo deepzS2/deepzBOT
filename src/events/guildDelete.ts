@@ -1,22 +1,31 @@
-import logger from '@deepz/logger'
-import { Event } from '@deepz/structures'
+import { Guild } from 'discord.js'
+import { inject } from 'inversify'
 
-export default new Event('guildCreate', async (client, guild) => {
-  try {
-    const guildExists = await client.database.guild.findFirst({
-      where: {
-        discordId: guild.id,
-      },
-    })
+import { Event } from '@deepz/decorators'
+import { BaseEvent, Client } from '@deepz/structures'
+import { PrismaClient } from '@prisma/client'
 
-    if (!guildExists) return
+@Event('guildDelete')
+export default class GuildDeleteEvent extends BaseEvent<'guildDelete'> {
+  @inject(PrismaClient) private readonly _database: PrismaClient
 
-    await client.database.guild.delete({
-      where: {
-        discordId: guild.id,
-      },
-    })
-  } catch (error) {
-    logger.error(error, 'Error deleting guild from database!')
+  async run(client: Client, guild: Guild) {
+    try {
+      const guildExists = await this._database.guild.findFirst({
+        where: {
+          discordId: guild.id,
+        },
+      })
+
+      if (!guildExists) return
+
+      await this._database.guild.delete({
+        where: {
+          discordId: guild.id,
+        },
+      })
+    } catch (error) {
+      this._logger.error(error, 'Error deleting guild from database!')
+    }
   }
-})
+}

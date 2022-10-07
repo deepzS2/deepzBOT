@@ -1,14 +1,14 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
-import logger from '@deepz/logger'
+import { Command } from '@deepz/decorators'
 import { tenor } from '@deepz/services'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'hug',
   description: 'Hug a user!',
   category: 'FUNNY',
-
   options: [
     {
       name: 'user',
@@ -17,8 +17,12 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['d.kiss @user'],
-  run: async ({ interaction, args }) => {
+})
+export default class HugCommand extends BaseCommand {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const user = args.getUser('user')
 
     try {
@@ -33,10 +37,12 @@ export default new Command({
       return new CustomMessageEmbed(' ', {
         image: gifs[toSend].media[0].gif.url,
         color: '#4360FB',
-        description: `***${interaction.user.username}, you hugged ${user.username} :smiling_face_with_3_hearts:***`,
+        description: `***${interaction.user.username}, you hugged <@${user.id}> :smiling_face_with_3_hearts:***`,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
+
+      return `***Error trying to hug <@${user.id}>, try again later...`
     }
-  },
-})
+  }
+}

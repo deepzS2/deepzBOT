@@ -5,6 +5,7 @@ interface RequestOptions extends Omit<AxiosRequestConfig, 'url' | 'params'> {
   query?: AxiosRequestConfig['params']
 }
 
+// search for {charactersanddigitals} patterns inside string
 const URL_PARAMS_REGEX = /{[A-Za-z0-9]+}/g
 
 /**
@@ -20,12 +21,13 @@ export function createRequest(config: AxiosRequestConfig) {
   }
 }
 
+/**
+ * It takes a request options object, and returns a promise that resolves to the data
+ * returned from the request
+ * @param {RequestOptions} options - Request options
+ * @returns The data from the request
+ */
 export async function request<T>(options: RequestOptions): Promise<T>
-export async function request<T>(
-  options: RequestOptions,
-  createdAxiosInstance?: AxiosInstance
-): Promise<T>
-
 /**
  * It takes a request options object, and returns a promise that resolves to the data
  * returned from the request
@@ -33,6 +35,11 @@ export async function request<T>(
  * @param {AxiosInstance} axiosInstance - Axios instance
  * @returns The data from the request
  */
+export async function request<T>(
+  options: RequestOptions,
+  createdAxiosInstance: AxiosInstance
+): Promise<T>
+
 export async function request<T>(
   { method = 'GET', url = '', query, ...options }: RequestOptions,
   createdAxiosInstance?: AxiosInstance

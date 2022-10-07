@@ -1,14 +1,14 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
-import logger from '@deepz/logger'
+import { Command } from '@deepz/decorators'
 import { tenor } from '@deepz/services'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'slap',
   description: 'Slaps a user!',
   category: 'FUNNY',
-
   options: [
     {
       name: 'user',
@@ -17,8 +17,12 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['d.slap @user'],
-  run: async ({ interaction, args }) => {
+})
+export default class SlapCommand extends BaseCommand {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const user = args.getUser('user')
 
     try {
@@ -36,7 +40,9 @@ export default new Command({
         description: `***${interaction.user.username}, you slapped ${user.username} :angry:***`,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
+
+      return `***Error trying to slap <@${user.id}>, try again later...`
     }
-  },
-})
+  }
+}

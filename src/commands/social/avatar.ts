@@ -1,13 +1,13 @@
-import { ApplicationCommandOptionType, User } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload, User } from 'discord.js'
 
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'avatar',
   description: 'Returns the your current avatar or someone else',
   category: 'SOCIAL',
-
-  examples: ['d.avatar', 'd.avatar @user'],
   options: [
     {
       name: 'user',
@@ -16,7 +16,12 @@ export default new Command({
       required: false,
     },
   ],
-  run: async ({ interaction, args }) => {
+})
+export default class AvatarCommand extends BaseCommand {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const user: User = args.getUser('user')
     const author = interaction.user
 
@@ -29,5 +34,5 @@ export default new Command({
       image: avatar,
       description: `**Click [here](${avatar}) to get the image!**`,
     })
-  },
-})
+  }
+}

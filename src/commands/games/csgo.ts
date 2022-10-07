@@ -1,21 +1,21 @@
 import axios from 'axios'
 import { stripIndents } from 'common-tags'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
-import logger from '@deepz/logger'
+import { Command } from '@deepz/decorators'
 import { tracker } from '@deepz/services'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
-import {
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type {
   ICsUserDataResponse,
   ISearchSteamUserResponse,
-} from '@deepz/types/fetchs/csgo'
+} from '@deepz/types/fetchs'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'csgo',
   description:
     'Gets the Counter-Strike: Global Offensive information by the steam of the user!',
   category: 'GAMES',
-
   options: [
     {
       name: 'steam',
@@ -24,8 +24,11 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['d.steam deepzqueen'],
-  run: async ({ args }) => {
+})
+export default class CsgoCommand extends BaseCommand {
+  async run({
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
       const steam = args.getString('steam')
 
@@ -75,7 +78,7 @@ export default new Command({
         )}`,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       if (axios.isAxiosError(error)) {
         if (error?.response?.status === 500)
@@ -90,5 +93,5 @@ export default new Command({
 
       return 'Something went wrong! Please try again later'
     }
-  },
-})
+  }
+}

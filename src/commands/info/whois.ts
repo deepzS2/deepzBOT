@@ -3,13 +3,15 @@ import {
   ApplicationCommandOptionType,
   EmbedField,
   GuildMember,
+  MessagePayload,
 } from 'discord.js'
 
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'whois',
-
   description: 'Returns a mentioned user information',
   category: 'INFO',
   options: [
@@ -20,9 +22,12 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['d.whois @user'],
-
-  run: async ({ args, interaction }) => {
+})
+export default class WhoIsCommand extends BaseCommand {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const member = args.getMentionable('user')
 
     const { guild } = interaction
@@ -77,5 +82,5 @@ export default new Command({
       timestamp: true,
       fields: embedFields,
     })
-  },
-})
+  }
+}

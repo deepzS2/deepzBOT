@@ -1,15 +1,14 @@
 import { stripIndent } from 'common-tags'
-import { Queue } from 'discord-music-player'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { Player, Queue } from 'discord-music-player'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
+import { inject } from 'inversify'
 
-import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-const SONGS_PER_PAGE = 10
-
-export default new Command({
+@Command({
   name: 'queue',
-
   description: 'Displays the current playing queue!',
   category: 'AUDIO',
   options: [
@@ -20,15 +19,21 @@ export default new Command({
       minValue: 1,
     },
   ],
+})
+export default class QueueCommand extends BaseCommand {
+  @inject(Player) private readonly _player: Player
+  private readonly SONGS_PER_PAGE = 10
 
-  examples: ['d.queue', 'd.queue 1'],
-  run: async ({ client, interaction, args }) => {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
-      const queue: Queue = await client.player.getQueue(interaction.guildId)
+      const queue: Queue = await this._player.getQueue(interaction.guildId)
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
-      const pages = Math.ceil(queue.songs.length / SONGS_PER_PAGE) || 1
+      const pages = Math.ceil(queue.songs.length / this.SONGS_PER_PAGE) || 1
       const currentPage = args.getNumber('page') || 1
 
       if (currentPage > pages)
@@ -36,11 +41,11 @@ export default new Command({
 
       const queueString = queue.songs
         .slice(
-          (currentPage - 1) * SONGS_PER_PAGE,
-          (currentPage - 1) * SONGS_PER_PAGE + SONGS_PER_PAGE
+          (currentPage - 1) * this.SONGS_PER_PAGE,
+          (currentPage - 1) * this.SONGS_PER_PAGE + this.SONGS_PER_PAGE
         )
         .map((track, i) => {
-          return `**${(currentPage - 1) * SONGS_PER_PAGE + i + 1}.** \`[${
+          return `**${(currentPage - 1) * this.SONGS_PER_PAGE + i + 1}.** \`[${
             track.duration
           }]\` ${track.name} -- <@${track.requestedBy.id}>\n`
         })
@@ -65,9 +70,9 @@ export default new Command({
         thumbnail: currentSong.thumbnail,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***Something went wrong trying to get the queue...***`
     }
-  },
-})
+  }
+}

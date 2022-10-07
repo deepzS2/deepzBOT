@@ -1,14 +1,14 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
-import logger from '@deepz/logger'
+import { Command } from '@deepz/decorators'
 import { tenor } from '@deepz/services'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'kiss',
   description: 'Kiss a user!',
   category: 'FUNNY',
-
   options: [
     {
       name: 'user',
@@ -17,8 +17,12 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['d.kiss @user'],
-  run: async ({ interaction, args }) => {
+})
+export default class KissCommand extends BaseCommand {
+  async run({
+    args,
+    interaction,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const user = args.getUser('user')
 
     try {
@@ -33,10 +37,12 @@ export default new Command({
       return new CustomMessageEmbed(' ', {
         image: gifs[toSend].media[0].gif.url,
         color: '#4360FB',
-        description: `***${interaction.user.username}, you kissed ${user.username} :kissing_heart:***`,
+        description: `***${interaction.user.username}, you kissed <@${user.id}> :kissing_heart:***`,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
+
+      return `***Error trying to kiss <@${user.id}>, try again later...`
     }
-  },
-})
+  }
+}

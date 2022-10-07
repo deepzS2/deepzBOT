@@ -1,13 +1,13 @@
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
-import logger from '@deepz/logger'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'love',
   description: 'Calculate the love affinity you have for another person!',
   category: 'FUNNY',
-
   options: [
     {
       name: 'user',
@@ -16,8 +16,12 @@ export default new Command({
       required: true,
     },
   ],
-  examples: ['d.love @user'],
-  run: async ({ interaction, args }) => {
+})
+export default class LoveCommand extends BaseCommand {
+  async run({
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const user = args.getUser('user')
 
     try {
@@ -38,7 +42,9 @@ export default new Command({
         ],
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
+
+      return `***Error trying calculate love affinity with <@${user.id}>, try again later...`
     }
-  },
-})
+  }
+}

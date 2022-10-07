@@ -1,30 +1,36 @@
-import { Player } from 'discord-music-player'
 import {
   ActivitiesOptions,
-  ApplicationCommandDataResolvable,
-  Client,
-  ClientEvents,
+  Client as DiscordClient,
   Collection,
   ActivityType,
   GatewayIntentBits,
+  ApplicationCommandData,
 } from 'discord.js'
-import glob from 'glob'
+import { Container, inject, injectable } from 'inversify'
 import path from 'path'
-import { promisify } from 'util'
 
 import { botConfig, isDev } from '@deepz/config'
-import logger from '@deepz/logger'
-import { Event } from '@deepz/structures'
-import { RegisterCommandsOptions } from '@deepz/types/client'
-import { CommandType } from '@deepz/types/command'
-import { BotConfiguration } from '@deepz/types/environment'
-import { PrismaClient } from '@prisma/client'
+import { importFiles } from '@deepz/helpers'
+import { BaseEvent, BaseCommand } from '@deepz/structures'
+import type {
+  Logger,
+  RegisterCommandsOptions,
+  ICommandConstructor,
+  ICommandData,
+  BotConfiguration,
+  IEventConstructor,
+} from '@deepz/types/index'
 
-const globPromise = promisify(glob)
 const commandsPath = path.join(__dirname, '..', 'commands', '*', '*{.ts,.js}')
 const eventsPath = path.join(__dirname, '..', 'events', '*{.ts,.js}')
 
-export class ExtendedClient extends Client {
+const DiscordClientInjectable = injectable()(DiscordClient)
+
+@injectable()
+export class Client extends DiscordClientInjectable {
+  @inject('Logger') private readonly _logger: Logger
+  @inject('Container') private readonly _container: Container
+
   private readonly ACTIVITIES: ActivitiesOptions[] = [
     {
       name: 'Delivering a new version to you!',
@@ -40,15 +46,7 @@ export class ExtendedClient extends Client {
     },
   ]
 
-  public readonly database = new PrismaClient()
-  public readonly commands: Collection<string, CommandType> = new Collection()
-  public readonly player = new Player(this, {
-    leaveOnEmpty: true,
-    quality: 'high',
-    deafenOnJoin: true,
-    leaveOnStop: true,
-    leaveOnEnd: false,
-  })
+  public readonly commands: Collection<string, ICommandData> = new Collection()
 
   constructor() {
     super({
@@ -93,36 +91,62 @@ export class ExtendedClient extends Client {
    * Load all commands and events
    */
   private async registerModules(): Promise<void> {
-    const slashCommands: ApplicationCommandDataResolvable[] = []
-    const commandFiles = await globPromise(commandsPath)
+    const events: string[] = []
+    const slashCommands: ApplicationCommandData[] = []
 
-    commandFiles.forEach(async (filePath) => {
-      const command: CommandType = await this.importFile(filePath)
+    // Commands
+    const commandFilesGenerator = importFiles<
+      ICommandConstructor,
+      ICommandData
+    >(commandsPath)
+    let nextCommandFilesResult = await commandFilesGenerator.next()
 
-      if (!command.name) return
+    while (!nextCommandFilesResult.done) {
+      const Command = nextCommandFilesResult.value as ICommandConstructor
+      const commandData = {
+        instance: this._container.resolve(Command),
+        options: BaseCommand.getOptions(Command),
+      }
 
-      this.commands.set(command.name, command)
-      slashCommands.push(command)
-    })
+      this.commands.set(commandData.options.name, commandData)
+      slashCommands.push(commandData.options)
+      nextCommandFilesResult = await commandFilesGenerator.next(commandData)
+    }
 
-    // Event
-    const eventFiles = await globPromise(eventsPath)
-    eventFiles.forEach(async (filePath) => {
-      const event: Event<keyof ClientEvents> = await this.importFile(filePath)
+    // Events
+    const eventFilesGenerator = importFiles<IEventConstructor, string>(
+      eventsPath
+    )
+    let nextEventFilesResult = await eventFilesGenerator.next()
 
-      if (event.event === 'ready') {
+    while (!nextEventFilesResult.done) {
+      const Event = nextEventFilesResult.value as IEventConstructor
+      const eventInstance = this._container.resolve(Event)
+      const eventName = BaseEvent.getName(Event)
+
+      events.push(eventName)
+
+      if (eventName === 'ready') {
         // When ready register commands!
-        this.on(event.event, (args) => {
-          event.run(this, args)
+        this.on(eventName, (args) => {
+          eventInstance.run(this, args)
           this.registerCommands({
             commands: slashCommands,
             guildId: isDev && botConfig.guildId,
           })
         })
       } else {
-        this.on(event.event as string, (args) => event.run(this, args))
+        this.on(eventName, (args) => eventInstance.run(this, args))
       }
-    })
+
+      nextEventFilesResult = await eventFilesGenerator.next(eventName)
+    }
+
+    this._logger.info(
+      'Commands registered: %O\nEvents registered: %O',
+      slashCommands.map((cmd) => cmd.name),
+      events
+    )
   }
 
   /**
@@ -135,20 +159,11 @@ export class ExtendedClient extends Client {
     // If provided a guild id the slash command will only work on that guild!
     if (guildId) {
       this.guilds.cache.get(guildId)?.commands.set(commands)
-      logger.info(`Registering commands to ${guildId}`)
+      this._logger.info(`Registering commands to ${guildId}`)
     } else {
       this.application?.commands.set(commands)
-      logger.info('Registering global commands')
+      this._logger.info('Registering global commands')
     }
-  }
-
-  /**
-   * Import file with import()
-   */
-  private async importFile(filePath: string): Promise<any> {
-    const imported = await import(filePath)
-
-    return imported?.default
   }
 
   /**

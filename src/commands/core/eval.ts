@@ -1,12 +1,15 @@
 import beautify from 'beautify'
-import { ApplicationCommandOptionType } from 'discord.js'
+import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
 import { botConfig } from '@deepz/config'
-import { Command, CustomMessageEmbed } from '@deepz/structures'
+import { Command } from '@deepz/decorators'
+import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
+import type { RunOptions } from '@deepz/types/index'
 
-export default new Command({
+@Command({
   name: 'eval',
   description: 'Evaluates some code!',
+  category: 'CORE',
   options: [
     {
       name: 'code',
@@ -15,9 +18,13 @@ export default new Command({
       required: true,
     },
   ],
-  category: 'CORE',
-
-  run: async ({ client, interaction, args }) => {
+})
+export default class EvalCommand extends BaseCommand {
+  async run({
+    client,
+    interaction,
+    args,
+  }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     if (interaction?.user.id !== botConfig.ownerId)
       return `***Sorry... You can't use that***`
 
@@ -60,5 +67,5 @@ export default new Command({
         },
       })
     }
-  },
-})
+  }
+}

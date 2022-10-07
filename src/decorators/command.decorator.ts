@@ -1,4 +1,3 @@
-import logger from '@deepz/logger'
 import { CommandOptions } from '@deepz/types/command'
 
 import { MetadataKeys } from './metadata-keys'
@@ -11,10 +10,6 @@ export function Command(options: CommandOptions): ClassDecorator {
     )
 
     if (metadataExists) {
-      logger.error(
-        `Command Decorator used more than 1 time in ${target.name} class`
-      )
-
       return target
     }
 

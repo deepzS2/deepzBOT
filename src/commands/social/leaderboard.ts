@@ -1,10 +1,12 @@
 import { stripIndents } from 'common-tags'
 import { MessagePayload } from 'discord.js'
+import { inject } from 'inversify'
 
 import { Command } from '@deepz/decorators'
 import { getExperienceInformation } from '@deepz/helpers'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
+import { PrismaClient } from '@prisma/client'
 
 @Command({
   name: 'leaderboard',
@@ -12,11 +14,12 @@ import { RunOptions } from '@deepz/types/command'
   category: 'SOCIAL',
 })
 export default class LeaderboardCommand extends BaseCommand {
+  @inject(PrismaClient) private readonly _database: PrismaClient
+
   async run({
-    client,
     interaction,
   }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
-    const users = await client.database.user.findMany()
+    const users = await this._database.user.findMany()
     const members = users
       .filter((user) => {
         // Filters by guild members

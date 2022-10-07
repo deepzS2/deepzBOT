@@ -6,9 +6,8 @@ import {
 } from 'discord.js'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'addrole',
@@ -56,7 +55,7 @@ export default class AddRoleCommand extends BaseCommand {
 
       return `***<@${user.id}> now have ${role.name} role!***`
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***I could not add role! Try again later...***`
     }

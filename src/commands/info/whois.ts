@@ -8,7 +8,7 @@ import {
 
 import { Command } from '@deepz/decorators'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'whois',

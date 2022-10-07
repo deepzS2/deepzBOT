@@ -1,9 +1,10 @@
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
+import { inject } from 'inversify'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
+import { PrismaClient } from '@prisma/client'
 
 @Command({
   name: 'money',
@@ -26,8 +27,9 @@ import { RunOptions } from '@deepz/types/command'
   ],
 })
 export default class MoneyCommand extends BaseCommand {
+  @inject(PrismaClient) private readonly _database: PrismaClient
+
   async run({
-    client,
     interaction,
     args,
   }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
@@ -35,7 +37,7 @@ export default class MoneyCommand extends BaseCommand {
     const amount = args.getNumber('amount')
 
     try {
-      const author = await client.database.user.findUniqueOrThrow({
+      const author = await this._database.user.findUniqueOrThrow({
         where: {
           discordId: interaction.user.id,
         },
@@ -45,7 +47,7 @@ export default class MoneyCommand extends BaseCommand {
         return `**:credit_card:  | ${author.username}, you current balance is :yen: ${author.balance} credits.**`
       }
 
-      const mentioned = await client.database.user.findUniqueOrThrow({
+      const mentioned = await this._database.user.findUniqueOrThrow({
         where: {
           discordId: user.id,
         },
@@ -63,7 +65,7 @@ export default class MoneyCommand extends BaseCommand {
         return `**:credit_card:  | ${author.username}, you have insufficient credits to make this transaction.**`
       }
 
-      await client.database.user.update({
+      await this._database.user.update({
         where: {
           id: mentioned.id,
         },
@@ -73,7 +75,7 @@ export default class MoneyCommand extends BaseCommand {
           },
         },
       })
-      await client.database.user.update({
+      await this._database.user.update({
         where: {
           id: author.id,
         },
@@ -84,7 +86,7 @@ export default class MoneyCommand extends BaseCommand {
         },
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `Error trying to get or transfer balance, try again later...`
     }

@@ -6,9 +6,8 @@ import {
 } from 'discord.js'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'ban',
@@ -91,7 +90,7 @@ export default class BanCommand extends BaseCommand {
         ],
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***I could not ban this user! Try again later...***`
     }

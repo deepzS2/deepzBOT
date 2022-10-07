@@ -3,7 +3,7 @@ import { MessagePayload } from 'discord.js'
 import { botConfig } from '@deepz/config'
 import { Command } from '@deepz/decorators'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'greet',

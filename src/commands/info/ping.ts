@@ -2,7 +2,7 @@ import { MessagePayload } from 'discord.js'
 
 import { Command } from '@deepz/decorators'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'ping',
@@ -16,15 +16,3 @@ export default class PingCommand extends BaseCommand {
     return `🏓 Pong!\nLatency is \`${client.ws.ping}\`ms`
   }
 }
-
-// export default new Command({
-//   name: 'ping',
-
-//   description: 'replies with pong',
-//   category: 'INFO',
-
-//   examples: ['d.ping'],
-//   run: async ({ client }) => {
-//
-//   },
-// })

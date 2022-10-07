@@ -1,12 +1,15 @@
 import { Message } from 'discord.js'
+import { inject } from 'inversify'
 
 import { Event } from '@deepz/decorators'
-import logger from '@deepz/logger'
-import { BaseEvent, ExtendedClient } from '@deepz/structures'
+import { BaseEvent, Client } from '@deepz/structures'
+import { PrismaClient } from '@prisma/client'
 
 @Event('messageCreate')
 export default class MessageCreateEvent extends BaseEvent<'messageCreate'> {
-  async run(client: ExtendedClient, message: Message<boolean>) {
+  @inject(PrismaClient) private readonly _database: PrismaClient
+
+  async run(client: Client, message: Message<boolean>) {
     // Not a BOT
     if (message.author.bot) return
 
@@ -17,7 +20,7 @@ export default class MessageCreateEvent extends BaseEvent<'messageCreate'> {
       const { id, username } = message.author
 
       // Ensure that the user exists in database by when updating if does not exists create the user or just update
-      await client.database.user.upsert({
+      await this._database.user.upsert({
         where: {
           discordId: id,
         },
@@ -35,7 +38,7 @@ export default class MessageCreateEvent extends BaseEvent<'messageCreate'> {
         },
       })
     } catch (error) {
-      logger.error(error, 'Error upserting the user in database!')
+      this._logger.error(error, 'Error upserting the user in database!')
     }
   }
 }

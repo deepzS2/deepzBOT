@@ -5,9 +5,8 @@ import {
 } from 'discord.js'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'clear',
@@ -44,7 +43,7 @@ export default class ClearCommand extends BaseCommand {
 
       return `***Deleted ${size} message(s) requested by <@${author.id}>.***`
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***I could not delete the messages! Try again later...***`
     }

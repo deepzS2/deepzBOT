@@ -33,4 +33,6 @@ const transport = pino.transport({
   ],
 })
 
-export default pino(transport)
+export default function createLogger() {
+  return pino(transport)
+}

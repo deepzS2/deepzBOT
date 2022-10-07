@@ -1,9 +1,10 @@
 import { User, ApplicationCommandOptionType, MessagePayload } from 'discord.js'
+import { inject } from 'inversify'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
+import { PrismaClient } from '@prisma/client'
 
 @Command({
   name: 'rep',
@@ -19,9 +20,10 @@ import { RunOptions } from '@deepz/types/command'
   ],
 })
 export default class RepCommand extends BaseCommand {
+  @inject(PrismaClient) private readonly _database: PrismaClient
+
   async run({
     args,
-    client,
     interaction,
   }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     const user: User = args.getUser('user')
@@ -31,7 +33,7 @@ export default class RepCommand extends BaseCommand {
         return `**Please provide a user to give a reputation point...**`
       }
 
-      await client.database.user.update({
+      await this._database.user.update({
         where: {
           discordId: user.id,
         },
@@ -44,7 +46,7 @@ export default class RepCommand extends BaseCommand {
 
       return `***<@${interaction.user.id}> just gave a reputation point to <@${user.id}>`
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***Error while trying to give reputation point to <@${user.id}>***`
     }

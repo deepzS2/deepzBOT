@@ -1,10 +1,10 @@
-import { Queue } from 'discord-music-player'
+import { Player, Queue } from 'discord-music-player'
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
+import { inject } from 'inversify'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'skip',
@@ -20,13 +20,14 @@ import { RunOptions } from '@deepz/types/command'
   ],
 })
 export default class SkipCommand extends BaseCommand {
+  @inject(Player) private readonly _player: Player
+
   async run({
-    client,
     args,
     interaction,
   }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
-      const queue: Queue = await client.player.getQueue(interaction.guildId)
+      const queue: Queue = await this._player.getQueue(interaction.guildId)
 
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
@@ -51,7 +52,7 @@ export default class SkipCommand extends BaseCommand {
 
       return `***Skipped ahead to track ${skipDestination} index***`
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***Something went wrong trying to shuffle the queue...***`
     }

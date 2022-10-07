@@ -1,16 +1,17 @@
 import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
+import { inject } from 'inversify'
 
 import { Command } from '@deepz/decorators'
 import { createRequest } from '@deepz/helpers'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
-import {
+import type {
   IGetAccountResponse,
   IGetMMRHistoryResponse,
   IGetMMRResponse,
-} from '@deepz/types/fetchs/valorant'
+} from '@deepz/types/fetchs'
+import type { RunOptions } from '@deepz/types/index'
+import { PrismaClient } from '@prisma/client'
 
 @Command({
   name: 'valorant',
@@ -55,9 +56,10 @@ export default class ValorantCommand extends BaseCommand {
     baseURL: 'https://api.henrikdev.xyz/valorant/v1',
   })
 
+  @inject(PrismaClient) private readonly _database: PrismaClient
+
   async run({
     args,
-    client,
     interaction,
   }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
@@ -81,7 +83,7 @@ export default class ValorantCommand extends BaseCommand {
           return `***I didn't found any user with that username and tag... Check if it's correct!***`
         }
 
-        await client.database.user.update({
+        await this._database.user.update({
           data: {
             valorant: `${name}#${tag}`,
           },
@@ -93,7 +95,7 @@ export default class ValorantCommand extends BaseCommand {
         return `***Assigned ${name}#${tag} account to your discord! Try using \`/valorant get\` to get your Valorant data.***`
       }
 
-      const { valorant } = await client.database.user.findUniqueOrThrow({
+      const { valorant } = await this._database.user.findUniqueOrThrow({
         where: {
           discordId: interaction.user.id,
         },
@@ -133,7 +135,7 @@ export default class ValorantCommand extends BaseCommand {
         },
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       if (error.message === 'Not found user!') {
         return `***I didn't found any user with that username and tag... Check if it's correct!***`

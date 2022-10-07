@@ -1,10 +1,9 @@
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { tenor } from '@deepz/services'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'kiss',
@@ -41,7 +40,7 @@ export default class KissCommand extends BaseCommand {
         description: `***${interaction.user.username}, you kissed <@${user.id}> :kissing_heart:***`,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***Error trying to kiss <@${user.id}>, try again later...`
     }

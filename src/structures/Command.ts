@@ -1,19 +1,24 @@
 import { MessagePayload } from 'discord.js'
+import { inject, injectable } from 'inversify'
 
 import { MetadataKeys } from '@deepz/decorators/metadata-keys'
-import {
+import type {
   CommandOptions,
   ICommand,
   ICommandConstructor,
   RunOptions,
-} from '@deepz/types/command'
+  Logger,
+} from '@deepz/types/index'
 
 import { CustomMessageEmbed } from './MessageEmbed'
 
 /**
  * Class for creating a command
  */
+@injectable()
 export abstract class BaseCommand implements ICommand {
+  @inject('Logger') protected readonly _logger: Logger
+
   abstract run(
     options: RunOptions
   ): Promise<CustomMessageEmbed | MessagePayload | string>

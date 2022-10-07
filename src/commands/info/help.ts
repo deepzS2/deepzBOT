@@ -11,9 +11,12 @@ import {
 
 import { botConfig, categoryEmojis } from '@deepz/config'
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { CommandCategory, ICommandData, RunOptions } from '@deepz/types/command'
+import type {
+  CommandCategory,
+  ICommandData,
+  RunOptions,
+} from '@deepz/types/index'
 
 @Command({
   name: 'help',
@@ -137,7 +140,7 @@ export default class HelpCommand extends BaseCommand {
         })
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
       return `**Sorry, something went wrong with sending a message...**`
     }
   }

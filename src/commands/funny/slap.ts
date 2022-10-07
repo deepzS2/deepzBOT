@@ -1,10 +1,9 @@
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { tenor } from '@deepz/services'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'slap',
@@ -41,7 +40,7 @@ export default class SlapCommand extends BaseCommand {
         description: `***${interaction.user.username}, you slapped ${user.username} :angry:***`,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***Error trying to slap <@${user.id}>, try again later...`
     }

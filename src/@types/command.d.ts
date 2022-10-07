@@ -7,18 +7,14 @@ import {
   MessagePayload,
 } from 'discord.js'
 
-import {
-  ExtendedClient,
-  CustomMessageEmbed,
-  BaseCommand,
-} from '@deepz/structures'
+import { Client, CustomMessageEmbed, BaseCommand } from '@deepz/structures'
 
 export interface ExtendedInteraction extends CommandInteraction {
   member: GuildMember
 }
 
 export interface RunOptions {
-  client: ExtendedClient
+  client: Client
   interaction: ExtendedInteraction
   args: CommandInteractionOptionResolver
 }

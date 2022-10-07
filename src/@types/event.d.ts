@@ -1,12 +1,12 @@
 import { ClientEvents } from 'discord.js'
 
-import { BaseEvent, ExtendedClient } from '@deepz/structures'
+import { BaseEvent, Client } from '@deepz/structures'
 
 /**
  * Event callback
  */
 export type RunFunction<Key extends keyof ClientEvents> = (
-  client: ExtendedClient,
+  client: Client,
   ...args: ClientEvents[Key]
 ) => any
 
@@ -16,5 +16,5 @@ export interface IEventConstructor extends Function {
 }
 
 export interface IEvent<Key extends keyof ClientEvents> {
-  run(client: ExtendedClient, ...args: ClientEvents[Key]): any
+  run(client: Client, ...args: ClientEvents[Key]): any
 }

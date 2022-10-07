@@ -8,20 +8,15 @@ import {
 
 import { Command } from '@deepz/decorators'
 import { request } from '@deepz/helpers'
-import logger from '@deepz/logger'
-import {
-  ExtendedClient,
-  CustomMessageEmbed,
-  BaseCommand,
-} from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
-import {
+import { Client, CustomMessageEmbed, BaseCommand } from '@deepz/structures'
+import type {
   IAnime,
   IAnimeByIdFetchResponse,
   IAnimesFetchResponse,
   IGenre,
   IGenresByAnimeFetchResponse,
-} from '@deepz/types/fetchs/kitsu'
+} from '@deepz/types/fetchs'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'anime',
@@ -139,12 +134,12 @@ export default class AnimeCommand extends BaseCommand {
         }
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
       return `***Something went wrong getting the anime data!***`
     }
   }
 
-  private createAnimeSelectList(animes: IAnime[], client: ExtendedClient) {
+  private createAnimeSelectList(animes: IAnime[], client: Client) {
     return new CustomMessageEmbed('Select an anime!', {
       description: `Type the number present on the list or type \`exit\` if no results are found!`,
       author: {
@@ -163,11 +158,7 @@ export default class AnimeCommand extends BaseCommand {
     )
   }
 
-  private createAnimeEmbed(
-    anime: IAnime,
-    genres: IGenre[],
-    client: ExtendedClient
-  ) {
+  private createAnimeEmbed(anime: IAnime, genres: IGenre[], client: Client) {
     const embed = new CustomMessageEmbed(
       `**${anime.attributes.titles.en || anime.attributes.titles.en_jp || ''} ${
         anime.attributes.titles.ja_jp

@@ -2,7 +2,7 @@ import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
 import { Command } from '@deepz/decorators'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: '8ball',

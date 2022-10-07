@@ -3,15 +3,13 @@ import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
 import { steamToken } from '@deepz/config'
 import { Command } from '@deepz/decorators'
-import { createRequest } from '@deepz/helpers'
-import { getSteamID } from '@deepz/helpers'
-import logger from '@deepz/logger'
+import { createRequest, getSteamID } from '@deepz/helpers'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
-import {
+import type {
   IGetPlayerSummariesResponse,
   IPlayerBansResponse,
-} from '@deepz/types/fetchs/steam'
+} from '@deepz/types/fetchs'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'steam',
@@ -96,7 +94,7 @@ export default class SteamCommand extends BaseCommand {
         `,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       if (error instanceof Error) return error.message
       else return `**:x: Something went wrong! Please try again later!**`

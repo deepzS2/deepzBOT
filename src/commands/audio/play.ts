@@ -1,15 +1,15 @@
-import { Queue } from 'discord-music-player'
+import { Player, Queue } from 'discord-music-player'
 import {
   ApplicationCommandOptionType,
   MessagePayload,
   PermissionFlagsBits,
 } from 'discord.js'
+import { inject } from 'inversify'
 import path from 'path'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { ExtendedInteraction, RunOptions } from '@deepz/types/command'
+import type { ExtendedInteraction, RunOptions } from '@deepz/types/index'
 import { createAudioResource } from '@discordjs/voice'
 
 @Command({
@@ -59,15 +59,16 @@ import { createAudioResource } from '@discordjs/voice'
   ],
 })
 export default class PlayCommand extends BaseCommand {
+  @inject(Player) private readonly _player: Player
+
   async run({
-    client,
     interaction,
     args,
   }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     if (!interaction.member.voice.channel)
       return `***You need to be in a voice channel to use this command!***`
 
-    const queue = await client.player.createQueue(interaction.guild.id)
+    const queue = await this._player.createQueue(interaction.guild.id)
 
     if (!queue.connection) {
       const voiceChannel = interaction.member.voice.channel
@@ -159,7 +160,7 @@ export default class PlayCommand extends BaseCommand {
 
       return embed
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***Something went wrong trying to play your music...***`
     }

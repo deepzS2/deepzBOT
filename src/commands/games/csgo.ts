@@ -3,14 +3,13 @@ import { stripIndents } from 'common-tags'
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { tracker } from '@deepz/services'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
-import {
+import type {
   ICsUserDataResponse,
   ISearchSteamUserResponse,
-} from '@deepz/types/fetchs/csgo'
+} from '@deepz/types/fetchs'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'csgo',
@@ -79,7 +78,7 @@ export default class CsgoCommand extends BaseCommand {
         )}`,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       if (axios.isAxiosError(error)) {
         if (error?.response?.status === 500)

@@ -2,10 +2,9 @@ import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 
 import { Command } from '@deepz/decorators'
 import { request } from '@deepz/helpers'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
-import { IGetTermMeanings } from '@deepz/types/fetchs/urbandictionary'
+import type { IGetTermMeanings } from '@deepz/types/fetchs'
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'dictionary',
@@ -51,7 +50,7 @@ export default class UrbanDictionaryCommand extends BaseCommand {
         },
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `**:x: Something went wrong! Please try again later...**`
     }

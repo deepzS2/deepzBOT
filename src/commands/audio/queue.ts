@@ -1,13 +1,11 @@
 import { stripIndent } from 'common-tags'
-import { Queue } from 'discord-music-player'
+import { Player, Queue } from 'discord-music-player'
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
+import { inject } from 'inversify'
 
 import { Command } from '@deepz/decorators'
-import logger from '@deepz/logger'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
-import { RunOptions } from '@deepz/types/command'
-
-const SONGS_PER_PAGE = 10
+import type { RunOptions } from '@deepz/types/index'
 
 @Command({
   name: 'queue',
@@ -23,17 +21,19 @@ const SONGS_PER_PAGE = 10
   ],
 })
 export default class QueueCommand extends BaseCommand {
+  @inject(Player) private readonly _player: Player
+  private readonly SONGS_PER_PAGE = 10
+
   async run({
-    client,
     interaction,
     args,
   }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
     try {
-      const queue: Queue = await client.player.getQueue(interaction.guildId)
+      const queue: Queue = await this._player.getQueue(interaction.guildId)
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
-      const pages = Math.ceil(queue.songs.length / SONGS_PER_PAGE) || 1
+      const pages = Math.ceil(queue.songs.length / this.SONGS_PER_PAGE) || 1
       const currentPage = args.getNumber('page') || 1
 
       if (currentPage > pages)
@@ -41,11 +41,11 @@ export default class QueueCommand extends BaseCommand {
 
       const queueString = queue.songs
         .slice(
-          (currentPage - 1) * SONGS_PER_PAGE,
-          (currentPage - 1) * SONGS_PER_PAGE + SONGS_PER_PAGE
+          (currentPage - 1) * this.SONGS_PER_PAGE,
+          (currentPage - 1) * this.SONGS_PER_PAGE + this.SONGS_PER_PAGE
         )
         .map((track, i) => {
-          return `**${(currentPage - 1) * SONGS_PER_PAGE + i + 1}.** \`[${
+          return `**${(currentPage - 1) * this.SONGS_PER_PAGE + i + 1}.** \`[${
             track.duration
           }]\` ${track.name} -- <@${track.requestedBy.id}>\n`
         })
@@ -70,7 +70,7 @@ export default class QueueCommand extends BaseCommand {
         thumbnail: currentSong.thumbnail,
       })
     } catch (error) {
-      logger.error(error)
+      this._logger.error(error)
 
       return `***Something went wrong trying to get the queue...***`
     }

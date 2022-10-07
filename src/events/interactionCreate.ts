@@ -3,19 +3,18 @@ import {
   CommandInteractionOptionResolver,
   Interaction,
 } from 'discord.js'
+import { inject } from 'inversify'
 
 import { Event } from '@deepz/decorators'
-import logger from '@deepz/logger'
-import {
-  BaseEvent,
-  CustomMessageEmbed,
-  ExtendedClient,
-} from '@deepz/structures'
+import { BaseEvent, CustomMessageEmbed, Client } from '@deepz/structures'
 import { ExtendedInteraction } from '@deepz/types/command'
+import { PrismaClient } from '@prisma/client'
 
 @Event('interactionCreate')
 export default class InteractionCreateEvent extends BaseEvent<'interactionCreate'> {
-  async run(client: ExtendedClient, interaction: Interaction<CacheType>) {
+  @inject(PrismaClient) private readonly _database: PrismaClient
+
+  async run(client: Client, interaction: Interaction<CacheType>) {
     if (interaction.isCommand()) {
       const command = client.commands.get(interaction.commandName)
 
@@ -25,7 +24,7 @@ export default class InteractionCreateEvent extends BaseEvent<'interactionCreate
         await interaction.deferReply()
 
         // Ensure that the user exists in database by when updating if does not exists create the user or just update
-        await client.database.user.upsert({
+        await this._database.user.upsert({
           where: {
             discordId: interaction.user.id,
           },
@@ -61,7 +60,7 @@ export default class InteractionCreateEvent extends BaseEvent<'interactionCreate
         if (typeof responseMessage === 'string')
           return await interaction.editReply(responseMessage)
       } catch (error) {
-        logger.error(
+        this._logger.error(
           error,
           'Error with ' + interaction.commandName + ' command'
         )

@@ -16,16 +16,19 @@ async function bootstrap() {
   // Utils
   container.bind<Container>('Container').toConstantValue(container)
   container.bind<Logger>('Logger').toConstantValue(createLogger())
-  container.bind(Player).toDynamicValue(
-    (ctx) =>
-      new Player(ctx.container.get(Client), {
-        leaveOnEmpty: true,
-        quality: 'high',
-        deafenOnJoin: true,
-        leaveOnStop: true,
-        leaveOnEnd: false,
-      })
-  )
+  container
+    .bind(Player)
+    .toDynamicValue(
+      (ctx) =>
+        new Player(ctx.container.get(Client), {
+          leaveOnEmpty: true,
+          quality: 'high',
+          deafenOnJoin: true,
+          leaveOnStop: true,
+          leaveOnEnd: false,
+        })
+    )
+    .inSingletonScope()
 
   // Client and Database
   container.bind<PrismaClient>(PrismaClient).toConstantValue(new PrismaClient())

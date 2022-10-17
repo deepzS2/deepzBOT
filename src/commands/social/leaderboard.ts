@@ -18,33 +18,35 @@ export default class LeaderboardCommand extends BaseCommand {
 
   async run({
     interaction,
+    client,
   }: RunOptions): Promise<string | CustomMessageEmbed | MessagePayload> {
-    const users = await this._database.user.findMany()
+    const users = await this._database.guildMembers.findMany({
+      where: {
+        guildId: interaction.guildId,
+      },
+    })
+
     const members = users
-      .filter((user) => {
-        // Filters by guild members
-        return interaction.guild.members.cache.find(
-          (member) => user.discordId === member.id
-        )
-      })
       .sort((a, b) => b.experience - a.experience) // Sort
       .splice(0, 10) // Top 10
 
-    const description = members.reduce(
-      (prev, curr) => {
+    const description = await members.reduce(
+      async (prev, curr) => {
         const { level } = getExperienceInformation(curr.experience)
+        const user = await client.users.fetch(curr.userId)
+        const result = await prev
 
-        prev.value += `${prev.index + 1}. "${
-          curr.username
+        result.value += `${result.index + 1}. "${
+          user.username
         }" with level ${level} and ${curr.experience.toLocaleString()}xp!\n`
-        prev.index++
+        result.index++
 
-        return prev
+        return result
       },
-      {
+      Promise.resolve({
         value: '',
         index: 0,
-      }
+      })
     )
 
     return new CustomMessageEmbed('Leaderboard', {

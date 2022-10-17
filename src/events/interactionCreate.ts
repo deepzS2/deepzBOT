@@ -33,12 +33,37 @@ export default class InteractionCreateEvent extends BaseEvent<'interactionCreate
             username: interaction.user.username,
           },
           update: {
-            experience: {
-              increment: Math.floor(Math.random() * 15) + 10,
-            },
             balance: {
               increment: Math.floor(Math.random() * 7) + 3,
             },
+          },
+        })
+
+        const guildMemberExists = await this._database.guildMembers.findFirst({
+          where: {
+            guildId: interaction.guildId,
+            userId: interaction.user.id,
+          },
+        })
+
+        if (!guildMemberExists) {
+          await this._database.guildMembers.create({
+            data: {
+              guildId: interaction.guildId,
+              userId: interaction.user.id,
+            },
+          })
+        }
+
+        await this._database.guildMembers.updateMany({
+          data: {
+            experience: {
+              increment: Math.floor(Math.random() * 15) + 10,
+            },
+          },
+          where: {
+            guildId: interaction.guildId,
+            userId: interaction.user.id,
           },
         })
 

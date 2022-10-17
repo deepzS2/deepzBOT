@@ -17,7 +17,10 @@ export default class MessageCreateEvent extends BaseEvent<'messageCreate'> {
       // No DMs
       if (message.channel.isDMBased()) return
 
-      const { id, username } = message.author
+      const {
+        author: { id, username },
+        guildId,
+      } = message
 
       // Ensure that the user exists in database by when updating if does not exists create the user or just update
       await this._database.user.upsert({
@@ -29,12 +32,37 @@ export default class MessageCreateEvent extends BaseEvent<'messageCreate'> {
           username: username,
         },
         update: {
-          experience: {
-            increment: Math.floor(Math.random() * 15) + 10,
-          },
           balance: {
             increment: Math.floor(Math.random() * 7) + 3,
           },
+        },
+      })
+
+      const guildMemberExists = await this._database.guildMembers.findFirst({
+        where: {
+          guildId: guildId,
+          userId: id,
+        },
+      })
+
+      if (!guildMemberExists) {
+        await this._database.guildMembers.create({
+          data: {
+            guildId: guildId,
+            userId: id,
+          },
+        })
+      }
+
+      await this._database.guildMembers.updateMany({
+        data: {
+          experience: {
+            increment: Math.floor(Math.random() * 15) + 10,
+          },
+        },
+        where: {
+          guildId: guildId,
+          userId: id,
         },
       })
     } catch (error) {

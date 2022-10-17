@@ -25,7 +25,6 @@ model User {
 
   // Profile
   reputation        Int       @default(0)
-  experience        Float     @default(0)
   bio               String? 
   backgroundImage   Bytes?
   couple            String?
@@ -33,6 +32,9 @@ model User {
   // Games
   osu       String?
   valorant  String?
+
+  // Guilds
+  guilds GuildMembers[]
 }
 
 model Guild {
@@ -51,11 +53,23 @@ model Guild {
   roles               Roles[]
   roleMessage         String?
   channelRoleMessage  String?
+
+  // Members
+  members GuildMembers[]
+}
+
+model GuildMembers {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  guild       Guild     @relation(fields: [guildId], references: [discordId])
+  guildId     String    
+  user        User      @relation(fields: [userId], references: [discordId])
+  userId      String    
+  experience  Float     @default(0)
 }
 
 model TwitchUser {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  guild     Guild     @relation(fields: [guildId], references: [id])
+  guild     Guild     @relation(fields: [guildId], references: [discordId])
   guildId   String 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -64,7 +78,7 @@ model TwitchUser {
 model Roles {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
   name      String 
-  guild     Guild     @relation(fields: [guildId], references: [id])
+  guild     Guild     @relation(fields: [guildId], references: [discordId])
   guildId   String 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

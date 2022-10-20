@@ -13,15 +13,15 @@ datasource db {
 
 model User {
   // Essentials
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  discordId String    @unique
-  username  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  discordId         String    @unique
+  username          String
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   // Economy
-  dailyMoney  DateTime  @default(now())
-  balance     Float     @default(0)
+  dailyMoney        DateTime  @default(now())
+  balance           Float     @default(0)
 
   // Profile
   reputation        Int       @default(0)
@@ -30,8 +30,8 @@ model User {
   couple            String?
 
   // Games
-  osu       String?
-  valorant  String?
+  osu               String?
+  valorant          String?
 
   // Guilds
   guilds GuildMembers[]
@@ -39,23 +39,23 @@ model User {
 
 model Guild {
   // Essentials
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-  discordId   String    @unique
-  name        String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                        String    @id @default(auto()) @map("_id") @db.ObjectId
+  discordId                 String    @unique
+  name                      String
+  createdAt                 DateTime  @default(now())
+  updatedAt                 DateTime  @updatedAt
 
   // Twitch
-  twitchs                   String[]
+  twitchs                   String[]  @default([])
   twitchNotificationChannel String?   
 
   // Roles
-  roles               Roles[]
-  roleMessage         String?
-  channelRoleMessage  String?
+  roles                     Roles[]
+  roleMessage               String?
+  channelRoleMessage        String?
 
   // Members
-  members GuildMembers[]
+  members                   GuildMembers[]
 }
 
 model GuildMembers {

@@ -10,6 +10,7 @@ import { PrismaClient } from '@prisma/client'
 @Command({
   name: 'twitch',
   description: 'Twitch command utility',
+  userPermissions: ['Administrator'],
   category: 'INFO',
   options: [
     {

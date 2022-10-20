@@ -46,7 +46,7 @@ model Guild {
   updatedAt   DateTime  @updatedAt
 
   // Twitch
-  twitchUsers               TwitchUser[]
+  twitchs                   String[]
   twitchNotificationChannel String?   
 
   // Roles
@@ -65,14 +65,6 @@ model GuildMembers {
   user        User      @relation(fields: [userId], references: [discordId])
   userId      String    
   experience  Float     @default(0)
-}
-
-model TwitchUser {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  guild     Guild     @relation(fields: [guildId], references: [discordId])
-  guildId   String 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
 }
 
 model Roles {

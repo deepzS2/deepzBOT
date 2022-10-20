@@ -24,6 +24,12 @@ export default class GuildDeleteEvent extends BaseEvent<'guildDelete'> {
           discordId: guild.id,
         },
       })
+
+      await this._database.guildMembers.deleteMany({
+        where: {
+          guildId: guild.id,
+        },
+      })
     } catch (error) {
       this._logger.error(error, 'Error deleting guild from database!')
     }

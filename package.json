@@ -51,6 +51,7 @@
     "inversify-inject-decorators": "^3.1.0",
     "isomorphic-unfetch": "^3.1.0",
     "libsodium-wrappers": "^0.7.10",
+    "node-twitch": "^0.4.7",
     "pino": "^8.6.1",
     "pino-pretty": "^9.1.0",
     "prisma": "^4.4.0",

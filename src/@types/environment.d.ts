@@ -19,6 +19,8 @@ declare global {
       TRACKER_API_KEY: string
       TWITCH_API_KEY: string
       YOUTUBE_TOKEN: string
+
+      TWITCH_API_SECRET: string
     }
   }
 }

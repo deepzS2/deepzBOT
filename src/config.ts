@@ -12,6 +12,8 @@ export const botConfig: BotConfiguration = {
   ownerId: process.env.OWNER_ID.toString(),
 }
 
+export const twitchApiSecret = process.env.TWITCH_API_SECRET
+export const twitchApiKey = process.env.TWITCH_API_KEY
 export const trackerApiKey = process.env.TRACKER_API_KEY
 export const tenorKey = process.env.TENOR_KEY
 export const steamToken = process.env.STEAM_TOKEN

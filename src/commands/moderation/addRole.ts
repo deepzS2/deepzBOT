@@ -13,7 +13,7 @@ import type { RunOptions } from '@deepz/types/index'
   name: 'addrole',
   description: 'Add a role to an user!',
   category: 'MODERATION',
-  userPermissions: ['ManageRoles'],
+  defaultMemberPermissions: ['ManageRoles'],
   options: [
     {
       name: 'role',

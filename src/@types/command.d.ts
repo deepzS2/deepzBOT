@@ -36,14 +36,14 @@ export type CommandCategory =
 // export type CommandType = {
 //   category: CommandCategory
 //   examples?: string[]
-//   userPermissions?: PermissionResolvable[]
+//   defaultMemberPermissions?: PermissionResolvable[]
 //   run: RunFunction
 // } & ChatInputApplicationCommandData
 
 export type CommandOptions = {
   category: CommandCategory
   examples?: string[]
-  userPermissions?: PermissionResolvable[]
+  defaultMemberPermissions?: PermissionResolvable[]
 } & ChatInputApplicationCommandData
 
 export interface ICommandConstructor extends Function {

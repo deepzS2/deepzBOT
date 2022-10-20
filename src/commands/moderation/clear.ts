@@ -12,7 +12,7 @@ import type { RunOptions } from '@deepz/types/index'
   name: 'clear',
   description: 'Clear the message history!',
   category: 'MODERATION',
-  userPermissions: ['ManageMessages'],
+  defaultMemberPermissions: ['ManageMessages'],
   options: [
     {
       name: 'amount',

@@ -15,7 +15,7 @@ const MUTED_ROLE_NAME = 'Muted'
   name: 'mute',
   description: 'Mutes an user!',
   category: 'MODERATION',
-  userPermissions: ['MuteMembers'],
+  defaultMemberPermissions: ['MuteMembers'],
   options: [
     {
       name: 'user',

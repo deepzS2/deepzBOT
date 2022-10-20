@@ -13,7 +13,7 @@ import type { RunOptions } from '@deepz/types/index'
   name: 'ban',
   description: 'Bans a user from the guild!',
   category: 'MODERATION',
-  userPermissions: ['BanMembers'],
+  defaultMemberPermissions: ['BanMembers'],
   options: [
     {
       name: 'user',

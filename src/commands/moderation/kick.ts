@@ -13,7 +13,7 @@ import type { RunOptions } from '@deepz/types/index'
   name: 'kick',
   description: 'Kick an user from the guild!',
   category: 'MODERATION',
-  userPermissions: ['KickMembers'],
+  defaultMemberPermissions: ['KickMembers'],
   options: [
     {
       name: 'user',

@@ -13,7 +13,14 @@ export function Command(options: CommandOptions): ClassDecorator {
       return target
     }
 
-    Reflect.defineMetadata(MetadataKeys.Command, options, target.prototype)
+    Reflect.defineMetadata(
+      MetadataKeys.Command,
+      {
+        ...options,
+        dmPermission: false,
+      },
+      target.prototype
+    )
 
     return target
   }

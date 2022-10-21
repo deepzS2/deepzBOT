@@ -10,7 +10,9 @@
 <p align="center">
   <b>deepzBOT</b> is a bot developed with <a href="https://www.typescriptlang.org/">TypeScript</a> and <a href="https://www.discord.js.org/">discord.js</a>, based on <a href="https://tatsu.gg/">Tatsu</a> and other BOTS.
 </p>
-<img src="assets/info.gif">
+<div align="center">
+  <img src="assets/info.gif">
+</div>
 
 ## Idea
 My first idea was trying to make the bot like the Tatsu BOT, but then I changed it a little bit to implement other functions and commands that i thought will be useful to the final user.
@@ -41,6 +43,10 @@ Using dependency injection in TypeScript is more difficult than i thought previo
 - [x] [Social](src/commands/social) - XP, profile, bio, etc. stored on database.
 
 ## In action!
+
+
+<center>
+
 | ![Audio](assets/audio.gif) |
 | :--: |
 | *Playing music* |
@@ -48,6 +54,9 @@ Using dependency injection in TypeScript is more difficult than i thought previo
 | ![](assets/info.gif) |
 | :--: |
 | *Help command* |
+
+</center>
+
 
 ## Show your support
 Give this project a ⭐ if you like to support me to make more projects like this!

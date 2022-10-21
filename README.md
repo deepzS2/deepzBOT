@@ -44,16 +44,16 @@ Using dependency injection in TypeScript is more difficult than i thought previo
 
 ## In action!
 
-
 <div align="center">
-  <figure class="image">
-    <img src="assets/audio.gif" alt="Audio commands">
-    <figcaption>Playing music</figcaption>
-  </figure>
-  <figure class="image">
-    <img src="assets/info.gif" alt="Info commands">
-    <figcaption>Using help command</figcaption></figcaption>
-  </figure>
+  
+  | ![Audio commands](assets/audio.gif) |
+  |:--:|
+  | *Playing music* |
+
+  | ![Info commands](assets/info.gif) |
+  |:--:|
+  | *Using help command* |
+
 </div>
 
 

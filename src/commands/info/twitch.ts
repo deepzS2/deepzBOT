@@ -106,6 +106,12 @@ export default class TwitchCommand extends BaseCommand {
       }
 
       const twitchId = args.getString('id')
+      const twitchExists = twitchs.includes(twitchId)
+
+      if (twitchExists && subcommand === 'add')
+        return `**\`${twitchId}\` already exists...**`
+      else if (!twitchExists && subcommand === 'remove')
+        return `**\`${twitchId}\` don't exists...**`
 
       await this._database.guild.update({
         where: {

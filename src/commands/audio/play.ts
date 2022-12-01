@@ -112,7 +112,7 @@ export default class PlayCommand extends BaseCommand {
       if (subcommand === 'song') {
         const url = args.getString('url', true)
 
-        if (this.YOUTUBE_VIDEO_URL_REGEX.test(url)) {
+        if (!this.YOUTUBE_VIDEO_URL_REGEX.test(url)) {
           return `***Youtube Video URL invalid...***`
         }
 
@@ -140,7 +140,7 @@ export default class PlayCommand extends BaseCommand {
       if (subcommand === 'playlist') {
         const url = args.getString('url', true)
 
-        if (this.YOUTUBE_PLAYLIST_URL_REGEX.test(url)) {
+        if (!this.YOUTUBE_PLAYLIST_URL_REGEX.test(url)) {
           return `***Youtube Playlist URL invalid...***`
         }
 

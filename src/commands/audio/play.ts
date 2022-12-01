@@ -1,4 +1,4 @@
-import { Player, QueryType, Queue } from 'discord-player'
+import { Player, Queue } from 'discord-player'
 import {
   ApplicationCommandOptionType,
   MessagePayload,
@@ -6,6 +6,7 @@ import {
 } from 'discord.js'
 import { inject } from 'inversify'
 import path from 'path'
+import playdl from 'play-dl'
 
 import { Command } from '@deepz/decorators'
 import { BaseCommand, CustomMessageEmbed } from '@deepz/structures'
@@ -61,6 +62,11 @@ import { createAudioResource } from '@discordjs/voice'
 export default class PlayCommand extends BaseCommand {
   @inject(Player) private readonly _player: Player
 
+  private readonly YOUTUBE_VIDEO_URL_REGEX =
+    /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/gm
+  private readonly YOUTUBE_PLAYLIST_URL_REGEX =
+    /^.*(youtu.be\/|list=)([^#&?]*).*/gm
+
   async run({
     interaction,
     args,
@@ -68,7 +74,17 @@ export default class PlayCommand extends BaseCommand {
     if (!interaction.member.voice.channel)
       return `***You need to be in a voice channel to use this command!***`
 
-    const queue = await this._player.createQueue(interaction.guild.id)
+    const queue = await this._player.createQueue(interaction.guild.id, {
+      async onBeforeCreateStream(track, source) {
+        if (source === 'youtube') {
+          const result = await playdl.stream(track.url, {
+            discordPlayerCompatibility: true,
+          })
+
+          return result.stream
+        }
+      },
+    })
 
     if (!queue.connection) {
       const voiceChannel = interaction.member.voice.channel
@@ -96,9 +112,12 @@ export default class PlayCommand extends BaseCommand {
       if (subcommand === 'song') {
         const url = args.getString('url', true)
 
+        if (this.YOUTUBE_VIDEO_URL_REGEX.test(url)) {
+          return `***Youtube Video URL invalid...***`
+        }
+
         const { tracks } = await this._player.search(url, {
           requestedBy: interaction.user,
-          searchEngine: QueryType.YOUTUBE,
         })
 
         this._logger.info({ tracks })
@@ -121,9 +140,12 @@ export default class PlayCommand extends BaseCommand {
       if (subcommand === 'playlist') {
         const url = args.getString('url', true)
 
+        if (this.YOUTUBE_PLAYLIST_URL_REGEX.test(url)) {
+          return `***Youtube Playlist URL invalid...***`
+        }
+
         const { playlist } = await this._player.search(url, {
           requestedBy: interaction.user,
-          searchEngine: QueryType.YOUTUBE_PLAYLIST,
         })
 
         this._logger.info({ playlist })
@@ -156,7 +178,6 @@ export default class PlayCommand extends BaseCommand {
 
         const { tracks } = await this._player.search(searchterms, {
           requestedBy: interaction.user,
-          searchEngine: QueryType.YOUTUBE_SEARCH,
         })
 
         if (!tracks.length) {

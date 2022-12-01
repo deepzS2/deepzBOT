@@ -1,5 +1,5 @@
 import { stripIndent } from 'common-tags'
-import { Player } from 'discord-music-player'
+import { Player } from 'discord-player'
 import { MessagePayload } from 'discord.js'
 import { inject } from 'inversify'
 

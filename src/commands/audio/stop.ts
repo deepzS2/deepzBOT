@@ -1,5 +1,5 @@
 import { stripIndent } from 'common-tags'
-import { Player } from 'discord-music-player'
+import { Player } from 'discord-player'
 import { MessagePayload } from 'discord.js'
 import { inject } from 'inversify'
 
@@ -24,7 +24,7 @@ export default class StopCommand extends BaseCommand {
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
-      queue.stop()
+      queue.destroy()
 
       return stripIndent`
         ***Music queue stopped... Thanks for listening!***

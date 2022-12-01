@@ -2,7 +2,7 @@ import './helpers/extensions/string'
 import './helpers/extensions/date'
 import 'reflect-metadata'
 
-import { Player } from 'discord-music-player'
+import { Player } from 'discord-player'
 import { Container } from 'inversify'
 
 import createLogger from '@deepz/logger'
@@ -21,11 +21,10 @@ async function bootstrap() {
     .toDynamicValue(
       (ctx) =>
         new Player(ctx.container.get(Client), {
-          leaveOnEmpty: true,
-          quality: 'high',
-          deafenOnJoin: true,
-          leaveOnStop: true,
-          leaveOnEnd: false,
+          ytdlOptions: {
+            quality: 'highestaudio',
+            highWaterMark: 1 << 25,
+          },
         })
     )
     .inSingletonScope()

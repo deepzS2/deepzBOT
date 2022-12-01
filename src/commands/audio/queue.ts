@@ -1,5 +1,5 @@
 import { stripIndent } from 'common-tags'
-import { Player, Queue } from 'discord-music-player'
+import { Player, Queue } from 'discord-player'
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 import { inject } from 'inversify'
 
@@ -33,24 +33,24 @@ export default class QueueCommand extends BaseCommand {
       if (!queue || !queue.connection)
         return `***There are no songs in the queue...***`
 
-      const pages = Math.ceil(queue.songs.length / this.SONGS_PER_PAGE) || 1
-      const currentPage = args.getNumber('page') || 1
+      const pages = Math.ceil(queue.tracks.length / this.SONGS_PER_PAGE) || 1
+      const currentPage = (args.getNumber('page') || 1) - 1
 
       if (currentPage > pages)
         return `***Wait... There are only ${pages} pages in this queue!***`
 
-      const queueString = queue.songs
+      const queueString = queue.tracks
         .slice(
-          (currentPage - 1) * this.SONGS_PER_PAGE,
-          (currentPage - 1) * this.SONGS_PER_PAGE + this.SONGS_PER_PAGE
+          currentPage * this.SONGS_PER_PAGE,
+          currentPage * this.SONGS_PER_PAGE + this.SONGS_PER_PAGE
         )
         .map((track, i) => {
-          return `**${(currentPage - 1) * this.SONGS_PER_PAGE + i + 1}.** \`[${
+          return `**${currentPage * this.SONGS_PER_PAGE + i + 1}.** \`[${
             track.duration
-          }]\` ${track.name} -- <@${track.requestedBy.id}>\n`
+          }]\` ${track.title} -- <@${track.requestedBy.id}>\n`
         })
 
-      const currentSong = queue.nowPlaying
+      const currentSong = queue.nowPlaying()
 
       return new CustomMessageEmbed(' ', {
         description:
@@ -58,7 +58,7 @@ export default class QueueCommand extends BaseCommand {
           stripIndent`
                 ${
                   currentSong
-                    ? `\`[${currentSong.duration}]\` ${currentSong.name} -- <@${currentSong.requestedBy.id}>`
+                    ? `\`[${currentSong.duration}]\` ${currentSong.title} -- <@${currentSong.requestedBy.id}>`
                     : 'None'
                 }
                 \n\n

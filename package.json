@@ -1,6 +1,6 @@
 {
   "name": "deepz_bot",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "main": "dist/index.js",
   "author": "deepzS2",
   "license": "MIT",
@@ -43,6 +43,7 @@
     "common-tags": "^1.8.2",
     "dayjs": "^1.11.5",
     "discord-music-player": "^9.1.1",
+    "discord-player": "^5.3.2",
     "discord.js": "^14.5.0",
     "dotenv": "^16.0.3",
     "ffmpeg-static": "^5.1.0",
@@ -57,6 +58,8 @@
     "prisma": "^4.4.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
+    "soundcloud-scraper": "^5.0.3",
+    "youtube-sr": "^4.3.4",
     "ytdl-core": "^4.11.2"
   }
 }

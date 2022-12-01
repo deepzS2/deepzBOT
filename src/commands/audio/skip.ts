@@ -1,4 +1,4 @@
-import { Player, Queue } from 'discord-music-player'
+import { Player, Queue } from 'discord-player'
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 import { inject } from 'inversify'
 
@@ -16,6 +16,7 @@ import type { RunOptions } from '@deepz/types/index'
       name: 'to',
       description: 'The track to skip to',
       required: false,
+      minValue: 1,
     },
   ],
 })
@@ -35,20 +36,20 @@ export default class SkipCommand extends BaseCommand {
       const skipDestination = args.getNumber('to')
 
       if (!skipDestination || isNaN(skipDestination)) {
-        const currentSong = queue.nowPlaying
+        const currentSong = queue.nowPlaying()
 
         queue.skip()
 
         return new CustomMessageEmbed(' ', {
-          description: `${currentSong.name} has been skipped!`,
+          description: `${currentSong.title} has been skipped!`,
           thumbnail: currentSong.thumbnail,
         })
       }
 
-      if (skipDestination > queue.songs.length)
+      if (skipDestination > queue.tracks.length)
         return `***Invalid track index***`
 
-      queue.skip(skipDestination - 1)
+      queue.skipTo(skipDestination - 1)
 
       return `***Skipped ahead to track ${skipDestination} index***`
     } catch (error) {

@@ -1,4 +1,4 @@
-import { Player, RepeatMode } from 'discord-music-player'
+import { Player, QueueRepeatMode } from 'discord-player'
 import { ApplicationCommandOptionType, MessagePayload } from 'discord.js'
 import { inject } from 'inversify'
 
@@ -48,19 +48,19 @@ export default class LoopCommand extends BaseCommand {
         return `***There are no songs in the queue...***`
 
       if (subcommand === 'song') {
-        queue.setRepeatMode(RepeatMode.SONG)
+        queue.setRepeatMode(QueueRepeatMode.TRACK)
 
         return `***Looping the current song!***`
       }
 
       if (subcommand === 'queue') {
-        queue.setRepeatMode(RepeatMode.QUEUE)
+        queue.setRepeatMode(QueueRepeatMode.QUEUE)
 
         return `***Looping the current queue!***`
       }
 
       if (subcommand === 'disable') {
-        queue.setRepeatMode(RepeatMode.DISABLED)
+        queue.setRepeatMode(QueueRepeatMode.OFF)
 
         return `***Loop disabled!***`
       }

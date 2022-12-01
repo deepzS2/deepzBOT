@@ -1,4 +1,4 @@
-import { Player, Queue } from 'discord-music-player'
+import { Player, QueryType, Queue } from 'discord-player'
 import {
   ApplicationCommandOptionType,
   MessagePayload,
@@ -83,7 +83,7 @@ export default class PlayCommand extends BaseCommand {
       )
         return `***I don't have permission to speak...***`
 
-      await queue.join(voiceChannel)
+      await queue.connect(voiceChannel)
     }
 
     await this.shouldSayGoodNight(interaction, queue)
@@ -96,17 +96,23 @@ export default class PlayCommand extends BaseCommand {
       if (subcommand === 'song') {
         const url = args.getString('url', true)
 
-        const song = await queue.play(url, {
-          requestedBy: interaction?.user,
+        const { tracks } = await this._player.search(url, {
+          requestedBy: interaction.user,
+          searchEngine: QueryType.YOUTUBE,
         })
 
-        if (!song) {
+        this._logger.info({ tracks })
+
+        if (!tracks.length) {
           return `***No result...***`
         }
 
+        const song = tracks[0]
+        await queue.play(song)
+
         embed
           .setDescription(
-            `**[${song.name}](${song.url})** has been added to the queue!`
+            `**[${song.title}](${song.url})** has been added to the queue!`
           )
           .setThumbnail(song.thumbnail)
           .setFooter({ text: `Duration: ${song.duration}` })
@@ -115,22 +121,28 @@ export default class PlayCommand extends BaseCommand {
       if (subcommand === 'playlist') {
         const url = args.getString('url', true)
 
-        const playlist = await queue.playlist(url, {
-          requestedBy: interaction?.user,
+        const { playlist } = await this._player.search(url, {
+          requestedBy: interaction.user,
+          searchEngine: QueryType.YOUTUBE_PLAYLIST,
         })
 
-        if (!playlist.songs.length) {
+        this._logger.info({ playlist })
+
+        if (!playlist?.tracks?.length) {
           return `***No result...***`
         }
 
-        const duration = playlist.songs.reduce(
-          (prev, curr) => curr.milliseconds + prev,
+        await queue.play(playlist.tracks[0])
+        await queue.addTracks(playlist.tracks)
+
+        const duration = playlist.tracks.reduce(
+          (prev, curr) => curr.durationMS + prev,
           0
         )
 
         embed
           .setDescription(
-            `**${playlist.songs.length} songs from [${playlist.name}](${playlist.url})** has been added to the queue!`
+            `**${playlist.tracks.length} songs from [${playlist.title}](${playlist.url})** has been added to the queue!`
           )
           .setFooter({
             text: `Duration: ${Date.duration(duration, 'milliseconds').format(
@@ -142,17 +154,22 @@ export default class PlayCommand extends BaseCommand {
       if (subcommand === 'search') {
         const searchterms = args.getString('searchterms', true)
 
-        const song = await queue.play(searchterms, {
-          requestedBy: interaction?.user,
+        const { tracks } = await this._player.search(searchterms, {
+          requestedBy: interaction.user,
+          searchEngine: QueryType.YOUTUBE_SEARCH,
         })
 
-        if (!song) {
+        if (!tracks.length) {
           return `***No result...***`
         }
 
+        const song = tracks[0]
+
+        await queue.play(song)
+
         embed
           .setDescription(
-            `**[${song.name}](${song.url})** has been added to the queue!`
+            `**[${song.title}](${song.url})** has been added to the queue!`
           )
           .setThumbnail(song.thumbnail)
           .setFooter({ text: `Duration: ${song.duration}` })
@@ -171,12 +188,20 @@ export default class PlayCommand extends BaseCommand {
     interaction: ExtendedInteraction,
     queue: Queue
   ) {
-    if (interaction.guild.id === '750149237357936741' && !queue.isPlaying) {
-      const audio = createAudioResource(
-        path.join(__dirname, '..', '..', 'assets', 'boa noite.mp3')
-      )
+    new Promise((resolve, reject) => {
+      if (interaction.guild.id === '750149237357936741' && !queue.playing) {
+        const audio = createAudioResource(
+          path.join(__dirname, '..', '..', 'assets', 'boa noite.mp3')
+        )
 
-      await queue.connection.playAudioStream(audio)
-    }
+        queue.connection
+          .playStream(audio)
+          .then((stream) => {
+            stream.on('finish', resolve)
+            stream.on('error', reject)
+          })
+          .catch(reject)
+      }
+    })
   }
 }

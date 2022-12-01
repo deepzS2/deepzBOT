@@ -1,4 +1,4 @@
-import { Player, Queue } from 'discord-music-player'
+import { Player, Queue } from 'discord-player'
 import { MessagePayload } from 'discord.js'
 import { inject } from 'inversify'
 
@@ -24,13 +24,14 @@ export default class NowPlayingCommand extends BaseCommand {
         return `***There are no songs in the queue...***`
 
       const bar = queue.createProgressBar({
-        size: 19,
+        length: 19,
+        queue: false,
       })
-      const song = queue.nowPlaying
+      const song = queue.nowPlaying()
 
       return new CustomMessageEmbed(' ', {
         thumbnail: song.thumbnail,
-        description: `Current playing [${song.name}](${song.url})\n\n${bar}`,
+        description: `Current playing [${song.title}](${song.url})\n\n${bar}`,
       })
     } catch (error) {
       this._logger.error(error)

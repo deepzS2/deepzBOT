@@ -1,5 +1,5 @@
 import { stripIndent } from 'common-tags'
-import { Player } from 'discord-music-player'
+import { Player } from 'discord-player'
 import { MessagePayload } from 'discord.js'
 import { inject } from 'inversify'
 
@@ -27,7 +27,7 @@ export default class ShuffleCommand extends BaseCommand {
       queue.shuffle()
 
       return stripIndent`
-        ***The queue of ${queue.songs.length} songs have been shuffled!***
+        ***The queue of ${queue.tracks.length} songs have been shuffled!***
       `
     } catch (error) {
       this._logger.error(error)

@@ -1,4 +1,4 @@
-import { Player, Queue } from 'discord-player'
+import { Player, QueryType, Queue } from 'discord-player'
 import {
   ApplicationCommandOptionType,
   MessagePayload,
@@ -62,11 +62,6 @@ import { createAudioResource } from '@discordjs/voice'
 export default class PlayCommand extends BaseCommand {
   @inject(Player) private readonly _player: Player
 
-  private readonly YOUTUBE_VIDEO_URL_REGEX =
-    /^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube(-nocookie)?\.com|youtu.be))(\/(?:[\w-]+\?v=|embed\/|v\/)?)([\w-]+)(\S+)?$/gm
-  private readonly YOUTUBE_PLAYLIST_URL_REGEX =
-    /^.*(youtu.be\/|list=)([^#&?]*).*/gm
-
   async run({
     interaction,
     args,
@@ -84,6 +79,9 @@ export default class PlayCommand extends BaseCommand {
           return result.stream
         }
       },
+      leaveOnEmpty: true,
+      leaveOnEnd: false,
+      leaveOnStop: true,
     })
 
     if (!queue.connection) {
@@ -112,15 +110,10 @@ export default class PlayCommand extends BaseCommand {
       if (subcommand === 'song') {
         const url = args.getString('url', true)
 
-        if (!this.YOUTUBE_VIDEO_URL_REGEX.test(url)) {
-          return `***Youtube Video URL invalid...***`
-        }
-
         const { tracks } = await this._player.search(url, {
           requestedBy: interaction.user,
+          searchEngine: QueryType.YOUTUBE_VIDEO,
         })
-
-        this._logger.info({ tracks })
 
         if (!tracks.length) {
           return `***No result...***`
@@ -140,15 +133,10 @@ export default class PlayCommand extends BaseCommand {
       if (subcommand === 'playlist') {
         const url = args.getString('url', true)
 
-        if (!this.YOUTUBE_PLAYLIST_URL_REGEX.test(url)) {
-          return `***Youtube Playlist URL invalid...***`
-        }
-
         const { playlist } = await this._player.search(url, {
           requestedBy: interaction.user,
+          searchEngine: QueryType.YOUTUBE_PLAYLIST,
         })
-
-        this._logger.info({ playlist })
 
         if (!playlist?.tracks?.length) {
           return `***No result...***`
@@ -178,6 +166,7 @@ export default class PlayCommand extends BaseCommand {
 
         const { tracks } = await this._player.search(searchterms, {
           requestedBy: interaction.user,
+          searchEngine: QueryType.YOUTUBE_SEARCH,
         })
 
         if (!tracks.length) {

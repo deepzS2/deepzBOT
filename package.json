@@ -36,6 +36,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@discord-player/downloader": "^3.0.1",
     "@discordjs/opus": "^0.8.0",
     "@discordjs/voice": "^0.11.0",
     "@prisma/client": "^4.4.0",

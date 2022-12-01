@@ -8,6 +8,7 @@ import { Container } from 'inversify'
 import createLogger from '@deepz/logger'
 import { Client } from '@deepz/structures'
 import { Logger } from '@deepz/types/index'
+import { Downloader } from '@discord-player/downloader'
 import { PrismaClient } from '@prisma/client'
 
 async function bootstrap() {
@@ -18,15 +19,18 @@ async function bootstrap() {
   container.bind<Logger>('Logger').toConstantValue(createLogger())
   container
     .bind(Player)
-    .toDynamicValue(
-      (ctx) =>
-        new Player(ctx.container.get(Client), {
-          ytdlOptions: {
-            quality: 'highestaudio',
-            highWaterMark: 1 << 25,
-          },
-        })
-    )
+    .toDynamicValue((ctx) => {
+      const player = new Player(ctx.container.get(Client), {
+        ytdlOptions: {
+          quality: 'highestaudio',
+          highWaterMark: 1 << 25,
+        },
+      })
+
+      player.use('YOUTUBE_DL', Downloader)
+
+      return player
+    })
     .inSingletonScope()
 
   // Client and Database

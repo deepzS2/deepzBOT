@@ -55,6 +55,7 @@
     "node-twitch": "^0.4.7",
     "pino": "^8.6.1",
     "pino-pretty": "^9.1.0",
+    "play-dl": "^1.9.6",
     "prisma": "^4.4.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
